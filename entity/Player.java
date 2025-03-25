@@ -1,4 +1,4 @@
-package src.entity;
+package entity;
 
 import Main.KeyHandler;
 import Main.gamePanel;
