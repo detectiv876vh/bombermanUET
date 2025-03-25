@@ -1,4 +1,4 @@
-package entity;
+package src.entity;
 
 import Main.KeyHandler;
 import Main.gamePanel;
@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class Player extends Entity {
+public class Player extends entity.Entity {
     gamePanel gp;
     KeyHandler kH;
     private Graphics2D g2d;
