@@ -1,5 +1,7 @@
 package Main;
 
+import entity.Player;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,7 +11,7 @@ public class gamePanel extends JPanel implements Runnable {
     final int originalTileSize = 16;
     final int scale = 3;
 
-    final int tileSize = originalTileSize * scale; //48x48 tile
+    public final int tileSize = originalTileSize * scale; //48x48 tile
     final int maxScreenCol = 16;
     final int maxScreenRow = 12;
     final int screenWidth = tileSize * maxScreenCol; // 768 pixels
@@ -19,6 +21,7 @@ public class gamePanel extends JPanel implements Runnable {
 
     KeyHandler kH = new KeyHandler();
     Thread gameThread;
+    Player player = new Player(this, kH );// sfsfsfsfsfsfsdfs ddaay nay
 
     //Set player's default position.
     int playerX = 100;
@@ -31,6 +34,8 @@ public class gamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(kH);
         this.setFocusable(true);
+        this.setFocusable(true);
+        this.requestFocusInWindow();
     }
 
     public void startGameThread() {
@@ -68,18 +73,19 @@ public class gamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        if(kH.upPressed == true) {
-            playerY -= playerSpeed;
-        }
-        else if(kH.downPressed == true) {
-            playerY += playerSpeed;
-        }
-        else if(kH.leftPressed == true) {
-            playerX -= playerSpeed;
-        }
-        else if(kH.rightPressed == true){
-            playerX += playerSpeed;
-        }
+        player.update();
+        //if(kH.upPressed == true) {
+        //            playerY -= playerSpeed;
+        //        }
+        //        else if(kH.downPressed == true) {
+        //            playerY += playerSpeed;
+        //        }
+        //        else if(kH.leftPressed == true) {
+        //            playerX -= playerSpeed;
+        //        }
+        //        else if(kH.rightPressed == true){
+        //            playerX += playerSpeed;
+        //        }
     }
 
     public void paintComponent(Graphics g) {
@@ -88,10 +94,10 @@ public class gamePanel extends JPanel implements Runnable {
 
         Graphics2D g2d = (Graphics2D) g;
 
-        g2d.setColor(Color.WHITE);
+        //da xoa cai nay//  g2d.setColor(Color.WHITE);/////can xoa
 
-        g2d.fillRect(playerX, playerY, tileSize, tileSize);
-
+        //da xoa cai nay//  g2d.fillRect(playerX, playerY, tileSize, tileSize);/////can xoa
+        player.draw(g2d);//xoa cai tren thay bang cai nay
         g2d.dispose();
     }
 }
