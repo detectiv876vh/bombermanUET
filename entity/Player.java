@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class Player extends entity.Entity {
+public class Player extends Entity {
     gamePanel gp;
     KeyHandler kH;
     private Graphics2D g2d;
@@ -94,7 +94,7 @@ public class Player extends entity.Entity {
 //
 //        g2d.fillRect(x, y, gp.tileSize, gp.tileSize);
         BufferedImage image = null;
-        System.out.println("spriteCounter: " + spriteCounter);
+        //System.out.println("spriteCounter: " + spriteCounter);
 
 
         switch(direction) {
