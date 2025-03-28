@@ -69,7 +69,7 @@ public class TileManager {
         }
     }
 
-    public void drawMap(Graphics2D g2) {       //ve do hoa nang cao.
+    public void draw(Graphics2D g2) {       //ve do hoa nang cao.
         int col = 0;
         int row = 0;
         int x = 0;
@@ -90,4 +90,6 @@ public class TileManager {
             }
         }
     }
+
+
 }
