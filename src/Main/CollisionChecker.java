@@ -10,6 +10,7 @@ public class CollisionChecker {
         this.gp = gp;
     }
 
+    //Kiem tra va cham voi tuong
     public void checkTile(Entity entity) {
 
         int entityLeftX = entity.x + entity.solidArea.x;
@@ -52,7 +53,7 @@ public class CollisionChecker {
             case "right":
                 entityRightCol = (entityRightX + entity.speed) / gp.tileSize;
                 tileNum1 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
-                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
+                tileNum2 = gp.tileM.mapTileNum[entityRightCol   ][entityBottomRow];
                 if(gp.tileM.tile[tileNum1].collision == true || gp.tileM.tile[tileNum2].collision == true) {
                     entity.collisionOn = true;
                 }

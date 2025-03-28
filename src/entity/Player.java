@@ -35,20 +35,20 @@ public class Player extends Entity {
             //String path = "D:\\bombermanUET\\Resources\\anh";
             //xoa String path( ko duoc dung absolute path).
 
-            up1 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/boy_up_1.png"));
-            up2 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/boy_up_2.png"));
+            up1 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_up_1.png"));
+            up2 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_up_2.png"));
             //up3 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/sau3.png"));
             //up4 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/sau4.png"));
-            down1 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/boy_down_1.png"));
-            down2 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/boy_down_2.png"));
+            down1 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_down_1.png"));
+            down2 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_down_2.png"));
             //down3 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/truoc3.png"));
             //down4 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/truoc4.png"));
-            left1 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/boy_left_1.png"));
-            left2 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/boy_left_2.png"));
+            left1 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_left_1.png"));
+            left2 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_left_2.png"));
             //left3 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/trai3.png"));
             //left4 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/trai4.png"));
-            right1 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/boy_right_1.png"));
-            right2 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/boy_right_2.png"));
+            right1 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_right_1.png"));
+            right2 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_right_2.png"));
             //right3 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/phai3.png"));
             //right4 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/phai4.png"));
             } catch (IOException e) {
