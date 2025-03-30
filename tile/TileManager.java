@@ -27,13 +27,13 @@ public class TileManager {
     public void getTileImage() {        //tải ảnh các tile (ô vuông) từ file PNG và gán vào mảng tile.
         try {
             tile[0] = new Tile();
-            tile[0].image = ImageIO.read(getClass().getResourceAsStream("/tiles/grass.png"));
+            tile[0].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/grass.png"));
 
             tile[1] = new Tile();
-            tile[1].image = ImageIO.read(getClass().getResourceAsStream("/tiles/wall.jpg"));
+            tile[1].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/wall.jpg"));
 
             tile[2] = new Tile();
-            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/tiles/cracked-wall.png"));
+            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/cracked-wall.png"));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -41,7 +41,7 @@ public class TileManager {
     }
     public void loadMap() {
         try {
-            InputStream is = getClass().getResourceAsStream("/maps/map01.txt");
+            InputStream is = getClass().getResourceAsStream("/res/maps/map01.txt");
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
             int col = 0;
@@ -90,4 +90,6 @@ public class TileManager {
             }
         }
     }
+
+
 }

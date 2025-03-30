@@ -1,5 +1,6 @@
 package Main;
 
+import entity.Player;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -11,22 +12,25 @@ public class gamePanel extends JPanel implements Runnable {
     final int originalTileSize = 16;
     final int scale = 3;
 
-    public final int tileSize = originalTileSize * scale; //48x48 tile
+    public final int tileSize = originalTileSize * scale; //48x48 tile  (1 ô gạch)
     public final int maxScreenCol = 16;
     public final int maxScreenRow = 12;
-    public final int screenWidth = tileSize * maxScreenCol; // 768 pixels
-    public final int screenHeight = tileSize * maxScreenRow; // 576 pixels
+    final int screenWidth = tileSize * maxScreenCol; // 768 pixels
+    final int screenHeight = tileSize * maxScreenRow; // 576 pixels
 
     int FPS = 60;
-
-    TileManager tileM = new TileManager(this);
-    KeyHandler kH = new KeyHandler();
+    public TileManager tileM = new TileManager(this);
+    KeyHandler kH = new KeyHandler(this);
     Thread gameThread;
+    Player player = new Player(this, kH );
 
-    //Set player's default position.
-    int playerX = 100;
-    int playerY = 100;
-    int playerSpeed = 4;
+    //GAME STATE
+    public int gameState;
+    public final int titleState = 0;
+    public final int playState = 1;
+
+    //UI
+    public UI ui = new UI(this);
 
     public gamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -34,6 +38,12 @@ public class gamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(kH);
         this.setFocusable(true);
+        this.setFocusable(true);
+        this.requestFocusInWindow();
+    }
+
+    public void setupGame() {
+        gameState = titleState;
     }
 
     public void startGameThread() {
@@ -71,31 +81,44 @@ public class gamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        if(kH.upPressed == true) {
-            playerY -= playerSpeed;
-        }
-        else if(kH.downPressed == true) {
-            playerY += playerSpeed;
-        }
-        else if(kH.leftPressed == true) {
-            playerX -= playerSpeed;
-        }
-        else if(kH.rightPressed == true){
-            playerX += playerSpeed;
-        }
+        player.update();
+        //if(kH.upPressed == true) {
+        //            playerY -= playerSpeed;
+        //        }
+        //        else if(kH.downPressed == true) {
+        //            playerY += playerSpeed;
+        //        }
+        //        else if(kH.leftPressed == true) {
+        //            playerX -= playerSpeed;
+        //        }
+        //        else if(kH.rightPressed == true){
+        //            playerX += playerSpeed;
+        //        }
     }
 
-    @Override
     public void paintComponent(Graphics g) {
 
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D) g;
 
-        tileM.draw(g2);
-        g2.setColor(Color.WHITE);
+        // TITLE SCREEN
+        if(gameState == titleState) {
+            ui.draw(g2);
+        }
+        // OTHERS
+        else {
+            // TILE
+            tileM.draw(g2);
 
-        g2.fillRect(playerX, playerY, tileSize, tileSize);
+            // PLAYER
+            player.draw(g2);//xoa cai tren thay bang cai nay
+        }
+
+        //da xoa cai nay//  g2d.setColor(Color.WHITE);/////can xoa
+
+        //da xoa cai nay//  g2d.fillRect(playerX, playerY, tileSize, tileSize);/////can xoa
+
 
         g2.dispose();
     }

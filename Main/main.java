@@ -9,13 +9,13 @@ public class main {
         window.setResizable(false);
         window.setTitle("Bomberman");
 
-        gamePanel GamePanel = new gamePanel();
-        window.add(GamePanel);
+        gamePanel gamePanel = new gamePanel();
+        window.add(gamePanel);
         window.pack();
-
         window.setLocationRelativeTo(null);
         window.setVisible(true);
 
-        GamePanel.startGameThread();
+        gamePanel.startGameThread();
     }
+
 }
