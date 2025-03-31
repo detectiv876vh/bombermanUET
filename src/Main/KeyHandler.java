@@ -5,7 +5,12 @@ import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
 
+    gamePanel gp;
     public boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed;
+
+    public KeyHandler(gamePanel gp) {
+        this.gp=gp;
+    }
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -15,6 +20,35 @@ public class KeyHandler implements KeyListener {
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
 
+        //TILE STATE
+        if(gp.gameState == gp.titleState) {
+
+            if (code == KeyEvent.VK_W) {
+                gp.ui.commandNum--;
+                if(gp.ui.commandNum < 0) {
+                    gp.ui.commandNum = 0;
+                }
+            }
+            if (code == KeyEvent.VK_S) {
+                gp.ui.commandNum++;
+                if (gp.ui.commandNum > 2) {
+                    gp.ui.commandNum = 2;
+                }
+            }
+            if (code == KeyEvent.VK_SPACE || code == KeyEvent.VK_ENTER) {
+                if(gp.ui.commandNum == 0) {
+                    gp.gameState = gp.playState;
+                }
+                if(gp.ui.commandNum == 1) {
+                    gp.gameState = gp.playState;    //Chỉ có 1 map nên sẽ vào map01.
+                }
+                if(gp.ui.commandNum == 2) {
+                    System.exit(0);
+                }
+            }
+        }
+
+        //PLAY STATE
         if(code == KeyEvent.VK_W){
             upPressed = true;
         }
@@ -33,6 +67,10 @@ public class KeyHandler implements KeyListener {
 
         if(code == KeyEvent.VK_SPACE){
             spacePressed = true;
+        }
+
+        if(code == KeyEvent.VK_ESCAPE) {
+            gp.gameState = gp.titleState;
         }
     }
 
