@@ -13,17 +13,23 @@ public class gamePanel extends JPanel implements Runnable {
     final int scale = 3;
 
     public final int tileSize = originalTileSize * scale; //48x48 tile  (1 ô gạch)
-    public final int maxScreenCol = 16;
-    public final int maxScreenRow = 12;
-    final int screenWidth = tileSize * maxScreenCol; // 768 pixels
-    final int screenHeight = tileSize * maxScreenRow; // 576 pixels
+    public final int maxScreenCol = 16;     // Chiều dài (đơn vị số block) theo phương Ox của screen
+    public final int maxScreenRow = 12;     // Chiều rộng (đơn vị số block) theo phương Oy của
+    public final int screenWidth = tileSize * maxScreenCol; // 768 pixels: Chiều dài (đơn vị pixel)
+    public final int screenHeight = tileSize * maxScreenRow; // 576 pixels: Chiều rộng (đơn vị pixel)
+
+    // WORLD SETTINGS
+    public final int maxWorldCol = 50;
+    public final int maxWorldRow = 50;
+    public final int worldWidth = tileSize * maxWorldCol;
+    public final int worldHeight = tileSize * maxWorldRow;
 
     int FPS = 60;
     public TileManager tileM = new TileManager(this);
     KeyHandler kH = new KeyHandler(this);
     Thread gameThread;
     public CollisionChecker checker  = new CollisionChecker(this);
-    Player player = new Player(this, kH );
+    public Player player = new Player(this, kH );
 
     //GAME STATE
     public int gameState;

@@ -68,6 +68,10 @@ public class KeyHandler implements KeyListener {
         if(code == KeyEvent.VK_SPACE){
             spacePressed = true;
         }
+
+        if(code == KeyEvent.VK_ESCAPE) {
+            gp.gameState = gp.titleState;
+        }
     }
 
     @Override

@@ -14,16 +14,22 @@ public class Player extends Entity {
     KeyHandler kH;
     private Graphics2D g2d;
 
+    public final int screenX;
+    public final int screenY;
+
     public Player(gamePanel gp,KeyHandler kH ) {
         this.gp = gp;
         this.kH = kH;
 
         solidArea = new Rectangle(8,16, 32, 32);
 
+        screenX = gp.screenWidth/2;  // toa do tam ban do
+        screenY = gp.screenHeight/2;
+
         setDefaultValues();
         getPlayerImage();
     }
-    public void setDefaultValues() {
+    public void setDefaultValues() {    // vị trí spawn nhân vật + tốc độ chuyển động
     x = 50;
     y = 50;
     speed = 4;
@@ -176,7 +182,26 @@ public class Player extends Entity {
 //                }
                 break;
         }
-        g2d.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
+
+        int sX = screenX;
+        int sY = screenY;
+
+        if(screenX > x) {
+            sX = x;
+        }
+        if(screenY > y) {
+            sY = y;
+        }
+        int rightOffset = gp.screenWidth - screenX;
+        if(rightOffset > gp.worldWidth - x) {
+            sX = gp.screenWidth - (gp.worldWidth - x);
+        }
+        int bottomOffset = gp.screenHeight - screenY;
+        if(bottomOffset > gp.worldHeight - y) {
+            sY = gp.screenHeight - (gp.worldHeight - y);
+        }
+
+        g2d.drawImage(image, sX, sY, gp.tileSize, gp.tileSize, null);
     }
 
 }
