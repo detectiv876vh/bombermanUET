@@ -61,7 +61,6 @@ public class gamePanel extends JPanel implements Runnable {
         while (gameThread != null) {
 
             update();
-
             repaint();
 
             try {
@@ -100,7 +99,6 @@ public class gamePanel extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
 
         super.paintComponent(g);
-
         Graphics2D g2 = (Graphics2D) g;
 
         // TITLE SCREEN
@@ -108,7 +106,7 @@ public class gamePanel extends JPanel implements Runnable {
             ui.draw(g2);
         }
         // OTHERS
-        else {
+        else if(gameState == playState) {
             // TILE
             tileM.draw(g2);
 

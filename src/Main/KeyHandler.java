@@ -49,24 +49,26 @@ public class KeyHandler implements KeyListener {
         }
 
         //PLAY STATE
-        if(code == KeyEvent.VK_W){
-            upPressed = true;
-        }
+        if(gp.gameState == gp.playState) {
+            if(code == KeyEvent.VK_W){
+                upPressed = true;
+            }
 
-        if(code == KeyEvent.VK_S){
-            downPressed = true;
-        }
+            if(code == KeyEvent.VK_S){
+                downPressed = true;
+            }
 
-        if(code == KeyEvent.VK_A){
-            leftPressed = true;
-        }
+            if(code == KeyEvent.VK_A){
+                leftPressed = true;
+            }
 
-        if(code == KeyEvent.VK_D){
-            rightPressed = true;
-        }
+            if(code == KeyEvent.VK_D){
+                rightPressed = true;
+            }
 
-        if(code == KeyEvent.VK_SPACE){
-            spacePressed = true;
+            if(code == KeyEvent.VK_SPACE){
+                spacePressed = true;
+            }
         }
     }
 

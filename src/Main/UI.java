@@ -9,6 +9,7 @@ public class UI {
     public int commandNum = 0;
 
     public UI (gamePanel gp) {
+
         this.gp = gp;
     }
 

@@ -1,5 +1,6 @@
 package tile;
 
+import Main.UtilityTool;
 import Main.gamePanel;
 
 import javax.imageio.ImageIO;
@@ -21,29 +22,33 @@ public class TileManager {
         mapTileNum = new int[gp.maxScreenCol][gp.maxScreenRow];
 
         getTileImage();
-        loadMap();
+        loadMap("/maps/map01.txt");
     }
 
-    public void getTileImage() {        //tải ảnh các tile (ô vuông) từ file PNG và gán vào mảng tile.
+    public void getTileImage() {
+        //tải ảnh các tile (ô vuông) từ file PNG và gán vào mảng tile.
+        setup(0, "tile3", false);
+        setup(1, "New_wall", true);
+        setup(2, "crack_wall", true);
+
+    }
+
+    public void setup(int index, String imageName, boolean collision) {
+
+        UtilityTool uTool = new UtilityTool();
         try {
-            tile[0] = new Tile();
-            tile[0].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/grass.png"));
+            tile[index] = new Tile();
+            tile[index].image = ImageIO.read(getClass().getResourceAsStream("/tiles/" + imageName + ".png"));
+            tile[index].image = uTool.scaleImage(tile[index].image,gp.tileSize,gp.tileSize);
+            tile[index].collision = collision;
+        }catch(IOException e) {
 
-            tile[1] = new Tile();
-            tile[1].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/wall.jpg"));
-            tile[1].collision = true;
-
-            tile[2] = new Tile();
-            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/cracked-wall.png"));
-            tile[2].collision = true;
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
-    public void loadMap() {
+
+    public void loadMap(String filePath) {
         try {
-            InputStream is = getClass().getResourceAsStream("/res/maps/map01.txt");
+            InputStream is = getClass().getResourceAsStream(filePath);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
             int col = 0;
@@ -66,6 +71,7 @@ public class TileManager {
                 }
             }
             br.close();
+
         } catch (Exception e) {
 
         }
@@ -80,7 +86,7 @@ public class TileManager {
         while(col < gp.maxScreenCol && row < gp.maxScreenRow) {
 
             int tileNum = mapTileNum[col][row];
-            g2.drawImage(tile[tileNum].image, x, y, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(tile[tileNum].image, x, y,null);
             col++;
             x+= gp.tileSize;
 

@@ -10,12 +10,12 @@ import java.io.File;
 import java.io.IOException;
 
 public class Player extends Entity {
-    gamePanel gp;
+
     KeyHandler kH;
     private Graphics2D g2d;
 
     public Player(gamePanel gp,KeyHandler kH ) {
-        this.gp = gp;
+        super(gp);
         this.kH = kH;
 
         solidArea = new Rectangle(8,16, 32, 32);
@@ -29,32 +29,19 @@ public class Player extends Entity {
     speed = 4;
     direction = "down";
     }
-    public void getPlayerImage(){
 
-        try{
-            //String path = "D:\\bombermanUET\\Resources\\anh";
-            //xoa String path( ko duoc dung absolute path).
+    public void getPlayerImage() {
 
-            up1 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_up_1.png"));
-            up2 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_up_2.png"));
-            //up3 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/sau3.png"));
-            //up4 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/sau4.png"));
-            down1 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_down_1.png"));
-            down2 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_down_2.png"));
-            //down3 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/truoc3.png"));
-            //down4 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/truoc4.png"));
-            left1 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_left_1.png"));
-            left2 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_left_2.png"));
-            //left3 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/trai3.png"));
-            //left4 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/trai4.png"));
-            right1 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_right_1.png"));
-            right2 = ImageIO.read(getClass().getResourceAsStream("/res/anh/boy_right_2.png"));
-            //right3 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/phai3.png"));
-            //right4 = ImageIO.read(getClass().getResourceAsStream("/Resources/anh/phai4.png"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        up1 = setup("/anh/boy_up_1");
+        up2 = setup("/anh/boy_up_2");
+        down1 = setup("/anh/boy_down_1");
+        down2 = setup("/anh/boy_down_2");
+        left1 = setup("/anh/boy_left_1");
+        left2 = setup("/anh/boy_left_2");
+        right1 = setup("/anh/boy_right_1");
+        right2 = setup("/anh/boy_right_2");
+    }
+
     public void update() {
         if(kH.upPressed == true|| kH.downPressed == true|| kH.leftPressed == true|| kH.rightPressed == true){
             if(kH.upPressed == true) {
@@ -176,7 +163,7 @@ public class Player extends Entity {
 //                }
                 break;
         }
-        g2d.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
+        g2d.drawImage(image, x, y, null);
     }
 
 }
