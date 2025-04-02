@@ -1,29 +1,37 @@
 package Main;
 
+import entity.Entity;
 import entity.Player;
 import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class gamePanel extends JPanel implements Runnable {
-    //SCREEN SETTINGS:
 
+    //SCREEN SETTINGS
     final int originalTileSize = 16;
     final int scale = 3;
-
     public final int tileSize = originalTileSize * scale; //48x48 tile  (1 ô gạch)
     public final int maxScreenCol = 16;
     public final int maxScreenRow = 12;
-    final int screenWidth = tileSize * maxScreenCol; // 768 pixels
-    final int screenHeight = tileSize * maxScreenRow; // 576 pixels
+    public final int screenWidth = tileSize * maxScreenCol; // 768 pixels
+    public final int screenHeight = tileSize * maxScreenRow; // 576 pixels
 
-    int FPS = 60;
+    //FPS
+    public int FPS = 60;
+
+    //SYSTEM
     public TileManager tileM = new TileManager(this);
-    KeyHandler kH = new KeyHandler(this);
+    public KeyHandler kH = new KeyHandler(this);
     Thread gameThread;
     public CollisionChecker checker  = new CollisionChecker(this);
-    Player player = new Player(this, kH );
+
+    //ENTITIES AND OBJECTS
+    public Player player = new Player(this, kH);
+    public ArrayList<Entity> entityList = new ArrayList<>();
+    public ArrayList<Entity> projectileList = new ArrayList<>();
 
     //GAME STATE
     public int gameState;
@@ -38,7 +46,6 @@ public class gamePanel extends JPanel implements Runnable {
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
         this.addKeyListener(kH);
-        this.setFocusable(true);
         this.setFocusable(true);
         this.requestFocusInWindow();
     }
@@ -81,19 +88,24 @@ public class gamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        player.update();
-        //if(kH.upPressed == true) {
-        //            playerY -= playerSpeed;
-        //        }
-        //        else if(kH.downPressed == true) {
-        //            playerY += playerSpeed;
-        //        }
-        //        else if(kH.leftPressed == true) {
-        //            playerX -= playerSpeed;
-        //        }
-        //        else if(kH.rightPressed == true){
-        //            playerX += playerSpeed;
-        //        }
+        if (gameState == playState) {
+
+            player.update();
+
+            for (int i = 0; i < projectileList.size(); i++) {
+                if (projectileList.get(i) != null) {
+                    if (projectileList.get(i).alive) {
+                        projectileList.get(i).update();
+                    }
+                    if (!projectileList.get(i).alive) {
+                        projectileList.remove(i);
+                    }
+                }
+            }
+
+        }
+
+
     }
 
     public void paintComponent(Graphics g) {
@@ -112,13 +124,23 @@ public class gamePanel extends JPanel implements Runnable {
 
             // PLAYER
             player.draw(g2);//xoa cai tren thay bang cai nay
+
+            entityList.add(player);
+            for (int i = 0; i < projectileList.size(); i++) {
+                if(projectileList.get(i) != null) {
+                    entityList.add(projectileList.get(i));
+                }
+            }
+
+            for (int i = 0; i < entityList.size(); i++) {
+                entityList.get(i).draw(g2);
+            }
+
+            // empty the list
+            entityList.clear();
         }
 
-        //da xoa cai nay//  g2d.setColor(Color.WHITE);/////can xoa
-
-        //da xoa cai nay//  g2d.fillRect(playerX, playerY, tileSize, tileSize);/////can xoa
-
-
         g2.dispose();
+
     }
 }
