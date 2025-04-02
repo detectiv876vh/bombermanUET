@@ -2,6 +2,8 @@ package Main;
 
 import entity.Entity;
 
+import java.net.SocketOption;
+
 public class CollisionChecker {
 
     gamePanel gp;
@@ -59,5 +61,76 @@ public class CollisionChecker {
                 }
                 break;
         }
+    }
+    public int checkObject(Entity entity,boolean player) {
+
+        int index = 999;
+        for(int i = 0 ; i < gp.obj.length; i++) {
+            if(gp.obj[i] != null) {
+                // lay vi tri solidarea cua entity
+                entity.solidArea.x = entity.worldX + entity.solidArea.x;
+                entity.solidArea.y = entity.worldY + entity.solidArea.y;
+                // lay vi tri solidarea cua object
+                gp.obj[i].solidArea.x = gp.obj[i].worldX + gp.obj[i].solidArea.x;
+                gp.obj[i].solidArea.y = gp.obj[i].worldY + gp.obj[i].solidArea.y;
+
+                switch (entity.direction) {
+                    case "up":
+                        entity.solidArea.y -= entity.speed;
+                        // kiểm tra xem 2 vật có va chạm vào nhau hay không
+                        if (entity.solidArea.intersects(gp.obj[i].solidArea)) {
+                            if (gp.obj[i].collision == true) {
+                                entity.collisionOn = true;
+                            }
+                            if (player == true) {
+                                index = i;
+                            }
+                        }
+                        break;
+                    case "down":
+                        entity.solidArea.y += entity.speed;
+                        // kiểm tra xem 2 vật có va chạm vào nhau hay không
+                        if (entity.solidArea.intersects(gp.obj[i].solidArea)) {
+                            if (gp.obj[i].collision == true) {
+                                entity.collisionOn = true;
+                            }
+                            if (player == true) {
+                                index = i;
+                            }
+                        }
+                        break;
+                    case "left":
+                        entity.solidArea.x -= entity.speed;
+                        // kiểm tra xem 2 vật có va chạm vào nhau hay không
+                        if (entity.solidArea.intersects(gp.obj[i].solidArea)) {
+                            if (gp.obj[i].collision == true) {
+                                entity.collisionOn = true;
+                            }
+                            if (player == true) {
+                                index = i;
+                            }
+                        }
+                        break;
+                    case "right":
+                        entity.solidArea.x += entity.speed;
+                        // kiểm tra xem 2 vật có va chạm vào nhau hay không
+                        if (entity.solidArea.intersects(gp.obj[i].solidArea)) {
+                            if (gp.obj[i].collision == true) {
+                                entity.collisionOn = true;
+                            }
+                            if (player == true) {
+                                index = i;
+                            }
+                            break;
+                        }
+                }
+                //khong cho x va y tang lien tuc
+                entity.solidArea.x = entity.solidAreaDefauftX;
+                entity.solidArea.y = entity.solidAreaDefauftY;
+                gp.obj[i].solidArea.x = gp.obj[i].solidAreaDefauftX;
+                gp.obj[i].solidArea.y = gp.obj[i].solidAreaDefauftY;
+            }
+        }
+        return index;
     }
 }

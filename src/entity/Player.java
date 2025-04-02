@@ -16,13 +16,15 @@ public class Player extends Entity {
 
     public final int screenX;
     public final int screenY;
+    int hasKey = 0; // so key co duoc khi nhat tren map
 
     public Player(gamePanel gp,KeyHandler kH ) {
         this.gp = gp;
         this.kH = kH;
 
         solidArea = new Rectangle(8,16, 32, 32);
-
+        solidAreaDefauftX = solidArea.x;
+        solidAreaDefauftY = solidArea.y;
         screenX = gp.screenWidth/2 ;// toa do tam ban do
         screenY = gp.screenHeight/2- (gp.tileSize/2);
 
@@ -80,6 +82,10 @@ public class Player extends Entity {
             collisionOn = false;
             gp.checker.checkTile(this);
 
+            // Kiem tra va cham vat the // check object collision
+            int objIndex = gp.checker.checkObject(this, true); //entity va boolean cua player
+            pickUpObject(objIndex);
+
             //false thi di chuyen duoc:
             if(collisionOn == false){
                 switch(direction){
@@ -114,7 +120,32 @@ public class Player extends Entity {
         }
 
     }
+    public void pickUpObject(int i) {
 
+        if(i != 999) {
+
+            String objectName = gp.obj[i].name;
+
+            switch (objectName) {
+                case "Key" :
+                    hasKey++;
+                    gp.obj[i] = null;
+                    System.out.println("Key: " + hasKey);
+                    break;
+                case "Door" :
+                    if(hasKey > 0) {
+                        gp.obj[i] = null;
+                        hasKey--;
+                    }
+                    System.out.println("Key: " + hasKey);
+                    break;
+                case "Boots" :
+                    break;
+                case "Chest" :
+                    break;
+            }
+        }
+    }
     public void draw(Graphics2D g2d) {
 
 //        g2d.setColor(Color.WHITE);

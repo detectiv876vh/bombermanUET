@@ -119,15 +119,14 @@ public class gamePanel extends JPanel implements Runnable {
         else {
             // TILE
             tileM.draw(g2);
-            // PLAYER
-            player.draw(g2);//xoa cai tren thay bang cai nay
             //OBJECT
             for(int i = 0; i < obj.length; i++) {
                 if(obj[i] != null) {
                     obj[i].draw(g2, this);
                 }
             }
-
+            // PLAYER
+            player.draw(g2);
         }
 
         //da xoa cai nay//  g2d.setColor(Color.WHITE);/////can xoa
