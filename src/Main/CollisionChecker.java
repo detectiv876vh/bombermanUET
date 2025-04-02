@@ -13,10 +13,10 @@ public class CollisionChecker {
     //Kiem tra va cham voi tuong
     public void checkTile(Entity entity) {
 
-        int entityLeftX = entity.x + entity.solidArea.x;                            // x = (worldX); y = (worldY)
-        int entityRightX = entity.x + entity.solidArea.x + entity.solidArea.width;
-        int entityTopY = entity.y + entity.solidArea.y;
-        int entityBottomY = entity.y + entity.solidArea.y + entity.solidArea.height;
+        int entityLeftX = entity.worldX + entity.solidArea.x;                            // x = (worldX); y = (worldY)
+        int entityRightX = entity.worldX + entity.solidArea.x + entity.solidArea.width;
+        int entityTopY = entity.worldY + entity.solidArea.y;
+        int entityBottomY = entity.worldY + entity.solidArea.y + entity.solidArea.height;
 
         int entityLeftCol = entityLeftX / gp.tileSize;
         int entityRightCol = entityRightX / gp.tileSize;

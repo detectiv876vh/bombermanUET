@@ -1,6 +1,7 @@
 package Main;
 
 import entity.Player;
+import object.SuperObject;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -23,14 +24,15 @@ public class gamePanel extends JPanel implements Runnable {
     public final int maxWorldRow = 50;
     public final int worldWidth = tileSize * maxWorldCol;
     public final int worldHeight = tileSize * maxWorldRow;
-
+    // FPS
     int FPS = 60;
     public TileManager tileM = new TileManager(this);
     KeyHandler kH = new KeyHandler(this);
     Thread gameThread;
+    public AssetSetter aSetter = new AssetSetter(this);
     public CollisionChecker checker  = new CollisionChecker(this);
     public Player player = new Player(this, kH );
-
+    public SuperObject obj[] = new SuperObject[10];   // so item co the xuat hien tai o do
     //GAME STATE
     public int gameState;
     public final int titleState = 0;
@@ -45,12 +47,12 @@ public class gamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(kH);
         this.setFocusable(true);
-        this.setFocusable(true);
         this.requestFocusInWindow();
     }
 
     public void setupGame() {
         gameState = titleState;
+        aSetter.setObject();
     }
 
     public void startGameThread() {
@@ -117,9 +119,15 @@ public class gamePanel extends JPanel implements Runnable {
         else {
             // TILE
             tileM.draw(g2);
-
             // PLAYER
             player.draw(g2);//xoa cai tren thay bang cai nay
+            //OBJECT
+            for(int i = 0; i < obj.length; i++) {
+                if(obj[i] != null) {
+                    obj[i].draw(g2, this);
+                }
+            }
+
         }
 
         //da xoa cai nay//  g2d.setColor(Color.WHITE);/////can xoa

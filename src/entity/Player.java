@@ -23,15 +23,15 @@ public class Player extends Entity {
 
         solidArea = new Rectangle(8,16, 32, 32);
 
-        screenX = gp.screenWidth/2;  // toa do tam ban do
-        screenY = gp.screenHeight/2;
+        screenX = gp.screenWidth/2 ;// toa do tam ban do
+        screenY = gp.screenHeight/2- (gp.tileSize/2);
 
         setDefaultValues();
         getPlayerImage();
     }
     public void setDefaultValues() {    // vị trí spawn nhân vật + tốc độ chuyển động
-    x = 50;
-    y = 50;
+    worldX = 50; // vi tri mac dinh khi xuat hien
+    worldY = 50;
     speed = 4;
     direction = "down";
     }
@@ -84,22 +84,22 @@ public class Player extends Entity {
             if(collisionOn == false){
                 switch(direction){
                     case "up":
-                        y -= speed;
+                        worldY -= speed;
                         break;
                     case "down":
-                        y += speed;
+                        worldY += speed;
                         break;
                     case "left":
-                        x -= speed;
+                        worldX -= speed;
                         break;
                     case "right":
-                        x += speed;
+                        worldX += speed;
                         break;
                 }
             }
 
             spriteCounter++;
-            if(spriteCounter > 23) {
+            if(spriteCounter > 12) {
                 if(spriteNum == 1) {
                     spriteNum = 2;
                 }else if(spriteNum == 2) {
@@ -183,25 +183,25 @@ public class Player extends Entity {
                 break;
         }
 
-        int sX = screenX;
-        int sY = screenY;
+        int x = screenX;
+        int y = screenY;
 
-        if(screenX > x) {
-            sX = x;
+        if(screenX > worldX) {
+            x= worldX;
         }
-        if(screenY > y) {
-            sY = y;
+        if(screenY > worldY) {
+            y = worldY;
         }
         int rightOffset = gp.screenWidth - screenX;
-        if(rightOffset > gp.worldWidth - x) {
-            sX = gp.screenWidth - (gp.worldWidth - x);
+        if(rightOffset > gp.worldWidth - worldX) {
+            x = gp.screenWidth - (gp.worldWidth - worldX);
         }
         int bottomOffset = gp.screenHeight - screenY;
-        if(bottomOffset > gp.worldHeight - y) {
-            sY = gp.screenHeight - (gp.worldHeight - y);
+        if(bottomOffset > gp.worldHeight - worldY) {
+            y = gp.screenHeight - (gp.worldHeight - worldY);
         }
 
-        g2d.drawImage(image, sX, sY, gp.tileSize, gp.tileSize, null);
+        g2d.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
     }
 
 }
