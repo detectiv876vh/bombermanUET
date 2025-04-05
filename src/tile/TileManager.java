@@ -41,7 +41,7 @@ public class TileManager {
             e.printStackTrace();
         }
     }
-    public void loadMap() {
+    public void loadMap() {     // Đọc dữ liệu map từ file rồi lưu vào ma trận
         try {
             InputStream is = getClass().getResourceAsStream("/res/maps/map01.txt");
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -88,11 +88,11 @@ public class TileManager {
             int screenY = worldY - gp.player.y + gp.player.screenY;
 
             // Dừng camera khi đến rìa
-            if(gp.player.screenX > gp.player.x) {
+            if(gp.player.screenX > gp.player.x) { // tiến về rìa trái (x giảm dần)
                 screenX = worldX;
             }
 
-            if(gp.player.screenY > gp.player.y) {
+            if(gp.player.screenY > gp.player.y) { // tiến về rìa bên trên (y giảm dần)
                 screenY = worldY;
             }
             int rightOffset = gp.screenWidth - gp.player.screenX;
@@ -105,8 +105,8 @@ public class TileManager {
             }
 
             // chỉ vẽ các ô nằm trong màn hình hiển thị (tránh phải vẽ tất cả map)
-            if(worldX + gp.tileSize > gp.player.x - gp.player.screenX &&
-                    worldX - gp.tileSize < gp.player.x + gp.player.screenX &&
+            if(worldX + gp.tileSize > gp.player.x - gp.player.screenX &&    // xét khi đi sang trái màn hình
+                    worldX - gp.tileSize < gp.player.x + gp.player.screenX &&   // xét khi đi sang phải màn hình
                     worldY + gp.tileSize > gp.player.y - gp.player.screenY &&
                     worldY - gp.tileSize < gp.player.y + gp.player.screenY) {
                 g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);

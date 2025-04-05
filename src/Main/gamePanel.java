@@ -7,8 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class gamePanel extends JPanel implements Runnable {
-    //SCREEN SETTINGS:
 
+    //SCREEN SETTINGS
     final int originalTileSize = 16;
     final int scale = 3;
 
@@ -21,9 +21,10 @@ public class gamePanel extends JPanel implements Runnable {
     // WORLD SETTINGS
     public final int maxWorldCol = 50;
     public final int maxWorldRow = 50;
-    public final int worldWidth = tileSize * maxWorldCol;
-    public final int worldHeight = tileSize * maxWorldRow;
+    public final int worldWidth = tileSize * maxWorldCol;   // Chiều dài bản đồ
+    public final int worldHeight = tileSize * maxWorldRow;  // Chiều rộng bản đồ
 
+    // FPS
     int FPS = 60;
     public TileManager tileM = new TileManager(this);
     KeyHandler kH = new KeyHandler(this);

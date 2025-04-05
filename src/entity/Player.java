@@ -14,7 +14,7 @@ public class Player extends Entity {
     KeyHandler kH;
     private Graphics2D g2d;
 
-    public final int screenX;
+    public final int screenX;   // dùng final để đảm bảo màn hình được cố định theo nhân vật
     public final int screenY;
 
     public Player(gamePanel gp,KeyHandler kH ) {
@@ -23,13 +23,13 @@ public class Player extends Entity {
 
         solidArea = new Rectangle(8,16, 32, 32);
 
-        screenX = gp.screenWidth/2;  // toa do tam ban do
+        screenX = gp.screenWidth/2;  // di chuyển màn hình hiển thị theo chính giữa nhân vật
         screenY = gp.screenHeight/2;
 
         setDefaultValues();
         getPlayerImage();
     }
-    public void setDefaultValues() {    // vị trí spawn nhân vật + tốc độ chuyển động
+    public void setDefaultValues() {    // vị trí spawn nhân vật trên world map + tốc độ chuyển động
     x = 50;
     y = 50;
     speed = 4;
