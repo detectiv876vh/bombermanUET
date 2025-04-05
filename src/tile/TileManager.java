@@ -1,5 +1,6 @@
 package tile;
 
+import Main.UtilityTool;
 import Main.gamePanel;
 
 import javax.imageio.ImageIO;
@@ -21,29 +22,33 @@ public class TileManager {
         mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
         getTileImage();
-        loadMap();
+        loadMap("/maps/map01.txt");
     }
 
-    public void getTileImage() {        //tải ảnh các tile (ô vuông) từ file PNG và gán vào mảng tile.
+    public void getTileImage() {
+        //tải ảnh các tile (ô vuông) từ file PNG và gán vào mảng tile.
+        setup(0, "tile3", false);
+        setup(1, "New_wall", true);
+        setup(2, "crack_wall", true);
+
+    }
+
+    public void setup(int index, String imageName, boolean collision) {
+
+        UtilityTool uTool = new UtilityTool();
         try {
-            tile[0] = new Tile();
-            tile[0].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/grass.png"));
+            tile[index] = new Tile();
+            tile[index].image = ImageIO.read(getClass().getResourceAsStream("/tiles/" + imageName + ".png"));
+            tile[index].image = uTool.scaleImage(tile[index].image,gp.tileSize,gp.tileSize);
+            tile[index].collision = collision;
+        }catch(IOException e) {
 
-            tile[1] = new Tile();
-            tile[1].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/wall.jpg"));
-            tile[1].collision = true;
-
-            tile[2] = new Tile();
-            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/res/tiles/cracked-wall.png"));
-            tile[2].collision = true;
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
-    public void loadMap() {     // Đọc dữ liệu map từ file rồi lưu vào ma trận
+
+    public void loadMap(String filePath) {
         try {
-            InputStream is = getClass().getResourceAsStream("/res/maps/map01.txt");
+            InputStream is = getClass().getResourceAsStream(filePath);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
             int col = 0;
@@ -66,6 +71,7 @@ public class TileManager {
                 }
             }
             br.close();
+
         } catch (Exception e) {
 
         }
@@ -84,37 +90,37 @@ public class TileManager {
             int worldY = worldRow * gp.tileSize;
 
             //screen : vị trí ô trên màn hình hiển thị
-            int screenX = worldX - gp.player.x + gp.player.screenX;
-            int screenY = worldY - gp.player.y + gp.player.screenY;
+            int screenX = worldX - gp.player.worldX + gp.player.screenX;
+            int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
             // Dừng camera khi đến rìa
-            if(gp.player.screenX > gp.player.x) { // tiến về rìa trái (x giảm dần)
+            if(gp.player.screenX > gp.player.worldX) { // tiến về rìa trái (x giảm dần)
                 screenX = worldX;
             }
 
-            if(gp.player.screenY > gp.player.y) { // tiến về rìa bên trên (y giảm dần)
+            if(gp.player.screenY > gp.player.worldY) { // tiến về rìa bên trên (y giảm dần)
                 screenY = worldY;
             }
             int rightOffset = gp.screenWidth - gp.player.screenX;
-            if(rightOffset > gp.worldWidth - gp.player.x) {
+            if(rightOffset > gp.worldWidth - gp.player.worldX) {
                 screenX = gp.screenWidth - (gp.worldWidth - worldX);
             }
             int bottomOffset = gp.screenHeight - gp.player.screenY;
-            if(bottomOffset > gp.worldHeight - gp.player.y) {
+            if(bottomOffset > gp.worldHeight - gp.player.worldY) {
                 screenY = gp.screenHeight - (gp.worldHeight - worldY);
             }
 
             // chỉ vẽ các ô nằm trong màn hình hiển thị (tránh phải vẽ tất cả map)
-            if(worldX + gp.tileSize > gp.player.x - gp.player.screenX &&    // xét khi đi sang trái màn hình
-                    worldX - gp.tileSize < gp.player.x + gp.player.screenX &&   // xét khi đi sang phải màn hình
-                    worldY + gp.tileSize > gp.player.y - gp.player.screenY &&
-                    worldY - gp.tileSize < gp.player.y + gp.player.screenY) {
+            if(worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&    // xét khi đi sang trái màn hình
+                    worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&   // xét khi đi sang phải màn hình
+                    worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
+                    worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
                 g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
             }
-            else if(gp.player.screenX > gp.player.x ||
-                    gp.player.screenY > gp.player.y ||
-                    rightOffset > gp.worldWidth - gp.player.x ||
-                    bottomOffset > gp.worldHeight - gp.player.y) {
+            else if(gp.player.screenX > gp.player.worldX ||
+                    gp.player.screenY > gp.player.worldY ||
+                    rightOffset > gp.worldWidth - gp.player.worldX ||
+                    bottomOffset > gp.worldHeight - gp.player.worldY) {
                 g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
             }
 

@@ -9,6 +9,7 @@ public class UI {
     public int commandNum = 0;
 
     public UI (gamePanel gp) {
+
         this.gp = gp;
     }
 
@@ -47,7 +48,7 @@ public class UI {
         text = "NEW GAME";
         x = getXforCenteredText(text);
         y += gp.tileSize * 4;
-        g2.drawString(text, x, y);  // viết text ở vị trí x y.
+        g2.drawString(text, x, y);  // viết text ở vị trí x worldY.
         if(commandNum == 0) {
             g2.drawString(">", x-gp.tileSize, y);
         }

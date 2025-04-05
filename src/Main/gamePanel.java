@@ -1,12 +1,15 @@
 package Main;
 
+import entity.Entity;
 import entity.Player;
 import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class gamePanel extends JPanel implements Runnable {
+    //SCREEN SETTINGS:
 
     //SCREEN SETTINGS
     final int originalTileSize = 16;
@@ -27,10 +30,14 @@ public class gamePanel extends JPanel implements Runnable {
     // FPS
     int FPS = 60;
     public TileManager tileM = new TileManager(this);
-    KeyHandler kH = new KeyHandler(this);
+    public KeyHandler kH = new KeyHandler(this);
     Thread gameThread;
     public CollisionChecker checker  = new CollisionChecker(this);
-    public Player player = new Player(this, kH );
+
+    //ENTITIES AND OBJECTS
+    public Player player = new Player(this, kH);
+    public ArrayList<Entity> entityList = new ArrayList<>();
+    public ArrayList<Entity> projectileList = new ArrayList<>();
 
     //GAME STATE
     public int gameState;
@@ -45,7 +52,6 @@ public class gamePanel extends JPanel implements Runnable {
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
         this.addKeyListener(kH);
-        this.setFocusable(true);
         this.setFocusable(true);
         this.requestFocusInWindow();
     }
@@ -68,7 +74,6 @@ public class gamePanel extends JPanel implements Runnable {
         while (gameThread != null) {
 
             update();
-
             repaint();
 
             try {
@@ -89,25 +94,29 @@ public class gamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        player.update();
-        //if(kH.upPressed == true) {
-        //            playerY -= playerSpeed;
-        //        }
-        //        else if(kH.downPressed == true) {
-        //            playerY += playerSpeed;
-        //        }
-        //        else if(kH.leftPressed == true) {
-        //            playerX -= playerSpeed;
-        //        }
-        //        else if(kH.rightPressed == true){
-        //            playerX += playerSpeed;
-        //        }
+        if (gameState == playState) {
+
+            player.update();
+
+            for (int i = 0; i < projectileList.size(); i++) {
+                if (projectileList.get(i) != null) {
+                    if (projectileList.get(i).alive) {
+                        projectileList.get(i).update();
+                    }
+                    if (!projectileList.get(i).alive) {
+                        projectileList.remove(i);
+                    }
+                }
+            }
+
+        }
+
+
     }
 
     public void paintComponent(Graphics g) {
 
         super.paintComponent(g);
-
         Graphics2D g2 = (Graphics2D) g;
 
         // TITLE SCREEN
@@ -115,19 +124,29 @@ public class gamePanel extends JPanel implements Runnable {
             ui.draw(g2);
         }
         // OTHERS
-        else {
+        else if(gameState == playState) {
             // TILE
             tileM.draw(g2);
 
             // PLAYER
             player.draw(g2);//xoa cai tren thay bang cai nay
+
+            entityList.add(player);
+            for (int i = 0; i < projectileList.size(); i++) {
+                if(projectileList.get(i) != null) {
+                    entityList.add(projectileList.get(i));
+                }
+            }
+
+            for (int i = 0; i < entityList.size(); i++) {
+                entityList.get(i).draw(g2);
+            }
+
+            // empty the list
+            entityList.clear();
         }
 
-        //da xoa cai nay//  g2d.setColor(Color.WHITE);/////can xoa
-
-        //da xoa cai nay//  g2d.fillRect(playerX, playerY, tileSize, tileSize);/////can xoa
-
-
         g2.dispose();
+
     }
 }
