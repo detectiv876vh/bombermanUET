@@ -29,6 +29,7 @@ public class Entity {
     //HITBOX:
     public Rectangle solidArea;
 
+    public int solidAreaDefauftX, solidAreaDefauftY;
     public boolean collisionOn = false;
 
     public BufferedImage image, image2, image3;

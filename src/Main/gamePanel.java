@@ -2,6 +2,7 @@ package Main;
 
 import entity.Entity;
 import entity.Player;
+import object.SuperObject;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -14,24 +15,32 @@ public class gamePanel extends JPanel implements Runnable {
     final int originalTileSize = 16;
     final int scale = 3;
     public final int tileSize = originalTileSize * scale; //48x48 tile  (1 ô gạch)
-    public final int maxScreenCol = 16;
-    public final int maxScreenRow = 12;
-    public final int screenWidth = tileSize * maxScreenCol; // 768 pixels
-    public final int screenHeight = tileSize * maxScreenRow; // 576 pixels
+    public final int maxScreenCol = 16;     // Chiều dài (đơn vị số block) theo phương Ox của screen
+    public final int maxScreenRow = 12;     // Chiều rộng (đơn vị số block) theo phương Oy của
+    public final int screenWidth = tileSize * maxScreenCol; // 768 pixels: Chiều dài (đơn vị pixel)
+    public final int screenHeight = tileSize * maxScreenRow; // 576 pixels: Chiều rộng (đơn vị pixel)
 
     //FPS
     public int FPS = 60;
+
+    // WORLD SETTINGS
+    public final int maxWorldCol = 50;
+    public final int maxWorldRow = 50;
+    public final int worldWidth = tileSize * maxWorldCol;
+    public final int worldHeight = tileSize * maxWorldRow;
 
     //SYSTEM
     public TileManager tileM = new TileManager(this);
     public KeyHandler kH = new KeyHandler(this);
     Thread gameThread;
+    public AssetSetter aSetter = new AssetSetter(this);
     public CollisionChecker checker  = new CollisionChecker(this);
 
     //ENTITIES AND OBJECTS
     public Player player = new Player(this, kH);
     public ArrayList<Entity> entityList = new ArrayList<>();
     public ArrayList<Entity> projectileList = new ArrayList<>();
+    public SuperObject obj[] = new SuperObject[10];   // so item co the xuat hien tai o do
 
     //GAME STATE
     public int gameState;
@@ -52,6 +61,7 @@ public class gamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         gameState = titleState;
+        aSetter.setObject();
     }
 
     public void startGameThread() {
@@ -121,7 +131,12 @@ public class gamePanel extends JPanel implements Runnable {
         else if(gameState == playState) {
             // TILE
             tileM.draw(g2);
-
+            //OBJECT
+            for(int i = 0; i < obj.length; i++) {
+                if(obj[i] != null) {
+                    obj[i].draw(g2, this);
+                }
+            }
             // PLAYER
             player.draw(g2);//xoa cai tren thay bang cai nay
 
