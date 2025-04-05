@@ -28,7 +28,7 @@ public class gamePanel extends JPanel implements Runnable {
     public final int worldHeight = tileSize * maxWorldRow;  // Chiều rộng bản đồ
 
     // FPS
-    int FPS = 60;
+    public int FPS = 60;
     public TileManager tileM = new TileManager(this);
     public KeyHandler kH = new KeyHandler(this);
     Thread gameThread;

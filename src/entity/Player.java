@@ -184,19 +184,19 @@ public class Player extends Entity {
         int sX = screenX;
         int sY = screenY;
 
-        if(screenX > x) {
-            sX = x;
+        if(screenX > worldX) {
+            sX = worldX;
         }
-        if(screenY > y) {
-            sY = y;
+        if(screenY > worldY) {
+            sY = worldY;
         }
         int rightOffset = gp.screenWidth - screenX;
-        if(rightOffset > gp.worldWidth - x) {
-            sX = gp.screenWidth - (gp.worldWidth - x);
+        if(rightOffset > gp.worldWidth - worldX) {
+            sX = gp.screenWidth - (gp.worldWidth - worldX);
         }
         int bottomOffset = gp.screenHeight - screenY;
-        if(bottomOffset > gp.worldHeight - y) {
-            sY = gp.screenHeight - (gp.worldHeight - y);
+        if(bottomOffset > gp.worldHeight - worldY) {
+            sY = gp.screenHeight - (gp.worldHeight - worldY);
         }
 
         g2d.drawImage(image, sX, sY, gp.tileSize, gp.tileSize, null);
