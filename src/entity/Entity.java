@@ -136,6 +136,7 @@ public class Entity {
                 break;
         }
 
+
         g2.drawImage(image, worldX, worldY, null);
     }
 

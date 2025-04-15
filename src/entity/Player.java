@@ -28,7 +28,7 @@ public class Player extends Entity {
 
         setDefaultValues();
         getPlayerImage();
-        bomb = new Bomb(gp);
+
         projectileUp = new Fire(gp);
         projectileDown = new Fire(gp);
         projectileLeft = new Fire(gp);
@@ -108,9 +108,14 @@ public class Player extends Entity {
         if(gp.kH.spacePressed && !projectileUp.alive && !projectileDown.alive
                 && !projectileLeft.alive && !projectileRight.alive) {
 
-            bombXpos = worldX;
-            bombYpos = worldY;
+            int blockX = worldX / gp.tileSize;
+            int blockY = worldY / gp.tileSize;
 
+            bombXpos = (int) (blockX + 0.5) * gp.tileSize;
+            bombYpos = (int) (blockY + 0.5) * gp.tileSize;
+
+            // reset bom sau moi lan dat:
+            Bomb bomb = new Bomb(gp);
             bomb.set(bombXpos, bombYpos, "down", true,this);
             gp.projectileList.add(bomb);
 
