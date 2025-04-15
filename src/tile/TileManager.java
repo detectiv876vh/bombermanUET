@@ -94,11 +94,11 @@ public class TileManager {
             int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
             // Dừng camera khi đến rìa
-            if(gp.player.screenX > gp.player.worldX) { // tiến về rìa trái (x giảm dần)
+            if(gp.player.screenX > gp.player.worldX) {
                 screenX = worldX;
             }
 
-            if(gp.player.screenY > gp.player.worldY) { // tiến về rìa bên trên (y giảm dần)
+            if(gp.player.screenY > gp.player.worldY) {
                 screenY = worldY;
             }
             int rightOffset = gp.screenWidth - gp.player.screenX;
@@ -111,14 +111,15 @@ public class TileManager {
             }
 
             // chỉ vẽ các ô nằm trong màn hình hiển thị (tránh phải vẽ tất cả map)
-            if(worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&    // xét khi đi sang trái màn hình
-                    worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&   // xét khi đi sang phải màn hình
+            if(worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
+                    worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
                     worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
                     worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
                 g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+
             }
-            else if(gp.player.screenX > gp.player.worldX ||
-                    gp.player.screenY > gp.player.worldY ||
+            else if(gp.player.screenX > gp.player.worldX||
+                    gp.player.screenY > gp.player.worldY||
                     rightOffset > gp.worldWidth - gp.player.worldX ||
                     bottomOffset > gp.worldHeight - gp.player.worldY) {
                 g2.drawImage(tile[tileNum].image, screenX, screenY, gp.tileSize, gp.tileSize, null);
@@ -133,6 +134,4 @@ public class TileManager {
             }
         }
     }
-
-
 }

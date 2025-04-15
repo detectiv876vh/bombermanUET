@@ -12,9 +12,10 @@ public class Fire extends Projectile {
         this.gp = gp;
 
         name = "Fire";
-        speed = 10;
-        //maxLife change = shorter range.
-        maxLife = 8;
+        speed = 7;
+        // lower maxLife = shorter range.
+        // 7 = 1 ô; 14 = 2 ô.
+        maxLife = 7;
         alive = false;
         life = maxLife;
         getImage();

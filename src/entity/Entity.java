@@ -2,6 +2,7 @@ package entity;
 
 import Main.UtilityTool;
 import Main.gamePanel;
+import manager.DrawManager;
 import object.Bomb;
 
 import javax.imageio.ImageIO;
@@ -29,6 +30,7 @@ public class Entity {
     //HITBOX:
     public Rectangle solidArea;
 
+    public int solidAreaDefauftX, solidAreaDefauftY;
     public boolean collisionOn = false;
 
     public BufferedImage image, image2, image3;
@@ -55,6 +57,7 @@ public class Entity {
 
         //so-called hitbox:
         solidArea =  new Rectangle(8,16,30, 30);
+
     }
 
     public void setAction() {
@@ -96,11 +99,7 @@ public class Entity {
                 spriteNum = 2;
             } else if (spriteNum == 2) {
                 spriteNum = 1;
-            }/*else if(spriteNum == 3) {
-                    spriteNum = 4;
-                }else if(spriteNum == 4) {
-                    spriteNum = 1;
-                }*/
+            }
             spriteCounter = 0;
         }
     }
@@ -108,6 +107,7 @@ public class Entity {
     public void draw(Graphics2D g2) {
 
         BufferedImage image = null;
+        DrawManager drawManager = new DrawManager(gp, this);
 
         switch (direction) {
             case "up":
@@ -136,8 +136,8 @@ public class Entity {
                 break;
         }
 
+        drawManager.draw(g2, image, worldX, worldY);
 
-        g2.drawImage(image, worldX, worldY, null);
     }
 
     public BufferedImage setup(String imagePath) {

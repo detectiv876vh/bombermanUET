@@ -2,6 +2,7 @@ package Main;
 
 import entity.Entity;
 import entity.Player;
+import object.SuperObject;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -27,22 +28,27 @@ public class gamePanel extends JPanel implements Runnable {
     public final int worldWidth = tileSize * maxWorldCol;   // Chiều dài bản đồ
     public final int worldHeight = tileSize * maxWorldRow;  // Chiều rộng bản đồ
 
-    // FPS
+    //FPS
     public int FPS = 60;
+
+    //SYSTEM
     public TileManager tileM = new TileManager(this);
     public KeyHandler kH = new KeyHandler(this);
     Thread gameThread;
+    public AssetSetter aSetter = new AssetSetter(this);
     public CollisionChecker checker  = new CollisionChecker(this);
 
     //ENTITIES AND OBJECTS
     public Player player = new Player(this, kH);
     public ArrayList<Entity> entityList = new ArrayList<>();
     public ArrayList<Entity> projectileList = new ArrayList<>();
+    public SuperObject obj[] = new SuperObject[10];   // so item co the xuat hien tai o do
 
     //GAME STATE
     public int gameState;
     public final int titleState = 0;
     public final int playState = 1;
+    public final int pauseState = 2;
 
     //UI
     public UI ui = new UI(this);
@@ -58,6 +64,7 @@ public class gamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         gameState = titleState;
+        aSetter.setObject();
     }
 
     public void startGameThread() {
@@ -102,14 +109,16 @@ public class gamePanel extends JPanel implements Runnable {
                 if (projectileList.get(i) != null) {
                     if (projectileList.get(i).alive) {
                         projectileList.get(i).update();
-                    }
-                    if (!projectileList.get(i).alive) {
+                    } else {
                         projectileList.remove(i);
+                        i--;
                     }
                 }
             }
 
         }
+
+        if(gameState == pauseState) {}
 
 
     }
@@ -127,7 +136,12 @@ public class gamePanel extends JPanel implements Runnable {
         else if(gameState == playState) {
             // TILE
             tileM.draw(g2);
-
+            //OBJECT
+            for(int i = 0; i < obj.length; i++) {
+                if(obj[i] != null) {
+                    obj[i].draw(g2, this);
+                }
+            }
             // PLAYER
             player.draw(g2);//xoa cai tren thay bang cai nay
 

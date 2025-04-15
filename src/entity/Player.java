@@ -2,6 +2,7 @@ package entity;
 
 import Main.KeyHandler;
 import Main.gamePanel;
+import manager.BombManager;
 import object.Bomb;
 import object.Fire;
 
@@ -13,15 +14,23 @@ import java.util.Timer;
 public class Player extends Entity {
 
     KeyHandler kH;
-    public final int screenX;
-    public final int screenY;
     private Graphics2D g2d;
 
-    public Player(gamePanel gp, KeyHandler kH ) {
+    public final int screenX;
+    public final int screenY;
+    int hasKey = 0; // so key co duoc khi nhat tren map
+    private BombManager bombManager;
+
+
+    public Player(gamePanel gp,KeyHandler kH ) {
         super(gp);
         this.kH = kH;
+        screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
+        screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 
         solidArea = new Rectangle(15,20, 20, 20);
+        solidAreaDefauftX = solidArea.x;
+        solidAreaDefauftY = solidArea.y;
 
         screenX = gp.screenWidth/2;  // di chuyển màn hình hiển thị theo chính giữa nhân vật
         screenY = gp.screenHeight/2;
@@ -29,12 +38,18 @@ public class Player extends Entity {
         setDefaultValues();
         getPlayerImage();
 
-        projectileUp = new Fire(gp);
-        projectileDown = new Fire(gp);
-        projectileLeft = new Fire(gp);
-        projectileRight = new Fire(gp);
+        bombManager = new BombManager(gp, this);
+
+        //Bom.
+//        bomb = new Bomb(gp);
+//        projectileUp = new Fire(gp);
+//        projectileDown = new Fire(gp);
+//        projectileLeft = new Fire(gp);
+//        projectileRight = new Fire(gp);
 
     }
+
+    //vị trí ban đầu của player.
     public void setDefaultValues() {
 
         worldX = gp.tileSize;
@@ -44,6 +59,7 @@ public class Player extends Entity {
 
     }
 
+    //gắn ảnh.
     public void getPlayerImage() {
 
         up1 = setup("/entities/boy_up_1");
@@ -75,6 +91,10 @@ public class Player extends Entity {
             collisionOn = false;
             gp.checker.checkTile(this);
 
+            // Kiem tra va cham vat the // check object collision
+            int objIndex = gp.checker.checkObject(this, true); //entity va boolean cua player
+            pickUpObject(objIndex);
+
             //false thi di chuyen duoc:
             if(!collisionOn){
                 switch(direction){
@@ -105,41 +125,76 @@ public class Player extends Entity {
             }
         }
 
-        if(gp.kH.spacePressed && !projectileUp.alive && !projectileDown.alive
-                && !projectileLeft.alive && !projectileRight.alive) {
+        bombManager.handleBombPlacement();
 
-            int blockX = worldX / gp.tileSize;
-            int blockY = worldY / gp.tileSize;
+//        if(gp.kH.spacePressed == true
+//                && projectileRight.alive == false
+//                && projectileLeft.alive == false
+//                && projectileDown.alive == false
+//                && projectileUp.alive == false) {
+//
+//            shotAvailableCounter = 0;
+//
+//
+//            bombXpos = (gp.player.worldX + gp.tileSize / 2) - ((gp.player.worldX + gp.tileSize / 2) % gp.tileSize);
+//            bombYpos = (gp.player.worldY + gp.tileSize / 2) - ((gp.player.worldY + gp.tileSize / 2) % gp.tileSize);
+//
+//            bomb.set(bombXpos, bombYpos, "down", true,this);
+//            gp.projectileList.add(bomb);
+//
+//            //Fire fireUp = new Fire(gp);
+//            //Fire fireDown = new Fire(gp);
+//            //Fire fireLeft = new Fire(gp);
+//            //Fire fireRight = new Fire(gp);
+//
+//            projectileUp.set(bombXpos, bombYpos, "up",true, this);
+//            projectileDown.set(bombXpos, bombYpos, "down",true, this);
+//            projectileLeft.set(bombXpos, bombYpos, "left", true,this);
+//            projectileRight.set(bombXpos, bombYpos, "right", true, this);
+//
+//            new Timer().schedule(new java.util.TimerTask() {
+//                @Override
+//                public void run() {
+//                    // them vao danh sach cac projectile
+//                    gp.projectileList.add(projectileUp);
+//                    gp.projectileList.add(projectileDown);
+//                    gp.projectileList.add(projectileLeft);
+//                    gp.projectileList.add(projectileRight);
+//
+//                }
+//                },
+//                    (bomb.maxLife / gp.FPS) * 1000);
+//        }
+//
+//        if(shotAvailableCounter < 60) {
+//            shotAvailableCounter++;
+//        }
 
-            bombXpos = (int) (blockX + 0.5) * gp.tileSize;
-            bombYpos = (int) (blockY + 0.5) * gp.tileSize;
+    }
+    public void pickUpObject(int i) {
 
-            // reset bom sau moi lan dat:
-            Bomb bomb = new Bomb(gp);
-            bomb.set(bombXpos, bombYpos, "down", true,this);
-            gp.projectileList.add(bomb);
+        if(i != 999) {
 
-            projectileUp.set(bombXpos, bombYpos, "up",true, this);
-            projectileDown.set(bombXpos, bombYpos, "down",true, this);
-            projectileLeft.set(bombXpos, bombYpos, "left", true,this);
-            projectileRight.set(bombXpos, bombYpos, "right", true, this);
+            String objectName = gp.obj[i].name;
 
-            new Timer().schedule(new java.util.TimerTask() {
-                @Override
-                public void run() {
-                    // them vao danh sach cac projectile
-                    gp.projectileList.add(projectileUp);
-                    gp.projectileList.add(projectileDown);
-                    gp.projectileList.add(projectileLeft);
-                    gp.projectileList.add(projectileRight);
-
-                }
-                },
-                    (bomb.maxLife / gp.FPS) * 1000);
-        }
-
-        if(shotAvailableCounter < 60) {
-            shotAvailableCounter++;
+            switch (objectName) {
+                case "Key" :
+                    hasKey++;
+                    gp.obj[i] = null;
+                    System.out.println("Key: " + hasKey);
+                    break;
+                case "Door" :
+                    if(hasKey > 0) {
+                        gp.obj[i] = null;
+                        hasKey--;
+                    }
+                    System.out.println("Key: " + hasKey);
+                    break;
+                case "Boots" :
+                    break;
+                case "Chest" :
+                    break;
+            }
         }
     }
 
@@ -186,26 +241,25 @@ public class Player extends Entity {
                 break;
         }
 
-        int sX = screenX;
-        int sY = screenY;
+        int x = screenX;
+        int y = screenY;
 
         if(screenX > worldX) {
-            sX = worldX;
+            x= worldX;
         }
         if(screenY > worldY) {
-            sY = worldY;
+            y = worldY;
         }
         int rightOffset = gp.screenWidth - screenX;
         if(rightOffset > gp.worldWidth - worldX) {
-            sX = gp.screenWidth - (gp.worldWidth - worldX);
+            x = gp.screenWidth - (gp.worldWidth - worldX);
         }
         int bottomOffset = gp.screenHeight - screenY;
         if(bottomOffset > gp.worldHeight - worldY) {
-            sY = gp.screenHeight - (gp.worldHeight - worldY);
+            y = gp.screenHeight - (gp.worldHeight - worldY);
         }
 
-        g2d.drawImage(image, sX, sY, gp.tileSize, gp.tileSize, null);
-        g2d.drawImage(image, worldX, worldY, null);
+        g2d.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
     }
 
 }
