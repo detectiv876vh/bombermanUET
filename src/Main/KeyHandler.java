@@ -9,7 +9,7 @@ public class KeyHandler implements KeyListener {
     public boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed;
 
     public KeyHandler(gamePanel gp) {
-        this.gp=gp;
+        this.gp = gp;
     }
 
     @Override
@@ -71,8 +71,18 @@ public class KeyHandler implements KeyListener {
             }
         }
 
+//        if(code == KeyEvent.VK_ESCAPE) {
+//            gp.gameState = gp.titleState;
+//        }
+
+        //PAUSE STATE
         if(code == KeyEvent.VK_ESCAPE) {
-            gp.gameState = gp.titleState;
+            if(gp.gameState == gp.playState) {
+                gp.gameState = gp.pauseState;
+            }
+            else if(gp.gameState == gp.pauseState) {
+                gp.gameState = gp.playState;
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package entity;
 
 import Main.KeyHandler;
 import Main.gamePanel;
+import manager.BombManager;
 import object.Bomb;
 import object.Fire;
 
@@ -17,6 +18,8 @@ public class Player extends Entity {
     public final int screenX;
     public final int screenY;
     int hasKey = 0; // so key co duoc khi nhat tren map
+    private BombManager bombManager;
+
 
     public Player(gamePanel gp,KeyHandler kH ) {
         super(gp);
@@ -27,18 +30,22 @@ public class Player extends Entity {
         solidArea = new Rectangle(15,20, 20, 20);
         solidAreaDefauftX = solidArea.x;
         solidAreaDefauftY = solidArea.y;
-        screenX = gp.screenWidth/2 ;// toa do tam ban do
-        screenY = gp.screenHeight/2- (gp.tileSize/2);
 
         setDefaultValues();
         getPlayerImage();
-        bomb = new Bomb(gp);
-        projectileUp = new Fire(gp);
-        projectileDown = new Fire(gp);
-        projectileLeft = new Fire(gp);
-        projectileRight = new Fire(gp);
+
+        bombManager = new BombManager(gp, this);
+
+        //Bom.
+//        bomb = new Bomb(gp);
+//        projectileUp = new Fire(gp);
+//        projectileDown = new Fire(gp);
+//        projectileLeft = new Fire(gp);
+//        projectileRight = new Fire(gp);
 
     }
+
+    //vị trí ban đầu của player.
     public void setDefaultValues() {
 
         worldX = gp.tileSize;
@@ -48,6 +55,7 @@ public class Player extends Entity {
 
     }
 
+    //gắn ảnh.
     public void getPlayerImage() {
 
         up1 = setup("/entities/boy_up_1");
@@ -113,37 +121,51 @@ public class Player extends Entity {
             }
         }
 
-        if(gp.kH.spacePressed && !projectileUp.alive && !projectileDown.alive
-                && !projectileLeft.alive && !projectileRight.alive) {
+        bombManager.handleBombPlacement();
 
-            bombXpos = worldX;
-            bombYpos = worldY;
+//        if(gp.kH.spacePressed == true
+//                && projectileRight.alive == false
+//                && projectileLeft.alive == false
+//                && projectileDown.alive == false
+//                && projectileUp.alive == false) {
+//
+//            shotAvailableCounter = 0;
+//
+//
+//            bombXpos = (gp.player.worldX + gp.tileSize / 2) - ((gp.player.worldX + gp.tileSize / 2) % gp.tileSize);
+//            bombYpos = (gp.player.worldY + gp.tileSize / 2) - ((gp.player.worldY + gp.tileSize / 2) % gp.tileSize);
+//
+//            bomb.set(bombXpos, bombYpos, "down", true,this);
+//            gp.projectileList.add(bomb);
+//
+//            //Fire fireUp = new Fire(gp);
+//            //Fire fireDown = new Fire(gp);
+//            //Fire fireLeft = new Fire(gp);
+//            //Fire fireRight = new Fire(gp);
+//
+//            projectileUp.set(bombXpos, bombYpos, "up",true, this);
+//            projectileDown.set(bombXpos, bombYpos, "down",true, this);
+//            projectileLeft.set(bombXpos, bombYpos, "left", true,this);
+//            projectileRight.set(bombXpos, bombYpos, "right", true, this);
+//
+//            new Timer().schedule(new java.util.TimerTask() {
+//                @Override
+//                public void run() {
+//                    // them vao danh sach cac projectile
+//                    gp.projectileList.add(projectileUp);
+//                    gp.projectileList.add(projectileDown);
+//                    gp.projectileList.add(projectileLeft);
+//                    gp.projectileList.add(projectileRight);
+//
+//                }
+//                },
+//                    (bomb.maxLife / gp.FPS) * 1000);
+//        }
+//
+//        if(shotAvailableCounter < 60) {
+//            shotAvailableCounter++;
+//        }
 
-            bomb.set(bombXpos, bombYpos, "down", true,this);
-            gp.projectileList.add(bomb);
-
-            projectileUp.set(bombXpos, bombYpos, "up",true, this);
-            projectileDown.set(bombXpos, bombYpos, "down",true, this);
-            projectileLeft.set(bombXpos, bombYpos, "left", true,this);
-            projectileRight.set(bombXpos, bombYpos, "right", true, this);
-
-            new Timer().schedule(new java.util.TimerTask() {
-                @Override
-                public void run() {
-                    // them vao danh sach cac projectile
-                    gp.projectileList.add(projectileUp);
-                    gp.projectileList.add(projectileDown);
-                    gp.projectileList.add(projectileLeft);
-                    gp.projectileList.add(projectileRight);
-
-                }
-                },
-                    (bomb.maxLife / gp.FPS) * 1000);
-        }
-
-        if(shotAvailableCounter < 60) {
-            shotAvailableCounter++;
-        }
     }
     public void pickUpObject(int i) {
 

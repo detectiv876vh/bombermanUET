@@ -8,14 +8,15 @@ public class Projectile extends Entity{
 
     public Projectile(gamePanel gp) {
         super(gp);
-        solidArea.x = gp.tileSize/8;
-        solidArea.y = gp.tileSize/8;
-        solidArea.width = gp.tileSize -8 ;
-        solidArea.height = gp.tileSize -8;
+        solidArea.x = gp.tileSize / 8;
+        solidArea.y = gp.tileSize / 8;
+        solidArea.width = gp.tileSize - 8;
+        solidArea.height = gp.tileSize - 8;
     }
 
     public void set(int worldX, int worldY, String direction, boolean alive, Entity user) {
 
+        // thuộc tính của vật thể
         this.worldX = worldX;
         this.worldY = worldY;
         this.direction = direction;
@@ -27,6 +28,7 @@ public class Projectile extends Entity{
 
     public void update() {
 
+        // đặt kiểm tra va chạm ở đây
         if (user == gp.player) {
             gp.checker.checkTileProjectile(this);
         }
@@ -34,7 +36,7 @@ public class Projectile extends Entity{
         if (user != gp.player) {
         }
 
-        if (name == "Fire") {
+        if (name.equals("Fire")) {
 
             switch (direction) {
                 case "up":
@@ -51,6 +53,7 @@ public class Projectile extends Entity{
                     break;
             }
         }
+
         life--;
         if (life <= 0) {
             alive = false;

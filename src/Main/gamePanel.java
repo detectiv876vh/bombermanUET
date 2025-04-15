@@ -46,6 +46,7 @@ public class gamePanel extends JPanel implements Runnable {
     public int gameState;
     public final int titleState = 0;
     public final int playState = 1;
+    public final int pauseState = 2;
 
     //UI
     public UI ui = new UI(this);
@@ -106,14 +107,16 @@ public class gamePanel extends JPanel implements Runnable {
                 if (projectileList.get(i) != null) {
                     if (projectileList.get(i).alive) {
                         projectileList.get(i).update();
-                    }
-                    if (!projectileList.get(i).alive) {
+                    } else {
                         projectileList.remove(i);
+                        i--;
                     }
                 }
             }
 
         }
+
+        if(gameState == pauseState) {}
 
 
     }

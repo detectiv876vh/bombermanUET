@@ -16,9 +16,14 @@ public class UI {
     public void draw (Graphics2D g2) {
         this.g2 = g2;
 
+
         // TITLE STATE
         if(gp.gameState == gp.titleState) {
             drawTitleScreen();
+        }
+
+        if(gp.gameState == gp.pauseState) {
+            drawPauseScreen();
         }
     }
 
@@ -68,6 +73,18 @@ public class UI {
         if(commandNum == 2) {
             g2.drawString(">", x-gp.tileSize, y);
         }
+    }
+
+    public void drawPauseScreen() {
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD,96F));
+        g2.setColor(Color.white);
+
+        String text = "PAUSE";
+        int x = getXforCenteredText(text);
+        int y = gp.screenHeight / 2;
+
+        g2.drawString(text, x, y);
     }
 
     // căn giữa văn bản theo chiều ngang trong phương thức.

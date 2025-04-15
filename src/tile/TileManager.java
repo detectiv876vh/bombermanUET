@@ -90,7 +90,7 @@ public class TileManager {
             int worldY = worldRow * gp.tileSize;
 
             //screen : vị trí ô trên màn hình hiển thị
-            int screenX = worldX - gp.player.worldX+ gp.player.screenX;
+            int screenX = worldX - gp.player.worldX + gp.player.screenX;
             int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
             // Dừng camera khi đến rìa
@@ -134,6 +134,4 @@ public class TileManager {
             }
         }
     }
-
-
 }

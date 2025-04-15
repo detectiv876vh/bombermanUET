@@ -6,7 +6,9 @@ import object.OBJ_Door;
 import object.OBJ_Chest;
 
 public class AssetSetter {
+
     gamePanel gp;
+
     public AssetSetter(gamePanel gp) {
         this.gp = gp;
     }
