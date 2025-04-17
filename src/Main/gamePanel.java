@@ -27,6 +27,8 @@ public class gamePanel extends JPanel implements Runnable {
     public final int maxWorldRow = 50;
     public final int worldWidth = tileSize * maxWorldCol;   // Chiều dài bản đồ
     public final int worldHeight = tileSize * maxWorldRow;  // Chiều rộng bản đồ
+    public final int maxMap = 10; // Tổng số map
+    public int currentMap = 1;
 
     //FPS
     public int FPS = 60;
@@ -37,12 +39,13 @@ public class gamePanel extends JPanel implements Runnable {
     Thread gameThread;
     public AssetSetter aSetter = new AssetSetter(this);
     public CollisionChecker checker  = new CollisionChecker(this);
+    public EventHandler eHandler = new EventHandler(this);
 
     //ENTITIES AND OBJECTS
     public Player player = new Player(this, kH);
     public ArrayList<Entity> entityList = new ArrayList<>();
     public ArrayList<Entity> projectileList = new ArrayList<>();
-    public SuperObject obj[] = new SuperObject[10];   // so item co the xuat hien tai o do
+    public SuperObject obj[][] = new SuperObject[maxMap][10];   // so item co the xuat hien tai o do
 
     //GAME STATE
     public int gameState;
@@ -137,11 +140,11 @@ public class gamePanel extends JPanel implements Runnable {
             // TILE
             tileM.draw(g2);
             //OBJECT
-            for(int i = 0; i < obj.length; i++) {
-                if(obj[i] != null) {
-                    obj[i].draw(g2, this);
-                }
-            }
+//            for(int i = 0; i < obj.length; i++) {
+//                if(obj[i] != null) {
+//                    obj[currentMap][i].draw(g2, this);
+//                }
+//            }
             // PLAYER
             player.draw(g2);//xoa cai tren thay bang cai nay
 

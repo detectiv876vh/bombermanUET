@@ -16,8 +16,8 @@ public class Player extends Entity {
     KeyHandler kH;
     private Graphics2D g2d;
 
-    public final int screenX;
-    public final int screenY;
+    public int screenX;
+    public int screenY;
     int hasKey = 0; // so key co duoc khi nhat tren map
     private BombManager bombManager;
 
@@ -113,6 +113,9 @@ public class Player extends Entity {
                 }
             }
 
+            // CHECK EVENT
+            gp.eHandler.checkEvent();
+
             spriteCounter++;
             if(spriteCounter > 12) {
                 if(spriteNum == 1) {
@@ -175,7 +178,7 @@ public class Player extends Entity {
 
         if(i != 999) {
 
-            String objectName = gp.obj[i].name;
+            String objectName = gp.obj[gp.currentMap][i].name;
 
             switch (objectName) {
                 case "Key" :
