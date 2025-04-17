@@ -17,7 +17,7 @@ public class Player extends Entity {
 
     public final int screenX;
     public final int screenY;
-    int hasKey = 0; // so key co duoc khi nhat tren map
+    public int hasKey = 0; // so key co duoc khi nhat tren map
     private BombManager bombManager;
 
 
@@ -52,6 +52,10 @@ public class Player extends Entity {
         worldY = gp.tileSize;
         speed = 7;
         direction = "down";
+
+        //PLAYER STATUS
+        maxLife = 6;               //sua lai sau khi test game
+        life = maxLife;
 
     }
 

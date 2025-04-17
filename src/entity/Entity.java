@@ -52,6 +52,7 @@ public class Entity {
     public int bombCount;
     public int bombXpos, bombYpos;
 
+
     public Entity(gamePanel gp) {
         this.gp = gp;
 

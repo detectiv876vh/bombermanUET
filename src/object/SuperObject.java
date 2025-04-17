@@ -1,18 +1,23 @@
 package object;
 
+import Main.UtilityTool;
 import Main.gamePanel;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class SuperObject {
 
-    public BufferedImage image;
+    public BufferedImage image,image2,image3;
     public String name;
     public boolean collision;
     public int worldX,worldY;
     public Rectangle solidArea = new Rectangle(0,0,48,48);
     public int solidAreaDefauftX = 0,solidAreaDefauftY = 0;
+    private Object gp;                                     //day nai dung oi
+
     public void draw(Graphics2D g2, gamePanel gp) {
         int screenX = worldX - gp.player.worldX + gp.player.screenX;
         int screenY = worldY - gp.player.worldY + gp.player.screenY;
@@ -47,5 +52,19 @@ public class SuperObject {
                 bottomOffset > gp.worldHeight - gp.player.worldY) {
             g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
         }
+    }
+
+    // THEM TRINH DOC ANH
+    public BufferedImage setup(String imagePath) {
+
+        UtilityTool uTool = new UtilityTool();
+        BufferedImage image = null;
+
+        try {
+            image = ImageIO.read(getClass().getResourceAsStream(imagePath +".png"));
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+        return image;
     }
 }
