@@ -2,7 +2,6 @@ package Main;
 
 import entity.Entity;
 import entity.Player;
-import object.SuperObject;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -41,7 +40,7 @@ public class gamePanel extends JPanel implements Runnable {
     public Player player = new Player(this, kH);
     public ArrayList<Entity> entityList = new ArrayList<>();
     public ArrayList<Entity> projectileList = new ArrayList<>();
-    public SuperObject obj[] = new SuperObject[10];   // so item co the xuat hien tai o do
+    public Entity obj[] = new Entity[10];   // so item co the xuat hien tai o do
 
     //GAME STATE
     public int gameState;
@@ -137,7 +136,7 @@ public class gamePanel extends JPanel implements Runnable {
             //OBJECT
             for(int i = 0; i < obj.length; i++) {
                 if(obj[i] != null) {
-                    obj[i].draw(g2, this);
+                    obj[i].draw(g2);
                 }
             }
             // PLAYER
@@ -158,7 +157,8 @@ public class gamePanel extends JPanel implements Runnable {
             entityList.clear();
         }
 
-        g2.dispose();
         ui.draw(g2);
+        g2.dispose();
+
     }
 }
