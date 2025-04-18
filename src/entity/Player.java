@@ -19,6 +19,9 @@ public class Player extends Entity {
     public final int screenY;
     public int hasKey = 0; // so key co duoc khi nhat tren map
     private BombManager bombManager;
+    boolean moving = false;
+    int pixelCounter = 0;
+    int standCounter = 0;
 
 
     public Player(gamePanel gp,KeyHandler kH ) {
@@ -27,7 +30,7 @@ public class Player extends Entity {
         screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
         screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 
-        solidArea = new Rectangle(15,20, 20, 20);
+        solidArea = new Rectangle(1,1, 46, 46);
         solidAreaDefauftX = solidArea.x;
         solidAreaDefauftY = solidArea.y;
 
@@ -36,13 +39,6 @@ public class Player extends Entity {
 
         bombManager = new BombManager(gp, this);
 
-        //Bom.
-//        bomb = new Bomb(gp);
-//        projectileUp = new Fire(gp);
-//        projectileDown = new Fire(gp);
-//        projectileLeft = new Fire(gp);
-//        projectileRight = new Fire(gp);
-
     }
 
     //vị trí ban đầu của player.
@@ -50,7 +46,7 @@ public class Player extends Entity {
 
         worldX = gp.tileSize;
         worldY = gp.tileSize;
-        speed = 7;
+        speed = 4;
         direction = "down";
 
         //PLAYER STATUS
@@ -73,57 +69,75 @@ public class Player extends Entity {
     }
 
     public void update() {
-        if (kH.upPressed || kH.downPressed || kH.leftPressed || kH.rightPressed){
-            if (kH.upPressed) {
-                direction = "up";
-            }
-            else if (kH.downPressed) {
-                direction = "down";
-            }
-            else if (kH.leftPressed) {
-                direction = "left";
-            }
-            else if (kH.rightPressed){
-                direction = "right";
-            }
 
-            //Check tile collision.
-            collisionOn = false;
-            gp.checker.checkTile(this);
-
-            // Kiem tra va cham vat the // check object collision
-            int objIndex = gp.checker.checkObject(this, true); //entity va boolean cua player
-            pickUpObject(objIndex);
-
-            //false thi di chuyen duoc:
-            if(!collisionOn){
-                switch(direction){
-                    case "up":
-                        worldY -= speed;
-                        break;
-                    case "down":
-                        worldY += speed;
-                        break;
-                    case "left":
-                        worldX -= speed;
-                        break;
-                    case "right":
-                        worldX += speed;
-                        break;
+        if(moving == false) {
+            if (kH.upPressed || kH.downPressed || kH.leftPressed || kH.rightPressed) {
+                if (kH.upPressed) {
+                    direction = "up";
+                } else if (kH.downPressed) {
+                    direction = "down";
+                } else if (kH.leftPressed) {
+                    direction = "left";
+                } else if (kH.rightPressed) {
+                    direction = "right";
                 }
-            }
 
-            spriteCounter++;
-            if(spriteCounter > 12) {
-                if(spriteNum == 1) {
-                    spriteNum = 2;
-                }else if(spriteNum == 2) {
+                moving = true;
+                //Check tile collision.
+                collisionOn = false;
+                gp.checker.checkTile(this);
+
+                // Kiem tra va cham vat the // check object collision
+                int objIndex = gp.checker.checkObject(this, true); //entity va boolean cua player
+                pickUpObject(objIndex);
+
+            }
+            else {
+                standCounter++;
+                if(standCounter == 12) {
                     spriteNum = 1;
+                    standCounter = 0;
                 }
-
-                spriteCounter = 0;
             }
         }
+
+            if(moving == true) {
+                //false thi di chuyen duoc:
+                if(!collisionOn){
+                    switch(direction){
+                        case "up":
+                            worldY -= speed;
+                            break;
+                        case "down":
+                            worldY += speed;
+                            break;
+                        case "left":
+                            worldX -= speed;
+                            break;
+                        case "right":
+                            worldX += speed;
+                            break;
+                    }
+                }
+
+                spriteCounter++;
+                if(spriteCounter > 12) {
+                    if(spriteNum == 1) {
+                        spriteNum = 2;
+                    }else if(spriteNum == 2) {
+                        spriteNum = 1;
+                    }
+
+                    spriteCounter = 0;
+                }
+
+                pixelCounter += speed;
+
+                if(pixelCounter >= 48) {
+                    moving = false;
+                    pixelCounter = 0;
+                }
+            }
 
         bombManager.handleBombPlacement();
 

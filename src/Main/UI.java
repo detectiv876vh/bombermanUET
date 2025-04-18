@@ -124,11 +124,27 @@ public class UI {
         int y = gp.tileSize/2;
         int i = 0;
 
-        while(i< gp.player.maxLife/2) {
-            g2.drawImage(heart_blank, x, y, null);
+        // draw blank heart
+        while(i<gp.player.maxLife/2) {
+            g2.drawImage(heart_blank,x,y,null);
             i++;
-            x += gp.tileSize;
+            x+= gp.tileSize;
         }
+        // reset
+        x = gp.tileSize/2;
+        y = gp.tileSize/2;
+        i = 0;
+        //  draw current life
+        while(i<gp.player.life) {
+            g2.drawImage(heart_half,x,y,null);
+            i++;
+            if(i< gp.player.life) {
+                g2.drawImage(heart_full,x,y,null);
+            }
+            i++;
+            x+= gp.tileSize;
+        }
+
     }
     public void drawPauseScreen() {
 
