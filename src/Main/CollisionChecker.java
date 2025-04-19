@@ -146,41 +146,45 @@ public class CollisionChecker {
         int entityTopRow = entityTopY / gp.tileSize;
         int entityBottomRow = entityBottomY / gp.tileSize;
 
-        int tileNum1, tileNum2;
+        int tileNum1 = 0, tileNum2 = 0;
 
         switch(entity.direction) {
             case "up":
                 entityTopRow = (entityTopY - entity.speed) / gp.tileSize;
                 tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
                 tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
-                if(gp.tileM.tile[tileNum1].collision == true || gp.tileM.tile[tileNum2].collision == true) {
-                    entity.alive = false;
-                }
                 break;
             case "down":
                 entityBottomRow = (entityBottomY + entity.speed) / gp.tileSize;
                 tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
                 tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
-                if(gp.tileM.tile[tileNum1].collision == true || gp.tileM.tile[tileNum2].collision == true) {
-                    entity.alive = false;
-                }
                 break;
             case "left":
                 entityLeftCol = (entityLeftX - entity.speed) / gp.tileSize;
                 tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
                 tileNum2 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
-                if(gp.tileM.tile[tileNum1].collision == true || gp.tileM.tile[tileNum2].collision == true) {
-                    entity.alive = false;
-                }
                 break;
             case "right":
                 entityRightCol = (entityRightX + entity.speed) / gp.tileSize;
                 tileNum1 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
-                tileNum2 = gp.tileM.mapTileNum[entityRightCol   ][entityBottomRow];
-                if(gp.tileM.tile[tileNum1].collision == true || gp.tileM.tile[tileNum2].collision == true) {
-                    entity.alive = false;
-                }
+                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
                 break;
+        }
+
+        // Kiểm tra từng tile
+        handleProjectileCollision(entity, tileNum1, entityLeftCol, entityTopRow);
+        handleProjectileCollision(entity, tileNum2, entityRightCol, entityBottomRow);
+    }
+
+    private void handleProjectileCollision(Entity entity, int tileNum, int col, int row) {
+        if (gp.tileM.tile[tileNum].collision) {
+            if (gp.tileM.tile[tileNum].breakable) {
+                // Phá tường
+                gp.tileM.explodeTile(col * gp.tileSize, row * gp.tileSize);
+            }
+
+            // Dù là tường thường hay tường nứt: lửa cũng dừng lại
+            entity.alive = false;
         }
     }
 }

@@ -27,13 +27,13 @@ public class TileManager {
 
     public void getTileImage() {
         //tải ảnh các tile (ô vuông) từ file PNG và gán vào mảng tile.
-        setup(0, "tile3", false);
-        setup(1, "New_wall", true);
-        setup(2, "crack_wall", true);
+        setup(0, "tile3", false, false);
+        setup(1, "New_wall", true, false);
+        setup(2, "crack_wall", true, true);
 
     }
 
-    public void setup(int index, String imageName, boolean collision) {
+    public void setup(int index, String imageName, boolean collision, boolean breakable) {
 
         UtilityTool uTool = new UtilityTool();
         try {
@@ -41,10 +41,26 @@ public class TileManager {
             tile[index].image = ImageIO.read(getClass().getResourceAsStream("/tiles/" + imageName + ".png"));
             tile[index].image = uTool.scaleImage(tile[index].image,gp.tileSize,gp.tileSize);
             tile[index].collision = collision;
+            tile[index].breakable = breakable;
         }catch(IOException e) {
 
         }
     }
+
+    //đặt
+    public void explodeTile(int worldX, int worldY) {
+        int col = worldX / gp.tileSize;
+        int row = worldY / gp.tileSize;
+
+        if (col >= 0 && col < gp.maxWorldCol && row >= 0 && row < gp.maxWorldRow) {
+            int tileIndex = mapTileNum[col][row];
+
+            if (tile[tileIndex].breakable) {
+                mapTileNum[col][row] = 0; // Gán về tile nền
+            }
+        }
+    }
+
 
     public void loadMap(String filePath) {
         try {

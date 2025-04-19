@@ -8,7 +8,7 @@ public class Bomb extends Projectile {
     public Bomb(gamePanel gp) {
         super(gp);
         name = "Bomb";
-        maxLife = 120;
+        maxLife = 125;
         life = maxLife;
         alive = true;
         getImage();
