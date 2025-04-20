@@ -2,13 +2,14 @@ package object;
 
 import Main.UtilityTool;
 import Main.gamePanel;
+import entity.Entity;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class SuperObject {
+public class SuperObject  {
 
     public BufferedImage image,image2,image3;
     public String name;
@@ -66,5 +67,8 @@ public class SuperObject {
             e.printStackTrace();
         }
         return image;
+    }
+
+    public void update() {
     }
 }

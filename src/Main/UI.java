@@ -118,8 +118,8 @@ public class UI {
         }
     }
     public void drawPlayerLife() {
-        int x = gp.tileSize/2;
-        int y = gp.tileSize/2;
+        int x = gp.tileSize*2;
+        int y = gp.tileSize*2;
         int i = 0;
 
         while(i< gp.player.maxLife/2) {

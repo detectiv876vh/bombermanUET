@@ -41,7 +41,9 @@ public class gamePanel extends JPanel implements Runnable {
     public Player player = new Player(this, kH);
     public ArrayList<Entity> entityList = new ArrayList<>();
     public ArrayList<Entity> projectileList = new ArrayList<>();
+    public Entity monster[] = new Entity[20];
     public SuperObject obj[] = new SuperObject[10];   // so item co the xuat hien tai o do
+    public Entity npc[] = new Entity[10];           // so  npc co the co
 
     //GAME STATE
     public int gameState;
@@ -62,6 +64,8 @@ public class gamePanel extends JPanel implements Runnable {
     public void setupGame() {
         gameState = titleState;
         aSetter.setObject();
+        aSetter.setNPC();
+        aSetter.setMonster();
     }
 
     public void startGameThread() {
@@ -99,8 +103,19 @@ public class gamePanel extends JPanel implements Runnable {
 
     public void update() {
         if (gameState == playState) {
-
+            //PLAYER
             player.update();
+            //NPC
+            for(int i=0;i < npc.length;i++) {
+                if(npc[i] != null) {
+                    npc[i].update();
+                }
+            }
+            for(int i=0;i < monster.length;i++) {
+                if(monster[i] != null) {
+                    monster[i].update();
+                }
+            }
 
             for (int i = 0; i < projectileList.size(); i++) {
                 if (projectileList.get(i) != null) {
@@ -142,7 +157,13 @@ public class gamePanel extends JPanel implements Runnable {
             }
             // PLAYER
             player.draw(g2);//xoa cai tren thay bang cai nay
-
+            //NPC
+            for(int i = 0; i < npc.length; i++) {
+                if(npc[i] != null) {
+                    npc[i].draw(g2);            //this
+                }
+            }
+            //ADD ENTITIES TO THE LIST
             entityList.add(player);
             for (int i = 0; i < projectileList.size(); i++) {
                 if(projectileList.get(i) != null) {
@@ -150,6 +171,17 @@ public class gamePanel extends JPanel implements Runnable {
                 }
             }
 
+            for(int i = 0; i < npc.length; i++) {
+                if(npc[i] != null) {
+                    entityList.add(npc[i]);
+                }
+            }
+
+            for(int i = 0; i < monster.length; i++) {
+                if(monster[i] != null) {
+                    entityList.add(monster[i]);
+                }
+            }
             for (int i = 0; i < entityList.size(); i++) {
                 entityList.get(i).draw(g2);
             }
@@ -157,8 +189,8 @@ public class gamePanel extends JPanel implements Runnable {
             // empty the list
             entityList.clear();
         }
-
-        g2.dispose();
         ui.draw(g2);
+        g2.dispose();
     }
+
 }

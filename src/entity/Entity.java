@@ -25,10 +25,10 @@ public class Entity {
     //COUNTER
     public int spriteCounter = 0;
     public int shotAvailableCounter = 0;
-
     public int spriteNum = 1;
+
     //HITBOX:
-    public Rectangle solidArea;
+    public Rectangle solidArea = new Rectangle(0, 0, 48, 48); //cho all entity
 
     public int solidAreaDefauftX, solidAreaDefauftY;
     public boolean collisionOn = false;
@@ -36,13 +36,14 @@ public class Entity {
     public BufferedImage image, image2, image3;
     public String name;
     public boolean collision = false;
-    public int type;
+    public int type;         // player =0;;; npc =1.,,,2 = monster
+    public int actionLockCounter = 0;
 
     //Character status
     public int maxLife;
     public int life;
-    public boolean invincible = false;
-    public int invincibleCounter;
+    public boolean invincible = false; //giu nguoi choi mien nhiem sau khi nhan sat thuong
+    public int invincibleCounter = 0;
 
     //OBJECTS
     public Projectile projectileUp, projectileDown, projectileLeft, projectileRight, bomb;
@@ -51,7 +52,6 @@ public class Entity {
     public boolean alive = true;
     public int bombCount;
     public int bombXpos, bombYpos;
-
 
     public Entity(gamePanel gp) {
         this.gp = gp;
@@ -74,10 +74,23 @@ public class Entity {
     public void update() {
 
         setAction();
-
+        collision = false;
+        gp.checker.checkTile(this);
+        gp.checker.checkEntity(this, gp.npc);
+        gp.checker.checkEntity(this, gp.monster);
+        boolean contactPlayer = gp.checker.checkPlayer(this);
         checkCollision();
 
-        if (collisionOn == false) {
+        if(this.type == 2 && contactPlayer) {
+            if(gp.player.invincible == false) {             //loi
+                //can giave dame
+                gp.player.life -=1;
+                gp.player.invincible = true;
+            }
+        }
+
+        //neu ko co gi chan thi di tiep
+        if (!collisionOn) {
             switch (direction) {
                 case "up":
                     worldY -= speed;
@@ -109,6 +122,80 @@ public class Entity {
 
         BufferedImage image = null;
         DrawManager drawManager = new DrawManager(gp, this);
+        //them cai nay o trong superobj
+        int screenX = worldX - gp.player.worldX + gp.player.screenX;
+        int screenY = worldY - gp.player.worldY + gp.player.screenY;
+
+        // Kiểm tra nếu camera đã chạm rìa bản đồ
+        if (gp.player.screenX > gp.player.worldX) {
+            screenX = worldX;
+        }
+        if (gp.player.screenY > gp.player.worldY) {
+            screenY = worldY;
+        }
+        int rightOffset = gp.screenWidth + gp.player.screenX;
+        if (rightOffset > gp.worldWidth + gp.player.worldX) {
+            screenX = gp.screenWidth + (gp.worldWidth + worldX);
+        }
+        int bottomOffset = gp.screenHeight + gp.player.screenY;
+        if (bottomOffset > gp.worldHeight + gp.player.worldY) {
+            screenY = gp.screenHeight + (gp.worldHeight + worldY);
+        }
+
+        if(     worldX + gp.tileSize > gp.player.worldX - gp.player.screenX    &&
+                worldX - gp.tileSize < gp.player.worldX + gp.player.screenX     &&
+                worldY + gp.tileSize > gp.player.worldY -gp.player.screenY      &&
+                worldY - gp.tileSize < gp.player.worldY +gp.player.screenY) {
+            //lay tu player
+            switch(direction) {
+                case "up":
+                    if(spriteNum == 1) {
+                        image = up1;
+                    }
+                    if(spriteNum == 2) {
+                        image = up2;
+                    }
+
+                    break;
+                case "down":
+                    if(spriteNum == 1) {
+                        image = down1;
+                    }
+                    if(spriteNum == 2) {
+                        image = down2;
+                    }
+
+                    break;
+                case "left":
+                    if(spriteNum == 1) {
+                        image = left1;
+                    }
+                    if(spriteNum == 2) {
+                        image = left2;
+                    }
+
+                    break;
+                case "right":
+                    if(spriteNum == 1) {
+                        image = right1;
+                    }
+                    if(spriteNum == 2) {
+                        image = right2;
+                    }
+
+                    break;
+            }
+
+            g2.drawImage(image, screenX, screenY,gp.tileSize,gp.tileSize, null);
+
+        }
+        else if(gp.player.screenX > gp.player.worldX||
+                gp.player.screenY > gp.player.worldY||
+                rightOffset > gp.worldWidth - gp.player.worldX ||
+                bottomOffset > gp.worldHeight - gp.player.worldY) {
+            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        }
+
 
         switch (direction) {
             case "up":
