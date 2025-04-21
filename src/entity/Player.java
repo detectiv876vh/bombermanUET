@@ -6,6 +6,7 @@ import manager.BombManager;
 import object.Bomb;
 import object.Fire;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Timer;
@@ -120,13 +121,16 @@ public class Player extends Entity {
                     }
                 }
 
-                spriteCounter++;
-                if(spriteCounter > 12) {
-                    if(spriteNum == 1) {
-                        spriteNum = 2;
-                    }else if(spriteNum == 2) {
-                        spriteNum = 1;
-                    }
+            // CHECK EVENT
+            gp.eHandler.checkEvent();
+
+            spriteCounter++;
+            if(spriteCounter > 12) {
+                if(spriteNum == 1) {
+                    spriteNum = 2;
+                }else if(spriteNum == 2) {
+                    spriteNum = 1;
+                }
 
                     spriteCounter = 0;
                 }
@@ -145,7 +149,7 @@ public class Player extends Entity {
 
         if(i != 999) {
 
-            String objectName = gp.obj[i].name;
+            String objectName = gp.obj[gp.currentMap][i].name;
 
             switch (objectName) {
                 case "Key" :
@@ -167,6 +171,7 @@ public class Player extends Entity {
             }
         }
     }
+
     public void draw(Graphics2D g2d) {
 
         BufferedImage image = null;

@@ -13,16 +13,17 @@ import java.io.InputStreamReader;
 public class TileManager {
     gamePanel gp;
     public Tile[] tile;
-    public int mapTileNum[][];
+    public int mapTileNum[][][];
 
     public TileManager(gamePanel gp) {
         this.gp = gp;
 
         tile = new Tile[10];  // ex: 10 loai wall grass ...
-        mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+        mapTileNum = new int[gp.maxMap][gp.maxWorldCol][gp.maxWorldRow];
 
         getTileImage();
-        loadMap("/maps/map01.txt");
+        loadMap("/maps/map01.txt", 0);
+        loadMap("/maps/map02.txt", 1);
     }
 
     public void getTileImage() {
@@ -30,6 +31,9 @@ public class TileManager {
         setup(0, "tile3", false, false);
         setup(1, "New_wall", true, false);
         setup(2, "crack_wall", true, true);
+        setup(4,"tile4", false, false);
+        setup(5, "tile5", true, false);
+
 
     }
 
@@ -53,16 +57,16 @@ public class TileManager {
         int row = worldY / gp.tileSize;
 
         if (col >= 0 && col < gp.maxWorldCol && row >= 0 && row < gp.maxWorldRow) {
-            int tileIndex = mapTileNum[col][row];
+            int tileIndex = mapTileNum[1][col][row];
 
             if (tile[tileIndex].breakable) {
-                mapTileNum[col][row] = 0; // Gán về tile nền
+                mapTileNum[1][col][row] = 0; // Gán về tile nền
             }
         }
     }
 
 
-    public void loadMap(String filePath) {
+    public void loadMap(String filePath, int map) {
         try {
             InputStream is = getClass().getResourceAsStream(filePath);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -78,7 +82,7 @@ public class TileManager {
 
                     int num = Integer.parseInt(numbers[col]);
 
-                    mapTileNum[col][row] = num;
+                    mapTileNum[map][col][row] = num;
                     col++;
                 }
                 if(col == gp.maxWorldCol) {
@@ -99,7 +103,7 @@ public class TileManager {
 
         while(worldCol < gp.maxWorldCol && worldRow < gp.maxWorldRow) {
 
-            int tileNum = mapTileNum[worldCol][worldRow];
+            int tileNum = mapTileNum[gp.currentMap][worldCol][worldRow];
 
             // world : vị trí ô trên map
             int worldX = worldCol * gp.tileSize;
