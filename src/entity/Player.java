@@ -50,7 +50,7 @@ public class Player extends Entity {
         direction = "down";
 
         //PLAYER STATUS
-        maxLife = 6;               //sua lai sau khi test game
+        maxLife = 2;               //sua lai sau khi test game
         life = maxLife;
 
     }
@@ -140,50 +140,6 @@ public class Player extends Entity {
             }
 
         bombManager.handleBombPlacement();
-
-//        if(gp.kH.spacePressed == true
-//                && projectileRight.alive == false
-//                && projectileLeft.alive == false
-//                && projectileDown.alive == false
-//                && projectileUp.alive == false) {
-//
-//            shotAvailableCounter = 0;
-//
-//
-//            bombXpos = (gp.player.worldX + gp.tileSize / 2) - ((gp.player.worldX + gp.tileSize / 2) % gp.tileSize);
-//            bombYpos = (gp.player.worldY + gp.tileSize / 2) - ((gp.player.worldY + gp.tileSize / 2) % gp.tileSize);
-//
-//            bomb.set(bombXpos, bombYpos, "down", true,this);
-//            gp.projectileList.add(bomb);
-//
-//            //Fire fireUp = new Fire(gp);
-//            //Fire fireDown = new Fire(gp);
-//            //Fire fireLeft = new Fire(gp);
-//            //Fire fireRight = new Fire(gp);
-//
-//            projectileUp.set(bombXpos, bombYpos, "up",true, this);
-//            projectileDown.set(bombXpos, bombYpos, "down",true, this);
-//            projectileLeft.set(bombXpos, bombYpos, "left", true,this);
-//            projectileRight.set(bombXpos, bombYpos, "right", true, this);
-//
-//            new Timer().schedule(new java.util.TimerTask() {
-//                @Override
-//                public void run() {
-//                    // them vao danh sach cac projectile
-//                    gp.projectileList.add(projectileUp);
-//                    gp.projectileList.add(projectileDown);
-//                    gp.projectileList.add(projectileLeft);
-//                    gp.projectileList.add(projectileRight);
-//
-//                }
-//                },
-//                    (bomb.maxLife / gp.FPS) * 1000);
-//        }
-//
-//        if(shotAvailableCounter < 60) {
-//            shotAvailableCounter++;
-//        }
-
     }
     public void pickUpObject(int i) {
 
