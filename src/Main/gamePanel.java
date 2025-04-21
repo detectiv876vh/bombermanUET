@@ -2,7 +2,6 @@ package Main;
 
 import entity.Entity;
 import entity.Player;
-import object.SuperObject;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -10,7 +9,6 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class gamePanel extends JPanel implements Runnable {
-    //SCREEN SETTINGS:
 
     //SCREEN SETTINGS
     final int originalTileSize = 16;
@@ -28,7 +26,7 @@ public class gamePanel extends JPanel implements Runnable {
     public final int worldWidth = tileSize * maxWorldCol;   // Chiều dài bản đồ
     public final int worldHeight = tileSize * maxWorldRow;  // Chiều rộng bản đồ
     public final int maxMap = 10; // Tổng số map
-    public int currentMap = 1;
+    public int currentMap = 0;
 
     //FPS
     public int FPS = 60;
@@ -36,6 +34,7 @@ public class gamePanel extends JPanel implements Runnable {
     //SYSTEM
     public TileManager tileM = new TileManager(this);
     public KeyHandler kH = new KeyHandler(this);
+    public UI ui = new UI(this);
     Thread gameThread;
     public AssetSetter aSetter = new AssetSetter(this);
     public CollisionChecker checker  = new CollisionChecker(this);
@@ -45,16 +44,14 @@ public class gamePanel extends JPanel implements Runnable {
     public Player player = new Player(this, kH);
     public ArrayList<Entity> entityList = new ArrayList<>();
     public ArrayList<Entity> projectileList = new ArrayList<>();
-    public SuperObject obj[][] = new SuperObject[maxMap][10];   // so item co the xuat hien tai o do
+    public Entity obj[][] = new Entity[maxMap][100];   // so item co the xuat hien tai o do
 
     //GAME STATE
     public int gameState;
     public final int titleState = 0;
     public final int playState = 1;
     public final int pauseState = 2;
-
-    //UI
-    public UI ui = new UI(this);
+    private Graphics g;
 
     public gamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -127,6 +124,7 @@ public class gamePanel extends JPanel implements Runnable {
     }
 
     public void paintComponent(Graphics g) {
+        this.g = g;
 
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
@@ -158,11 +156,11 @@ public class gamePanel extends JPanel implements Runnable {
             // TILE
             tileM.draw(g2);
             //OBJECT
-//            for(int i = 0; i < obj.length; i++) {
-//                if(obj[i] != null) {
-//                    obj[currentMap][i].draw(g2, this);
-//                }
-//            }
+            for(int i = 0; i < obj.length; i++) {
+                if(obj[currentMap][i] != null) {
+                    obj[currentMap][i].draw(g2);
+                }
+            }
             // PLAYER
             player.draw(g2);//xoa cai tren thay bang cai nay
 
@@ -181,6 +179,7 @@ public class gamePanel extends JPanel implements Runnable {
             entityList.clear();
         }
 
+        ui.draw(g2);
         g2.dispose();
 
     }
