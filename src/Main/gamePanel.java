@@ -26,7 +26,7 @@ public class gamePanel extends JPanel implements Runnable {
     public final int worldWidth = tileSize * maxWorldCol;   // Chiều dài bản đồ
     public final int worldHeight = tileSize * maxWorldRow;  // Chiều rộng bản đồ
     public final int maxMap = 10; // Tổng số map
-    public int currentMap = 1;
+    public int currentMap = 0;
 
     //FPS
     public int FPS = 60;
