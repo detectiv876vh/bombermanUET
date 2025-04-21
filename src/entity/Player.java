@@ -224,6 +224,19 @@ public class Player extends Entity {
         }
     }
 
+    public void damegeMonter(int i) {
+        if(i != 999) {
+            if( gp.monster[i].invincible == false) {
+                gp.monster[i].life -= 1;
+                gp.monster[i].invincible = true;
+                gp.monster[i].damegeReaction();
+
+                if(gp.monster[i].life <= 0) {
+                    gp.monster[i].dying = true;
+                }
+            }
+        }
+    }
 
     public void draw(Graphics2D g2d) {
 

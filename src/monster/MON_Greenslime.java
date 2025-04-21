@@ -13,8 +13,8 @@ public class MON_Greenslime extends Entity {
         type = 2;
         name = "GreenSlime"; // sua o day
         speed = 1;
-//        maxLife = 4;
-//        life = maxLife;
+        maxLife = 20;
+        life = maxLife;
 
         solidArea.x = 3;
         solidArea.y = 18;
@@ -59,5 +59,10 @@ public class MON_Greenslime extends Entity {
 
             actionLockCounter = 0;
         }
+    }
+
+    public void damegeReaction() {
+        actionLockCounter = 0;
+        direction = gp.player.direction;
     }
 }

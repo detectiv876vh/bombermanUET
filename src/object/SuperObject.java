@@ -17,7 +17,7 @@ public class SuperObject  {
     public int worldX,worldY;
     public Rectangle solidArea = new Rectangle(0,0,48,48);
     public int solidAreaDefauftX = 0,solidAreaDefauftY = 0;
-    private Object gp;                                     //day nai dung oi
+    private Object gp;//day nai dung oi
 
     public void draw(Graphics2D g2, gamePanel gp) {
         int screenX = worldX - gp.player.worldX + gp.player.screenX;

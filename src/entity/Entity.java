@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class Entity {
-
+    //STATE
     public gamePanel gp;
     public int worldX, worldY;
     public int speed;
@@ -26,6 +26,8 @@ public class Entity {
     public int spriteCounter = 0;
     public int shotAvailableCounter = 0;
     public int spriteNum = 1;
+    int dyingCounter = 0;
+    int hpBarCounter = 0;
 
     //HITBOX:
     public Rectangle solidArea = new Rectangle(0, 0, 48, 48); //cho all entity
@@ -49,7 +51,9 @@ public class Entity {
     public Projectile projectileUp, projectileDown, projectileLeft, projectileRight, bomb;
 
     // ENTITY STATUS
+    public boolean hpBarOn = false;
     public boolean alive = true;
+    public boolean dying = false;
     public int bombCount;
     public int bombXpos, bombYpos;
 
@@ -62,6 +66,10 @@ public class Entity {
     }
 
     public void setAction() {
+    }
+
+    public void damegeReaction() {
+
     }
 
     //Kiểm tra va chạm với tường, quái, vật thể:
@@ -224,10 +232,68 @@ public class Entity {
                 break;
         }
 
+        if(invincible == true ) {
+            hpBarOn = true;
+            hpBarCounter = 0;
+            changAlpha(g2,0.4f);
+        }
+        if(dying == true) {
+            dyingAnimation(g2);
+        }
+
+        //MONSTRE HP BAR
+        if(type == 2  && hpBarOn) {
+
+            double oneScale = (double)gp.tileSize / maxLife;
+            double hpBarValue = oneScale * life;
+
+            g2.setColor(new Color(35, 35, 35));
+            g2.fillRect(screenX -1, screenY - 16, gp.tileSize + 2, 12);
+
+            g2.setColor(new Color(255, 0, 30));
+            g2.fillRect(screenX, screenY - 15,(int)hpBarValue, 10);   //(int)hpBarValue se thay cho gp.tileSize
+
+            hpBarCounter++;
+
+            if(hpBarCounter > 600) {
+                hpBarCounter = 0;
+                hpBarOn = false;
+            }
+        }
+
         drawManager.draw(g2, image, worldX, worldY);
 
     }
+    //ANIMATION LUC MONSTER CHET
+    public void dyingAnimation(Graphics2D g2) {
+        dyingCounter++;
+        int i=5;
 
+        if(dyingCounter <= i) {changAlpha(g2,0f);}
+
+        if(dyingCounter > i && dyingCounter <= 2*i) {changAlpha(g2,1f);}
+
+        if(dyingCounter > 2*i && dyingCounter <= 3*i) {changAlpha(g2,0f);}
+
+        if(dyingCounter > 3*i && dyingCounter <= 4*i) {changAlpha(g2,1f);}
+
+        if(dyingCounter > 4*i && dyingCounter <= 5*i) {changAlpha(g2,0f);}
+
+        if(dyingCounter > 5*i && dyingCounter <= 6*i) {changAlpha(g2,1f);}
+
+        if(dyingCounter > 6*i && dyingCounter <= 7*i) {changAlpha(g2,0f);}
+
+        if(dyingCounter > 7*i && dyingCounter <= 8*i) {changAlpha(g2,1f);}
+
+        if(dyingCounter > 8*i) {
+            dying = false;
+            alive = false;
+        }
+    }
+
+    public void changAlpha(Graphics2D g2, float alphaValue) {
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
+    }
     public BufferedImage setup(String imagePath) {
 
         UtilityTool uTool = new UtilityTool();
