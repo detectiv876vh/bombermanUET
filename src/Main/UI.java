@@ -77,14 +77,43 @@ public class UI {
 
     public void drawPauseScreen() {
 
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD,96F));
-        g2.setColor(Color.white);
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 
-        String text = "PAUSE";
-        int x = getXforCenteredText(text);
-        int y = gp.screenHeight / 2;
+        int x;
+        int y;
+        String text;
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD,110F));
 
+        // SHADOW
+        text = "Pause";
+        g2.setColor(Color.black);
+        x = getXforCenteredText(text);
+        y = gp.tileSize * 4;
         g2.drawString(text, x, y);
+
+        // MAIN
+        g2.setColor(Color.white);
+        g2.drawString(text, x - 4, y - 4);
+
+        // CONTINUE GAME
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD,50F));
+        text = "CONTINUE GAME";
+        x = getXforCenteredText(text);
+        y += gp.tileSize * 4;
+        g2.drawString(text, x, y);
+        if (commandNum == 0) {
+            g2.drawString(">", x-40, y);
+        }
+
+        // BACK TO THE TITLE SCREEN
+        text = "QUIT";
+        x = getXforCenteredText(text);
+        y += 55;
+        g2.drawString(text, x, y);
+        if(commandNum == 1) {
+            g2.drawString(">", x-40, y);
+        }
     }
 
     // căn giữa văn bản theo chiều ngang trong phương thức.

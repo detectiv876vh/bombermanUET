@@ -131,6 +131,12 @@ public class gamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
+        if(gameState == pauseState) {
+            tileM.draw(g2);
+            player.draw(g2);
+            ui.draw(g2);
+        }
+
         // TITLE SCREEN
         if(gameState == titleState) {
             ui.draw(g2);
