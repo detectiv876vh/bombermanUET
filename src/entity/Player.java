@@ -4,6 +4,7 @@ import Main.KeyHandler;
 import Main.gamePanel;
 import manager.BombManager;
 
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -70,6 +71,7 @@ public class Player extends Entity {
     }
 
     public void update() {
+
         if (kH.upPressed || kH.downPressed || kH.leftPressed || kH.rightPressed ){
             if (kH.upPressed) {
                 direction = "up";
@@ -135,6 +137,13 @@ public class Player extends Entity {
                 invincible = false;
                 invincibleCounter = 0;
             }
+        }
+        if(life > maxLife) {
+            life = maxLife;
+        }
+
+        if(life <= 0) {
+            gp.gameState = gp.gameOverState;;
         }
         bombManager.handleBombPlacement();
 //        if(gp.kH.spacePressed == true
@@ -214,14 +223,17 @@ public class Player extends Entity {
         }
     }
 
-    public void contactMonster(int monsterIndex) {          // giong voi interac
-        if(monsterIndex != 999) {
+    public void contactMonster(int i) {          // giong voi interac
+        if(i != 999) {
             if(invincible == false) {
-                life -= 1;
+
                 invincible = true;
+                life -= 1;
             }
-            System.out.println("tru " + life + "mau" + "  nho xoa cai test nay di");
+            System.out.println("tru " + 1 + "mau" + ", mau con "+life+"  nho xoa cai test nay di");
+
         }
+
     }
 
     public void damegeMonter(int i) {

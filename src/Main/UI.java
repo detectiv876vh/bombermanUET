@@ -45,6 +45,10 @@ public class UI {
         if(gp.gameState == gp.titleState) {
             drawTitleScreen();
         }
+        //GAME OVERSTATE
+        if(gp.gameState == gp.gameOverState) {
+            drawGameOverScreen();
+        }
 
         if(gp.gameState == gp.pauseState) {
             drawPauseScreen();
@@ -118,7 +122,7 @@ public class UI {
         }
     }
     public void drawPlayerLife() {
-        gp.player.life = 1;
+        gp.player.life = 3;
         int x = gp.tileSize*2;
         int y = gp.tileSize*2;
         int i = 0;
@@ -155,6 +159,12 @@ public class UI {
         int y = gp.screenHeight / 2;
 
         g2.drawString(text, x, y);
+    }
+
+    public void drawGameOverScreen() {
+        g2.setColor(new Color(0, 0, 0, 150));
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
     }
 
     // căn giữa văn bản theo chiều ngang trong phương thức.

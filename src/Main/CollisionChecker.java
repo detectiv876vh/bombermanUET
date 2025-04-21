@@ -36,7 +36,7 @@ public class CollisionChecker {
 
         if(entity.solidArea.intersects(gp.player.solidArea)) {
             entity.collisionOn = true;
-            contactPlayer = false;
+            contactPlayer = true;
         }
 
         entity.solidArea.x = entity.solidAreaDefauftX;
