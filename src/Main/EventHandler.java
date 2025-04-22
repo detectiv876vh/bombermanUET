@@ -93,5 +93,6 @@ public class EventHandler {
         previousEventX = gp.player.worldX;
         previousEventY = gp.player.worldY;
         canTouchEvent = false;
+        gp.playSE(3);
     }
 }
