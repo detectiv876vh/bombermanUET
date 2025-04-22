@@ -5,6 +5,7 @@ import Main.gamePanel;
 import manager.BombManager;
 
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -17,6 +18,9 @@ public class Player extends Entity {
     public final int screenY;
     public int hasKey = 0; // so key co duoc khi nhat tren map
     private BombManager bombManager;
+    boolean moving = false;
+    int pixelCounter = 0;
+    int standCounter = 0;
 
 
     public Player(gamePanel gp,KeyHandler kH ) {
@@ -25,7 +29,7 @@ public class Player extends Entity {
         screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
         screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 
-        solidArea = new Rectangle(15,20, 20, 20);
+        solidArea = new Rectangle(1,1, 46, 46);
         solidAreaDefauftX = solidArea.x;
         solidAreaDefauftY = solidArea.y;
 
@@ -34,13 +38,6 @@ public class Player extends Entity {
 
         bombManager = new BombManager(gp, this);
 
-        //Bom.
-//        bomb = new Bomb(gp);
-//        projectileUp = new Fire(gp);
-//        projectileDown = new Fire(gp);
-//        projectileLeft = new Fire(gp);
-//        projectileRight = new Fire(gp);
-
     }
 
     //vị trí ban đầu của player.
@@ -48,11 +45,11 @@ public class Player extends Entity {
 
         worldX = gp.tileSize;
         worldY = gp.tileSize;
-        speed = 7;
+        speed = 4;
         direction = "down";
 
         //PLAYER STATUS
-        maxLife = 6;               //sua lai sau khi test game
+        maxLife = 2;               //sua lai sau khi test game
         life = maxLife;
 
     }
@@ -72,27 +69,26 @@ public class Player extends Entity {
 
     public void update() {
 
-        if (kH.upPressed || kH.downPressed || kH.leftPressed || kH.rightPressed ){
-            if (kH.upPressed) {
-                direction = "up";
-            }
-            else if (kH.downPressed) {
-                direction = "down";
-            }
-            else if (kH.leftPressed) {
-                direction = "left";
-            }
-            else if (kH.rightPressed){
-                direction = "right";
-            }
+        if(moving == false) {
+            if (kH.upPressed || kH.downPressed || kH.leftPressed || kH.rightPressed) {
+                if (kH.upPressed) {
+                    direction = "up";
+                } else if (kH.downPressed) {
+                    direction = "down";
+                } else if (kH.leftPressed) {
+                    direction = "left";
+                } else if (kH.rightPressed) {
+                    direction = "right";
+                }
 
-            //Check tile collision.
-            collisionOn = false;
-            gp.checker.checkTile(this);
+                moving = true;
+                //Check tile collision.
+                collisionOn = false;
+                gp.checker.checkTile(this);
 
-            // Kiem tra va cham vat the // check object collision
-            int objIndex = gp.checker.checkObject(this, true); //entity va boolean cua player
-            pickUpObject(objIndex);
+                // Kiem tra va cham vat the // check object collision
+                int objIndex = gp.checker.checkObject(this, true); //entity va boolean cua player
+                pickUpObject(objIndex);
 
             // CHECK NPC COLLISION
             int npcIndex = gp.checker.checkEntity(this, gp.npc);
@@ -117,6 +113,37 @@ public class Player extends Entity {
                         break;
                 }
             }
+            }
+            else {
+                standCounter++;
+                if(standCounter == 12) {
+                    spriteNum = 1;
+                    standCounter = 0;
+                }
+            }
+        }
+
+            if(moving == true) {
+                //false thi di chuyen duoc:
+                if(!collisionOn){
+                    switch(direction){
+                        case "up":
+                            worldY -= speed;
+                            break;
+                        case "down":
+                            worldY += speed;
+                            break;
+                        case "left":
+                            worldX -= speed;
+                            break;
+                        case "right":
+                            worldX += speed;
+                            break;
+                    }
+                }
+
+            // CHECK EVENT
+            gp.eHandler.checkEvent();
 
             spriteCounter++;
             if(spriteCounter > 12) {
@@ -126,9 +153,16 @@ public class Player extends Entity {
                     spriteNum = 1;
                 }
 
-                spriteCounter = 0;
+                    spriteCounter = 0;
+                }
+
+                pixelCounter += speed;
+
+                if(pixelCounter >= 48) {
+                    moving = false;
+                    pixelCounter = 0;
+                }
             }
-        }
 
         //ngoia cau lenh chinh giup khi nguoi choi dung im thi invincibleCountre van chay
         if(invincible) {
@@ -146,55 +180,12 @@ public class Player extends Entity {
             gp.gameState = gp.gameOverState;;
         }
         bombManager.handleBombPlacement();
-//        if(gp.kH.spacePressed == true
-//                && projectileRight.alive == false
-//                && projectileLeft.alive == false
-//                && projectileDown.alive == false
-//                && projectileUp.alive == false) {
-//
-//            shotAvailableCounter = 0;
-//
-//
-//            bombXpos = (gp.player.worldX + gp.tileSize / 2) - ((gp.player.worldX + gp.tileSize / 2) % gp.tileSize);
-//            bombYpos = (gp.player.worldY + gp.tileSize / 2) - ((gp.player.worldY + gp.tileSize / 2) % gp.tileSize);
-//
-//            bomb.set(bombXpos, bombYpos, "down", true,this);
-//            gp.projectileList.add(bomb);
-//
-//            //Fire fireUp = new Fire(gp);
-//            //Fire fireDown = new Fire(gp);
-//            //Fire fireLeft = new Fire(gp);
-//            //Fire fireRight = new Fire(gp);
-//
-//            projectileUp.set(bombXpos, bombYpos, "up",true, this);
-//            projectileDown.set(bombXpos, bombYpos, "down",true, this);
-//            projectileLeft.set(bombXpos, bombYpos, "left", true,this);
-//            projectileRight.set(bombXpos, bombYpos, "right", true, this);
-//
-//            new Timer().schedule(new java.util.TimerTask() {
-//                @Override
-//                public void run() {
-//                    // them vao danh sach cac projectile
-//                    gp.projectileList.add(projectileUp);
-//                    gp.projectileList.add(projectileDown);
-//                    gp.projectileList.add(projectileLeft);
-//                    gp.projectileList.add(projectileRight);
-//
-//                }
-//                },
-//                    (bomb.maxLife / gp.FPS) * 1000);
-//        }
-//
-//        if(shotAvailableCounter < 60) {
-//            shotAvailableCounter++;
-//        }
-
     }
     public void pickUpObject(int i) {
 
         if(i != 999) {
 
-            String objectName = gp.obj[i].name;
+            String objectName = gp.obj[gp.currentMap][i].name;
 
             switch (objectName) {
                 case "Key":

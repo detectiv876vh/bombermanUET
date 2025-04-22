@@ -69,6 +69,14 @@ public class KeyHandler implements KeyListener {
             if(code == KeyEvent.VK_SPACE){
                 spacePressed = true;
             }
+
+            if(code == KeyEvent.VK_R) {
+                switch(gp.currentMap) {
+                    case 0: gp.tileM.loadMap("/maps/map01.txt", 0); break;
+                    case 1: gp.tileM.loadMap("/maps/map02.txt", 1); break;
+                }
+
+            }
         }
 
 //        if(code == KeyEvent.VK_ESCAPE) {

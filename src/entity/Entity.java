@@ -18,19 +18,20 @@ public class Entity {
 
     //LOAD IMAGE
     public BufferedImage up1, up2, up3, up4, down1, down2, down3, down4;
-    public BufferedImage right1, right2,right3,right4, left1, left2, left3, left4;
+    public BufferedImage right1, right2, right3, right4, left1, left2, left3, left4;
 
     public String direction = "down";
 
     //COUNTER
     public int spriteCounter = 0;
     public int shotAvailableCounter = 0;
+
     public int spriteNum = 1;
     int dyingCounter = 0;
     int hpBarCounter = 0;
 
     //HITBOX:
-    public Rectangle solidArea = new Rectangle(0, 0, 48, 48); //cho all entity
+    public Rectangle solidArea;
 
     public int solidAreaDefauftX, solidAreaDefauftY;
     public boolean collisionOn = false;
@@ -61,7 +62,7 @@ public class Entity {
         this.gp = gp;
 
         //so-called hitbox:
-        solidArea =  new Rectangle(8,16,30, 30);
+        solidArea = new Rectangle(8, 16, 30, 30);
 
     }
 
@@ -207,28 +208,36 @@ public class Entity {
 
         switch (direction) {
             case "up":
-                if (spriteNum == 1)
+                if (spriteNum == 1) {
                     image = up1;
-                if (spriteNum == 2)
+                }
+                if (spriteNum == 2) {
                     image = up2;
+                }
                 break;
             case "down":
-                if (spriteNum == 1)
+                if (spriteNum == 1) {
                     image = down1;
-                if (spriteNum == 2)
+                }
+                if (spriteNum == 2) {
                     image = down2;
+                }
                 break;
             case "left":
-                if (spriteNum == 1)
+                if (spriteNum == 1) {
                     image = left1;
-                if (spriteNum == 2)
+                }
+                if (spriteNum == 2) {
                     image = left2;
+                }
                 break;
             case "right":
-                if (spriteNum == 1)
+                if (spriteNum == 1) {
                     image = right1;
-                if (spriteNum == 2)
+                }
+                if (spriteNum == 2) {
                     image = right2;
+                }
                 break;
         }
 
@@ -300,9 +309,9 @@ public class Entity {
         BufferedImage image = null;
 
         try {
-            image = ImageIO.read(getClass().getResourceAsStream(imagePath +".png"));
+            image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
             image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
-        }catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return image;

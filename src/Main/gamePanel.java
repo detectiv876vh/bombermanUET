@@ -2,7 +2,6 @@ package Main;
 
 import entity.Entity;
 import entity.Player;
-import object.SuperObject;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -14,20 +13,23 @@ public class gamePanel extends JPanel implements Runnable {
     //SCREEN SETTINGS
     final int originalTileSize = 16;
     final int scale = 3;
+
     public final int tileSize = originalTileSize * scale; //48x48 tile  (1 ô gạch)
     public final int maxScreenCol = 16;     // Chiều dài (đơn vị số block) theo phương Ox của screen
     public final int maxScreenRow = 12;     // Chiều rộng (đơn vị số block) theo phương Oy của
     public final int screenWidth = tileSize * maxScreenCol; // 768 pixels: Chiều dài (đơn vị pixel)
     public final int screenHeight = tileSize * maxScreenRow; // 576 pixels: Chiều rộng (đơn vị pixel)
 
-    //FPS
-    public int FPS = 60;
-
     // WORLD SETTINGS
     public final int maxWorldCol = 50;
     public final int maxWorldRow = 50;
-    public final int worldWidth = tileSize * maxWorldCol;
-    public final int worldHeight = tileSize * maxWorldRow;
+    public final int worldWidth = tileSize * maxWorldCol;   // Chiều dài bản đồ
+    public final int worldHeight = tileSize * maxWorldRow;  // Chiều rộng bản đồ
+    public final int maxMap = 10; // Tổng số map
+    public int currentMap = 0;
+
+    //FPS
+    public int FPS = 60;
 
     //SYSTEM
     public TileManager tileM = new TileManager(this);
@@ -36,14 +38,15 @@ public class gamePanel extends JPanel implements Runnable {
     Thread gameThread;
     public AssetSetter aSetter = new AssetSetter(this);
     public CollisionChecker checker  = new CollisionChecker(this);
+    public EventHandler eHandler = new EventHandler(this);
 
     //ENTITIES AND OBJECTS
     public Player player = new Player(this, kH);
     public ArrayList<Entity> entityList = new ArrayList<>();
     public ArrayList<Entity> projectileList = new ArrayList<>();
     public Entity monster[] = new Entity[20];
-    public SuperObject obj[] = new SuperObject[10];   // so item co the xuat hien tai o do
     public Entity npc[] = new Entity[10];           // so  npc co the co
+    public Entity obj[][] = new Entity[maxMap][100];   // so item co the xuat hien tai o do
 
     //GAME STATE
     public int gameState;
@@ -158,8 +161,8 @@ public class gamePanel extends JPanel implements Runnable {
             tileM.draw(g2);
             //OBJECT
             for(int i = 0; i < obj.length; i++) {
-                if(obj[i] != null) {
-                    obj[i].draw(g2, this);
+                if(obj[currentMap][i] != null) {
+                    obj[currentMap][i].draw(g2);
                 }
             }
             // PLAYER
@@ -196,8 +199,8 @@ public class gamePanel extends JPanel implements Runnable {
             // empty the list
             entityList.clear();
         }
+
         ui.draw(g2);
         g2.dispose();
     }
-
 }
