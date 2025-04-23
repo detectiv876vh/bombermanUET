@@ -144,7 +144,11 @@ public class Player extends Entity {
 
         // CHECK EVENT
         gp.eHandler.checkEvent();
-        bombManager.handleBombPlacement();
+        if (kH.spacePressed) {
+            gp.bombManager.handleBombPlacement();
+        }
+
+
     }
     public void pickUpObject(int i) {
 

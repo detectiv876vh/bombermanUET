@@ -4,7 +4,7 @@ import Main.gamePanel;
 
 public class Projectile extends Entity{
 
-    protected Entity user;
+    public Entity user;
 
     public Projectile(gamePanel gp) {
         super(gp);

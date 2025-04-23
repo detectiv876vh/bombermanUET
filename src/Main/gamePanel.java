@@ -2,6 +2,7 @@ package Main;
 
 import entity.Entity;
 import entity.Player;
+import manager.BombManager;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -45,6 +46,7 @@ public class gamePanel extends JPanel implements Runnable {
     public ArrayList<Entity> entityList = new ArrayList<>();
     public ArrayList<Entity> projectileList = new ArrayList<>();
     public Entity obj[][] = new Entity[maxMap][100];   // so item co the xuat hien tai o do
+    public BombManager bombManager = new BombManager(this, player);
 
     //GAME STATE
     public int gameState;
@@ -104,6 +106,8 @@ public class gamePanel extends JPanel implements Runnable {
         if (gameState == playState) {
 
             player.update();
+            bombManager.handleBombPlacement();
+            bombManager.update();
 
             for (int i = 0; i < projectileList.size(); i++) {
                 if (projectileList.get(i) != null) {
