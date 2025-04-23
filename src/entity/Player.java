@@ -20,9 +20,10 @@ public class Player extends Entity {
     public final int screenY;
     public int hasKey = 0; // so key co duoc khi nhat tren map
     private BombManager bombManager;
-    boolean moving = false;
-    int pixelCounter = 0;
+    public boolean moving = false;
+    public int pixelCounter = 0;
     int standCounter = 0;
+    public int teleportCooldown = 0;
 
 
     public Player(gamePanel gp,KeyHandler kH ) {
@@ -51,8 +52,8 @@ public class Player extends Entity {
         direction = "down";
 
         //PLAYER STATUS
-        maxLife = 2;               //sua lai sau khi test game
-        life = maxLife;
+        maxLife = 6;               //sua lai sau khi test game
+        life = maxLife - 3;
 
     }
 
@@ -84,6 +85,7 @@ public class Player extends Entity {
                 }
 
                 moving = true;
+
                 //Check tile collision.
                 collisionOn = false;
                 gp.checker.checkTile(this);
@@ -102,27 +104,24 @@ public class Player extends Entity {
             }
         }
 
-            if(moving == true) {
-                //false thi di chuyen duoc:
-                if(!collisionOn){
-                    switch(direction){
-                        case "up":
-                            worldY -= speed;
-                            break;
-                        case "down":
-                            worldY += speed;
-                            break;
-                        case "left":
-                            worldX -= speed;
-                            break;
-                        case "right":
-                            worldX += speed;
-                            break;
-                    }
+        if(moving == true) {
+            //false thi di chuyen duoc:
+            if(!collisionOn){
+                switch(direction){
+                    case "up":
+                        worldY -= speed;
+                        break;
+                    case "down":
+                        worldY += speed;
+                        break;
+                    case "left":
+                        worldX -= speed;
+                        break;
+                    case "right":
+                        worldX += speed;
+                        break;
                 }
-
-            // CHECK EVENT
-            gp.eHandler.checkEvent();
+            }
 
             spriteCounter++;
             if(spriteCounter > 12) {
@@ -132,17 +131,19 @@ public class Player extends Entity {
                     spriteNum = 1;
                 }
 
-                    spriteCounter = 0;
-                }
-
-                pixelCounter += speed;
-
-                if(pixelCounter >= 48) {
-                    moving = false;
-                    pixelCounter = 0;
-                }
+                spriteCounter = 0;
             }
 
+            pixelCounter += speed;
+
+            if(pixelCounter >= 48) {
+                moving = false;
+                pixelCounter = 0;
+            }
+        }
+
+        // CHECK EVENT
+        gp.eHandler.checkEvent();
         bombManager.handleBombPlacement();
     }
     public void pickUpObject(int i) {
@@ -154,12 +155,12 @@ public class Player extends Entity {
             switch (objectName) {
                 case "Key" :
                     hasKey++;
-                    gp.obj[i] = null;
+                    gp.obj[gp.currentMap][i] = null;
                     System.out.println("Key: " + hasKey);
                     break;
                 case "Door" :
                     if(hasKey > 0) {
-                        gp.obj[i] = null;
+                        gp.obj[gp.currentMap][i] = null;
                         hasKey--;
                     }
                     System.out.println("Key: " + hasKey);

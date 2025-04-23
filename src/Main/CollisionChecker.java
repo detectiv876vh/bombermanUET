@@ -25,7 +25,7 @@ public class CollisionChecker {
         int entityTopRow = entityTopY / gp.tileSize;
         int entityBottomRow = entityBottomY / gp.tileSize;
 
-        int tileNum1 = 0, tileNum2 = 0;
+        int tileNum1, tileNum2;
 
         switch(entity.direction) {
             case "up":
@@ -61,6 +61,7 @@ public class CollisionChecker {
                 }
                 break;
         }
+
     }
     public int checkObject(Entity entity,boolean player) {
 
@@ -77,52 +78,25 @@ public class CollisionChecker {
                 switch (entity.direction) {
                     case "up":
                         entity.solidArea.y -= entity.speed;
-                        // kiểm tra xem 2 vật có va chạm vào nhau hay không
-                        if (entity.solidArea.intersects(gp.obj[gp.currentMap][i].solidArea)) {
-                            if (gp.obj[gp.currentMap][i].collision == true) {
-                                entity.collisionOn = true;
-                            }
-                            if (player == true) {
-                                index = i;
-                            }
-                        }
                         break;
                     case "down":
                         entity.solidArea.y += entity.speed;
-                        // kiểm tra xem 2 vật có va chạm vào nhau hay không
-                        if (entity.solidArea.intersects(gp.obj[gp.currentMap][i].solidArea)) {
-                            if (gp.obj[gp.currentMap][i].collision == true) {
-                                entity.collisionOn = true;
-                            }
-                            if (player == true) {
-                                index = i;
-                            }
-                        }
                         break;
                     case "left":
                         entity.solidArea.x -= entity.speed;
-                        // kiểm tra xem 2 vật có va chạm vào nhau hay không
-                        if (entity.solidArea.intersects(gp.obj[gp.currentMap][i].solidArea)) {
-                            if (gp.obj[gp.currentMap][i].collision == true) {
-                                entity.collisionOn = true;
-                            }
-                            if (player == true) {
-                                index = i;
-                            }
-                        }
                         break;
                     case "right":
                         entity.solidArea.x += entity.speed;
-                        // kiểm tra xem 2 vật có va chạm vào nhau hay không
-                        if (entity.solidArea.intersects(gp.obj[gp.currentMap][i].solidArea)) {
-                            if (gp.obj[gp.currentMap][i].collision == true) {
-                                entity.collisionOn = true;
-                            }
-                            if (player == true) {
-                                index = i;
-                            }
                             break;
-                        }
+                }
+
+                if (entity.solidArea.intersects(gp.obj[gp.currentMap][i].solidArea)) {
+                    if (gp.obj[gp.currentMap][i].collision == true) {
+                        entity.collisionOn = true;
+                    }
+                    if (player == true) {
+                        index = i;
+                    }
                 }
                 //khong cho x va y tang lien tuc
                 entity.solidArea.x = entity.solidAreaDefauftX;
