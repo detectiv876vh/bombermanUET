@@ -11,6 +11,7 @@ public class Bomb extends Projectile {
         maxLife = 120;
         life = maxLife;
         alive = true;
+        collision = true;
         getImage();
     }
 

@@ -51,13 +51,15 @@ public class Entity {
     public boolean alive = true;
     public int bombCount;
     public int bombXpos, bombYpos;
+    public int solidAreaDefaultX;
+    public int solidAreaDefaultY;
 
 
     public Entity(gamePanel gp) {
         this.gp = gp;
 
         //so-called hitbox:
-        solidArea = new Rectangle(8, 16, 30, 30);
+        solidArea = new Rectangle(0, 0, 48, 48);
 
     }
 
