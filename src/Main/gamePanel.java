@@ -45,6 +45,7 @@ public class gamePanel extends JPanel implements Runnable {
     public ArrayList<Entity> entityList = new ArrayList<>();
     public ArrayList<Entity> projectileList = new ArrayList<>();
     public Entity monster[] = new Entity[20];
+//    public InteractiveTile iTile[] = new InteractiveTile[50];
     public Entity npc[] = new Entity[10];           // so  npc co the co
     public Entity obj[][] = new Entity[maxMap][100];   // so item co the xuat hien tai o do
 
@@ -72,7 +73,9 @@ public class gamePanel extends JPanel implements Runnable {
         aSetter.setNPC();
         aSetter.setMonster();
     }
+    public void InteractiveTile() {
 
+    }
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
@@ -138,6 +141,11 @@ public class gamePanel extends JPanel implements Runnable {
                     }
                 }
             }
+//            for (int i = 0; i < iTile.length; i++) {
+//                if(iTile[i] != null) {
+//                    iTile[i].update();
+//                }
+//            }
         }
 
         if(gameState == pauseState) {}
@@ -160,13 +168,15 @@ public class gamePanel extends JPanel implements Runnable {
             // TILE
             tileM.draw(g2);
             //OBJECT
-            for(int i = 0; i < obj.length; i++) {
+            for(int i = 0; i < obj[currentMap].length; i++) {
                 if(obj[currentMap][i] != null) {
                     obj[currentMap][i].draw(g2);
                 }
             }
             // PLAYER
-            player.draw(g2);//xoa cai tren thay bang cai nay
+            player.draw(g2);
+
+
             //NPC
             for(int i = 0; i < npc.length; i++) {
                 if(npc[i] != null) {

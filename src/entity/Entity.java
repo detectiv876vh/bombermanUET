@@ -9,12 +9,14 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Random;
 
 public class Entity {
     //STATE
     public gamePanel gp;
     public int worldX, worldY;
     public int speed;
+    public boolean onPath = false;
 
     //LOAD IMAGE
     public BufferedImage up1, up2, up3, up4, down1, down2, down3, down4;
@@ -39,7 +41,7 @@ public class Entity {
     public BufferedImage image, image2, image3;
     public String name;
     public boolean collision = false;
-    public int type;         // player =0;;; npc =1.,,,2 = monster
+    public int type;         // player =0   npc = 1    monster = 2
     public int actionLockCounter = 0;
 
     //Character status
@@ -62,14 +64,38 @@ public class Entity {
         this.gp = gp;
 
         //so-called hitbox:
-        solidArea = new Rectangle(8, 16, 30, 30);
+        solidArea = new Rectangle(0, 0, gp.tileSize, gp.tileSize);
 
     }
 
     public void setAction() {
+        actionLockCounter++;
+
+        if (actionLockCounter == 60) {
+            String[] directions = {"up", "down", "left", "right"};
+            Random random = new Random();
+
+            for (int i = 0; i < 4; i++) {
+                String tryDir = directions[random.nextInt(4)];
+                direction = tryDir;
+
+                collisionOn = false;
+
+                gp.checker.checkTile(this); // chỉ check va chạm gạch
+
+                // KHÔNG check player nữa!
+
+                if (!collisionOn) {
+                    break;
+                }
+            }
+
+            actionLockCounter = 0;
+        }
     }
 
-    public void damegeReaction() {
+
+    public void damageReaction() {
 
     }
 
@@ -81,8 +107,10 @@ public class Entity {
 
     //UPDATE FPS
     public void update() {
+        collisionOn = false;
 
         setAction();
+
         collision = false;
         gp.checker.checkTile(this);
         gp.checker.checkEntity(this, gp.npc);

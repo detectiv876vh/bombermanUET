@@ -18,8 +18,8 @@ public class Player extends Entity {
     public final int screenY;
     public int hasKey = 0; // so key co duoc khi nhat tren map
     private BombManager bombManager;
-    boolean moving = false;
-    int pixelCounter = 0;
+    public boolean moving = false;
+    public int pixelCounter = 0;
     int standCounter = 0;
 
 
@@ -49,8 +49,8 @@ public class Player extends Entity {
         direction = "down";
 
         //PLAYER STATUS
-        maxLife = 2;               //sua lai sau khi test game
-        life = maxLife;
+        maxLife = 6;               //sua lai sau khi test game
+        life = maxLife - 4;
 
     }
 
@@ -97,22 +97,8 @@ public class Player extends Entity {
             int monsterIndex = gp.checker.checkEntity(this, gp.monster);
             contactMonster(monsterIndex);
             //false thi di chuyen duoc:
-            if(!collisionOn){
-                switch(direction){
-                    case "up":
-                        worldY -= speed;
-                        break;
-                    case "down":
-                        worldY += speed;
-                        break;
-                    case "left":
-                        worldX -= speed;
-                        break;
-                    case "right":
-                        worldX += speed;
-                        break;
-                }
-            }
+
+
             }
             else {
                 standCounter++;
@@ -142,8 +128,7 @@ public class Player extends Entity {
                     }
                 }
 
-            // CHECK EVENT
-            gp.eHandler.checkEvent();
+
 
             spriteCounter++;
             if(spriteCounter > 12) {
@@ -179,6 +164,8 @@ public class Player extends Entity {
         if(life <= 0) {
             gp.gameState = gp.gameOverState;;
         }
+        // CHECK EVENT
+        gp.eHandler.checkEvent();
         bombManager.handleBombPlacement();
     }
     public void pickUpObject(int i) {
@@ -190,12 +177,12 @@ public class Player extends Entity {
             switch (objectName) {
                 case "Key":
                     hasKey++;
-                    gp.obj[i] = null;
+                    gp.obj[gp.currentMap][i] = null;
                     System.out.println("Key: " + hasKey);
                     break;
                 case "Door":
                     if (hasKey > 0) {
-                        gp.obj[i] = null;
+                        gp.obj[gp.currentMap][i] = null;
                         hasKey--;
                     }
                     System.out.println("Key: " + hasKey);
@@ -227,12 +214,12 @@ public class Player extends Entity {
 
     }
 
-    public void damegeMonter(int i) {
+    public void damageMonter(int i) {
         if(i != 999) {
             if( gp.monster[i].invincible == false) {
                 gp.monster[i].life -= 1;
                 gp.monster[i].invincible = true;
-                gp.monster[i].damegeReaction();
+                gp.monster[i].damageReaction();
 
                 if(gp.monster[i].life <= 0) {
                     gp.monster[i].dying = true;
@@ -241,78 +228,6 @@ public class Player extends Entity {
         }
     }
 
-    public void draw(Graphics2D g2d) {
 
-        BufferedImage image = null;
-
-        switch(direction) {
-            case "up":
-                if(spriteNum == 1) {
-                    image = up1;
-                }
-                if(spriteNum == 2) {
-                    image = up2;
-                }
-
-                break;
-            case "down":
-                if(spriteNum == 1) {
-                    image = down1;
-                }
-                if(spriteNum == 2) {
-                    image = down2;
-                }
-
-                break;
-            case "left":
-                if(spriteNum == 1) {
-                    image = left1;
-                }
-                if(spriteNum == 2) {
-                    image = left2;
-                }
-
-                break;
-            case "right":
-                if(spriteNum == 1) {
-                    image = right1;
-                }
-                if(spriteNum == 2) {
-                    image = right2;
-                }
-
-                break;
-        }
-
-        int x = screenX;
-        int y = screenY;
-
-        if(screenX > worldX) {
-            x= worldX;
-        }
-        if(screenY > worldY) {
-            y = worldY;
-        }
-        int rightOffset = gp.screenWidth - screenX;
-        if(rightOffset > gp.worldWidth - worldX) {
-            x = gp.screenWidth - (gp.worldWidth - worldX);
-        }
-        int bottomOffset = gp.screenHeight - screenY;
-        if(bottomOffset > gp.worldHeight - worldY) {
-            y = gp.screenHeight - (gp.worldHeight - worldY);
-        }
-
-        if(invincible) {
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));// ve trong suot
-        }
-        g2d.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
-
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));// ve trong suot
-
-        //DEBUG
-//        g2d.setFont(new Font("Arial", Font.PLAIN, 26));
-//        g2d.setColor(Color.WHITE);
-//        g2d.drawString("Invincible: " + invincibleCounter + "(nho xoa)", 10, 400);
-    }
 
 }
