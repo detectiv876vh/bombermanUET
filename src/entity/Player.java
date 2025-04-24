@@ -21,6 +21,7 @@ public class Player extends Entity {
     public boolean moving = false;
     public int pixelCounter = 0;
     int standCounter = 0;
+    public int teleportCooldown = 0;
 
 
     public Player(gamePanel gp,KeyHandler kH ) {
@@ -50,7 +51,7 @@ public class Player extends Entity {
 
         //PLAYER STATUS
         maxLife = 6;               //sua lai sau khi test game
-        life = maxLife - 4;
+        life = maxLife - 3;
 
     }
 
@@ -69,7 +70,7 @@ public class Player extends Entity {
 
     public void update() {
 
-        if(moving == false) {
+        if (moving == false) {
             if (kH.upPressed || kH.downPressed || kH.leftPressed || kH.rightPressed) {
                 if (kH.upPressed) {
                     direction = "up";
@@ -82,6 +83,7 @@ public class Player extends Entity {
                 }
 
                 moving = true;
+
                 //Check tile collision.
                 collisionOn = false;
                 gp.checker.checkTile(this);
@@ -90,84 +92,89 @@ public class Player extends Entity {
                 int objIndex = gp.checker.checkObject(this, true); //entity va boolean cua player
                 pickUpObject(objIndex);
 
-            // CHECK NPC COLLISION
-            int npcIndex = gp.checker.checkEntity(this, gp.npc);
-            interactNPC(npcIndex);
-            //CHECK MONSTER COLLISION
-            int monsterIndex = gp.checker.checkEntity(this, gp.monster);
-            contactMonster(monsterIndex);
-            //false thi di chuyen duoc:
-
-
-            }
-            else {
+                // CHECK NPC COLLISION
+                int npcIndex = gp.checker.checkEntity(this, gp.npc);
+                interactNPC(npcIndex);
+                //CHECK MONSTER COLLISION
+                int monsterIndex = gp.checker.checkEntity(this, gp.monster);
+                contactMonster(monsterIndex);
+            } else {
                 standCounter++;
-                if(standCounter == 12) {
+                if (standCounter == 12) {
                     spriteNum = 1;
                     standCounter = 0;
                 }
             }
         }
 
-            if(moving == true) {
-                //false thi di chuyen duoc:
-                if(!collisionOn){
-                    switch(direction){
-                        case "up":
-                            worldY -= speed;
-                            break;
-                        case "down":
-                            worldY += speed;
-                            break;
-                        case "left":
-                            worldX -= speed;
-                            break;
-                        case "right":
-                            worldX += speed;
-                            break;
-                    }
-                }
+        if (moving == true) {
 
-
-
-            spriteCounter++;
-            if(spriteCounter > 12) {
-                if(spriteNum == 1) {
-                    spriteNum = 2;
-                }else if(spriteNum == 2) {
-                    spriteNum = 1;
-                }
-
-                    spriteCounter = 0;
-                }
-
-                pixelCounter += speed;
-
-                if(pixelCounter >= 48) {
-                    moving = false;
-                    pixelCounter = 0;
+            //false thi di chuyen duoc:
+            if (!collisionOn) {
+                switch (direction) {
+                    case "up":
+                        worldY -= speed;
+                        break;
+                    case "down":
+                        worldY += speed;
+                        break;
+                    case "left":
+                        worldX -= speed;
+                        break;
+                    case "right":
+                        worldX += speed;
+                        break;
                 }
             }
 
+            spriteCounter++;
+            if (spriteCounter > 12) {
+                if (spriteNum == 1) {
+                    spriteNum = 2;
+                } else if (spriteNum == 2) {
+                    spriteNum = 1;
+                }
+
+                spriteCounter = 0;
+            }
+
+            pixelCounter += speed;
+
+            if (pixelCounter >= 48) {
+                moving = false;
+                pixelCounter = 0;
+            }
+        }
+
+        // CHECK EVENT
+        gp.eHandler.checkEvent();
+
+        if (kH.spacePressed) {
+            gp.bombManager.handleBombPlacement();
+        }
+
+        if (teleportCooldown > 0) {
+            teleportCooldown--;
+        }
+
+
         //ngoia cau lenh chinh giup khi nguoi choi dung im thi invincibleCountre van chay
-        if(invincible) {
+        if (invincible) {
             invincibleCounter++;
-            if(invincibleCounter > 60) {
+            if (invincibleCounter > 60) {
                 invincible = false;
                 invincibleCounter = 0;
             }
         }
-        if(life > maxLife) {
+        if (life > maxLife) {
             life = maxLife;
         }
 
-        if(life <= 0) {
-            gp.gameState = gp.gameOverState;;
+        if (life <= 0) {
+            gp.gameState = gp.gameOverState;
         }
-        // CHECK EVENT
-        gp.eHandler.checkEvent();
-        bombManager.handleBombPlacement();
     }
+
     public void pickUpObject(int i) {
 
         if(i != 999) {
@@ -180,8 +187,8 @@ public class Player extends Entity {
                     gp.obj[gp.currentMap][i] = null;
                     System.out.println("Key: " + hasKey);
                     break;
-                case "Door":
-                    if (hasKey > 0) {
+                case "Door" :
+                    if(hasKey > 0) {
                         gp.obj[gp.currentMap][i] = null;
                         hasKey--;
                     }
@@ -214,12 +221,12 @@ public class Player extends Entity {
 
     }
 
-    public void damageMonter(int i) {
+    public void damegeMonter(int i) {
         if(i != 999) {
             if( gp.monster[i].invincible == false) {
                 gp.monster[i].life -= 1;
                 gp.monster[i].invincible = true;
-                gp.monster[i].damageReaction();
+                gp.monster[i].damegeReaction();
 
                 if(gp.monster[i].life <= 0) {
                     gp.monster[i].dying = true;
@@ -228,6 +235,78 @@ public class Player extends Entity {
         }
     }
 
+    public void draw(Graphics2D g2d) {
 
+        BufferedImage image = null;
+
+        switch(direction) {
+            case "up":
+                if(spriteNum == 1) {
+                    image = up1;
+                }
+                if(spriteNum == 2) {
+                    image = up2;
+                }
+
+                break;
+            case "down":
+                if(spriteNum == 1) {
+                    image = down1;
+                }
+                if(spriteNum == 2) {
+                    image = down2;
+                }
+
+                break;
+            case "left":
+                if(spriteNum == 1) {
+                    image = left1;
+                }
+                if(spriteNum == 2) {
+                    image = left2;
+                }
+
+                break;
+            case "right":
+                if(spriteNum == 1) {
+                    image = right1;
+                }
+                if(spriteNum == 2) {
+                    image = right2;
+                }
+
+                break;
+        }
+
+        int x = screenX;
+        int y = screenY;
+
+        if(screenX > worldX) {
+            x= worldX;
+        }
+        if(screenY > worldY) {
+            y = worldY;
+        }
+        int rightOffset = gp.screenWidth - screenX;
+        if(rightOffset > gp.worldWidth - worldX) {
+            x = gp.screenWidth - (gp.worldWidth - worldX);
+        }
+        int bottomOffset = gp.screenHeight - screenY;
+        if(bottomOffset > gp.worldHeight - worldY) {
+            y = gp.screenHeight - (gp.worldHeight - worldY);
+        }
+
+        if(invincible) {
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));// ve trong suot
+        }
+        g2d.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
+
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));// ve trong suot
+
+        //DEBUG
+//        g2d.setFont(new Font("Arial", Font.PLAIN, 26));
+//        g2d.setColor(Color.WHITE);
+//        g2d.drawString("Invincible: " + invincibleCounter + "(nho xoa)", 10, 400);
+    }
 
 }

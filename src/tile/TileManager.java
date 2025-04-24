@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 public class TileManager {
     gamePanel gp;
     public Tile[] tile;
-    public int mapTileNum[][][];
+    public int[][][] mapTileNum;
 
     public TileManager(gamePanel gp) {
         this.gp = gp;
@@ -57,10 +57,17 @@ public class TileManager {
         int row = worldY / gp.tileSize;
 
         if (col >= 0 && col < gp.maxWorldCol && row >= 0 && row < gp.maxWorldRow) {
-            int tileIndex = mapTileNum[0][col][row];
+            int tileIndex = mapTileNum[gp.currentMap][col][row];
 
-            if (tile[tileIndex].breakable) {
-                mapTileNum[0][col][row] = 0; // Gán về tile nền
+            if(gp.currentMap == 0) {
+                if (tile[tileIndex].breakable) {
+                    mapTileNum[0][col][row] = 0; // Gán về tile nền
+                }
+            }
+            else if (gp.currentMap == 1) {
+                if (tile[tileIndex].breakable) {
+                    mapTileNum[1][col][row] = 4; // Gán về tile nền
+                }
             }
         }
     }

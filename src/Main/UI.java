@@ -124,33 +124,32 @@ public class UI {
     }
 
     public void drawPlayerLife() {
-
-        int x = gp.tileSize/2;
-        int y = gp.tileSize/2;
+        int x = gp.tileSize / 2;
+        int y = gp.tileSize / 2;
         int i = 0;
 
         // draw blank heart
-        while(i<gp.player.maxLife/2) {
-            g2.drawImage(heart_blank,x,y,null);
+        while (i < gp.player.maxLife / 2) {
+            g2.drawImage(heart_blank, x, y, null);
             i++;
-            x+= gp.tileSize;
+            x += gp.tileSize;
         }
         // reset
-        x = gp.tileSize/2;
-        y = gp.tileSize/2;
+        x = gp.tileSize / 2;
+        y = gp.tileSize / 2;
         i = 0;
         //  draw current life
-        while(i<gp.player.life) {
-            g2.drawImage(heart_half,x,y,null);
+        while (i < gp.player.life) {
+            g2.drawImage(heart_half, x, y, null);
             i++;
-            if(i< gp.player.life) {
-                g2.drawImage(heart_full,x,y,null);
+            if (i < gp.player.life) {
+                g2.drawImage(heart_full, x, y, null);
             }
             i++;
-            x+= gp.tileSize;
+            x += gp.tileSize;
         }
     }
-    public void drawPauseScreen() {
+        public void drawPauseScreen() {
 
         g2.setFont(g2.getFont().deriveFont(Font.BOLD,96F));
         g2.setColor(Color.white);
@@ -166,14 +165,7 @@ public class UI {
         g2.setColor(new Color(0, 0, 0, 150));
         g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 80F));
-        g2.setColor(Color.red);
-        String text = "GAME OVER";
-        int x = getXforCenteredText(text);
-        int y = gp.screenHeight / 2;
-        g2.drawString(text, x, y);
     }
-
 
     // căn giữa văn bản theo chiều ngang trong phương thức.
     public int getXforCenteredText(String text) {

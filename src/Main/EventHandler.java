@@ -95,11 +95,13 @@ public class EventHandler {
         previousEventY = gp.player.worldY;
         canTouchEvent = false;
 
+        gp.kH.spacePressed = false;
         gp.player.moving = false;
         gp.player.pixelCounter = 0;
         gp.player.collisionOn = false;
         gp.player.collision = false;
         gp.player.spriteCounter = 0;
         gp.player.direction = "down";
+        gp.player.teleportCooldown = 30;
     }
 }

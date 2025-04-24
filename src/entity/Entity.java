@@ -9,14 +9,12 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Random;
 
 public class Entity {
     //STATE
     public gamePanel gp;
     public int worldX, worldY;
     public int speed;
-    public boolean onPath = false;
 
     //LOAD IMAGE
     public BufferedImage up1, up2, up3, up4, down1, down2, down3, down4;
@@ -27,13 +25,12 @@ public class Entity {
     //COUNTER
     public int spriteCounter = 0;
     public int shotAvailableCounter = 0;
-
     public int spriteNum = 1;
     int dyingCounter = 0;
     int hpBarCounter = 0;
 
     //HITBOX:
-    public Rectangle solidArea;
+    public Rectangle solidArea; //cho all entity
 
     public int solidAreaDefauftX, solidAreaDefauftY;
     public boolean collisionOn = false;
@@ -41,7 +38,7 @@ public class Entity {
     public BufferedImage image, image2, image3;
     public String name;
     public boolean collision = false;
-    public int type;         // player =0   npc = 1    monster = 2
+    public int type;         // player =0;;; npc =1.,,,2 = monster
     public int actionLockCounter = 0;
 
     //Character status
@@ -59,43 +56,21 @@ public class Entity {
     public boolean dying = false;
     public int bombCount;
     public int bombXpos, bombYpos;
+    public int solidAreaDefaultX;
+    public int solidAreaDefaultY;
 
     public Entity(gamePanel gp) {
         this.gp = gp;
 
         //so-called hitbox:
-        solidArea = new Rectangle(0, 0, gp.tileSize, gp.tileSize);
+        solidArea = new Rectangle(0, 0, 48, 48);
 
     }
 
     public void setAction() {
-        actionLockCounter++;
-
-        if (actionLockCounter == 60) {
-            String[] directions = {"up", "down", "left", "right"};
-            Random random = new Random();
-
-            for (int i = 0; i < 4; i++) {
-                String tryDir = directions[random.nextInt(4)];
-                direction = tryDir;
-
-                collisionOn = false;
-
-                gp.checker.checkTile(this); // chỉ check va chạm gạch
-
-                // KHÔNG check player nữa!
-
-                if (!collisionOn) {
-                    break;
-                }
-            }
-
-            actionLockCounter = 0;
-        }
     }
 
-
-    public void damageReaction() {
+    public void damegeReaction() {
 
     }
 
@@ -107,10 +82,8 @@ public class Entity {
 
     //UPDATE FPS
     public void update() {
-        collisionOn = false;
 
         setAction();
-
         collision = false;
         gp.checker.checkTile(this);
         gp.checker.checkEntity(this, gp.npc);
@@ -158,81 +131,24 @@ public class Entity {
     public void draw(Graphics2D g2) {
 
         BufferedImage image = null;
-        DrawManager drawManager = new DrawManager(gp, this);
-        //them cai nay o trong superobj
         int screenX = worldX - gp.player.worldX + gp.player.screenX;
         int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
-        // Kiểm tra nếu camera đã chạm rìa bản đồ
-        if (gp.player.screenX > gp.player.worldX) {
+        // STOP MOVING CAMERA
+        if (gp.player.worldX < gp.player.screenX) {
             screenX = worldX;
         }
-        if (gp.player.screenY > gp.player.worldY) {
+        if (gp.player.worldY < gp.player.screenY) {
             screenY = worldY;
         }
-        int rightOffset = gp.screenWidth + gp.player.screenX;
-        if (rightOffset > gp.worldWidth + gp.player.worldX) {
-            screenX = gp.screenWidth + (gp.worldWidth + worldX);
+        int rightOffset = gp.screenWidth - gp.player.screenX;
+        if (rightOffset > gp.worldWidth - gp.player.worldX) {
+            screenX = gp.screenWidth - (gp.worldWidth - worldX);
         }
-        int bottomOffset = gp.screenHeight + gp.player.screenY;
-        if (bottomOffset > gp.worldHeight + gp.player.worldY) {
-            screenY = gp.screenHeight + (gp.worldHeight + worldY);
+        int bottomOffset = gp.screenHeight - gp.player.screenY;
+        if (bottomOffset > gp.worldHeight - gp.player.worldY) {
+            screenY = gp.screenHeight - (gp.worldHeight - worldY);
         }
-
-        if(     worldX + gp.tileSize > gp.player.worldX - gp.player.screenX    &&
-                worldX - gp.tileSize < gp.player.worldX + gp.player.screenX     &&
-                worldY + gp.tileSize > gp.player.worldY -gp.player.screenY      &&
-                worldY - gp.tileSize < gp.player.worldY +gp.player.screenY) {
-            //lay tu player
-            switch(direction) {
-                case "up":
-                    if(spriteNum == 1) {
-                        image = up1;
-                    }
-                    if(spriteNum == 2) {
-                        image = up2;
-                    }
-
-                    break;
-                case "down":
-                    if(spriteNum == 1) {
-                        image = down1;
-                    }
-                    if(spriteNum == 2) {
-                        image = down2;
-                    }
-
-                    break;
-                case "left":
-                    if(spriteNum == 1) {
-                        image = left1;
-                    }
-                    if(spriteNum == 2) {
-                        image = left2;
-                    }
-
-                    break;
-                case "right":
-                    if(spriteNum == 1) {
-                        image = right1;
-                    }
-                    if(spriteNum == 2) {
-                        image = right2;
-                    }
-
-                    break;
-            }
-
-            g2.drawImage(image, screenX, screenY,gp.tileSize,gp.tileSize, null);
-
-        }
-        else if(gp.player.screenX > gp.player.worldX||
-                gp.player.screenY > gp.player.worldY||
-                rightOffset > gp.worldWidth - gp.player.worldX ||
-                bottomOffset > gp.worldHeight - gp.player.worldY) {
-            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
-        }
-
 
         switch (direction) {
             case "up":
@@ -269,37 +185,48 @@ public class Entity {
                 break;
         }
 
-        if(invincible == true ) {
+        if (invincible == true) {
             hpBarOn = true;
             hpBarCounter = 0;
-            changAlpha(g2,0.4f);
+            changAlpha(g2, 0.4f);
         }
-        if(dying == true) {
+        if (dying == true) {
             dyingAnimation(g2);
         }
 
         //MONSTRE HP BAR
-        if(type == 2  && hpBarOn) {
+        if (type == 2 && hpBarOn) {
 
-            double oneScale = (double)gp.tileSize / maxLife;
+            double oneScale = (double) gp.tileSize / maxLife;
             double hpBarValue = oneScale * life;
 
             g2.setColor(new Color(35, 35, 35));
-            g2.fillRect(screenX -1, screenY - 16, gp.tileSize + 2, 12);
+            g2.fillRect(screenX - 1, screenY - 16, gp.tileSize + 2, 12);
 
             g2.setColor(new Color(255, 0, 30));
-            g2.fillRect(screenX, screenY - 15,(int)hpBarValue, 10);   //(int)hpBarValue se thay cho gp.tileSize
+            g2.fillRect(screenX, screenY - 15, (int) hpBarValue, 10);   //(int)hpBarValue se thay cho gp.tileSize
 
             hpBarCounter++;
 
-            if(hpBarCounter > 600) {
+            if (hpBarCounter > 600) {
                 hpBarCounter = 0;
                 hpBarOn = false;
             }
         }
 
-        drawManager.draw(g2, image, worldX, worldY);
-
+        if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
+                worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
+                worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
+                worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
+            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        }
+        // If player is around the edge, draw everything
+        else if (gp.player.worldX < gp.player.screenX ||
+                gp.player.worldY < gp.player.screenY ||
+                rightOffset > gp.worldWidth - gp.player.worldX ||
+                bottomOffset > gp.worldHeight - gp.player.worldY) {
+            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        }
     }
     //ANIMATION LUC MONSTER CHET
     public void dyingAnimation(Graphics2D g2) {
