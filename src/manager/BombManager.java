@@ -6,8 +6,6 @@ import entity.Player;
 import object.Bomb;
 import object.Fire;
 
-import java.util.List;
-
 public class BombManager {
 
     private final gamePanel gp;
@@ -19,25 +17,26 @@ public class BombManager {
     }
 
     public void update() {
-        // Không cần xử lý bomb ở đây nữa nếu đã chuyển toàn bộ logic sang Bomb.java
-        // Tránh quản lý lifeFrame hoặc exploded ở đây để tránh trùng lặp.
+        // Không xử lý bomb ở đây nữa nếu đã để Bomb tự quản lý lifecycle
     }
 
     public void handleBombPlacement() {
-        if (gp.kH.spacePressed && canPlaceBomb()) {
+        if (gp.kH.spacePressed && canPlaceBomb() && player.teleportCooldown <= 0) {
             int bombXpos = (player.worldX + gp.tileSize / 2) - ((player.worldX + gp.tileSize / 2) % gp.tileSize);
             int bombYpos = (player.worldY + gp.tileSize / 2) - ((player.worldY + gp.tileSize / 2) % gp.tileSize);
 
             Bomb newBomb = new Bomb(gp);
-            newBomb.set(bombXpos, bombYpos, "down", true, player);
+            newBomb.mapIndex = gp.currentMap;
 
-            gp.projectileList.add(newBomb);
+            newBomb.set(bombXpos, bombYpos, "down", true, player);
+            gp.projectileList[gp.currentMap].add(newBomb);
         }
     }
 
     private boolean canPlaceBomb() {
-        // Chỉ cho đặt 1 bomb chưa nổ
-        for (Entity e : gp.projectileList) {
+        int mapIndex = gp.currentMap;
+        // Kiểm tra bomb đang tồn tại ở map hiện tại
+        for (Entity e : gp.projectileList[mapIndex]) {
             if (e instanceof Bomb && !((Bomb) e).exploded) {
                 return false;
             }
@@ -46,14 +45,16 @@ public class BombManager {
     }
 
     public void triggerExplosion(int x, int y, Entity user) {
+        int mapIndex = gp.currentMap;
+
         Fire up = new Fire(gp); up.set(x, y, "up", true, user);
         Fire down = new Fire(gp); down.set(x, y, "down", true, user);
         Fire left = new Fire(gp); left.set(x, y, "left", true, user);
         Fire right = new Fire(gp); right.set(x, y, "right", true, user);
 
-        gp.projectileList.add(up);
-        gp.projectileList.add(down);
-        gp.projectileList.add(left);
-        gp.projectileList.add(right);
+        gp.projectileList[mapIndex].add(up);
+        gp.projectileList[mapIndex].add(down);
+        gp.projectileList[mapIndex].add(left);
+        gp.projectileList[mapIndex].add(right);
     }
 }

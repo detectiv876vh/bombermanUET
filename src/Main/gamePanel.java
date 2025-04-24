@@ -2,6 +2,7 @@ package Main;
 
 import entity.Entity;
 import entity.Player;
+import entity.Projectile;
 import manager.BombManager;
 import tile.TileManager;
 
@@ -44,7 +45,9 @@ public class gamePanel extends JPanel implements Runnable {
     //ENTITIES AND OBJECTS
     public Player player = new Player(this, kH);
     public ArrayList<Entity> entityList = new ArrayList<>();
-    public ArrayList<Entity> projectileList = new ArrayList<>();
+    public ArrayList<Entity>[] projectileList = new ArrayList[maxMap];
+    public Entity monster[] = new Entity[20];
+    public Entity npc[] = new Entity[10];           // so  npc co the co
     public Entity obj[][] = new Entity[maxMap][100];   // so item co the xuat hien tai o do
     public BombManager bombManager = new BombManager(this, player);
 
@@ -54,6 +57,8 @@ public class gamePanel extends JPanel implements Runnable {
     public final int playState = 1;
     public final int pauseState = 2;
     private Graphics g;
+    public final int gameOverState = 6;
+
 
     public gamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -66,7 +71,15 @@ public class gamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         gameState = titleState;
+
+        for (int i = 0; i < maxMap; i++) {
+            if (projectileList[i] == null) {
+                projectileList[i] = new ArrayList<>();
+            }
+        }
         aSetter.setObject();
+        aSetter.setNPC();
+        aSetter.setMonster();
     }
 
     public void startGameThread() {
@@ -104,69 +117,88 @@ public class gamePanel extends JPanel implements Runnable {
 
     public void update() {
         if (gameState == playState) {
-
             player.update();
             bombManager.handleBombPlacement();
             bombManager.update();
 
-            for (int i = 0; i < projectileList.size(); i++) {
-                if (projectileList.get(i) != null) {
-                    if (projectileList.get(i).alive) {
-                        projectileList.get(i).update();
-                    } else {
-                        projectileList.remove(i);
-                        i--;
+            for (int i = 0; i < npc.length; i++) {
+                if (npc[i] != null) npc[i].update();
+            }
+
+            for (int i = 0; i < monster.length; i++) {
+                if (monster[i] != null) {
+                    if (monster[i].alive && !monster[i].dying) {
+                        monster[i].update();
+                    } else if (!monster[i].alive) {
+                        monster[i] = null;
                     }
                 }
             }
 
+            for (int i = 0; i < projectileList[currentMap].size(); i++) {
+                Entity p = projectileList[currentMap].get(i);
+                if (p != null) {
+                    if (p.alive) {
+                        p.update();
+                    } else {
+                        projectileList[currentMap].remove(i);
+                        i--;
+                    }
+                }
+            }
         }
-
         if(gameState == pauseState) {}
 
-
     }
-
     public void paintComponent(Graphics g) {
         this.g = g;
 
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        // TITLE SCREEN
-        if(gameState == titleState) {
+        if (gameState == titleState) {
             ui.draw(g2);
-        }
-        // OTHERS
-        else if(gameState == playState) {
-            // TILE
+        } else if (gameState == playState) {
             tileM.draw(g2);
-            //OBJECT
-            for(int i = 0; i < obj.length; i++) {
-                if(obj[currentMap][i] != null) {
+
+            for (int i = 0; i < obj[currentMap].length; i++) {
+                if (obj[currentMap][i] != null) {
                     obj[currentMap][i].draw(g2);
                 }
             }
-            // PLAYER
-            player.draw(g2);//xoa cai tren thay bang cai nay
+
+            player.draw(g2);
+
+            for (int i = 0; i < npc.length; i++) {
+                if (npc[i] != null) {
+                    npc[i].draw(g2);
+                }
+            }
 
             entityList.add(player);
-            for (int i = 0; i < projectileList.size(); i++) {
-                if(projectileList.get(i) != null) {
-                    entityList.add(projectileList.get(i));
+
+            for (int i = 0; i < projectileList[currentMap].size(); i++) {
+                if (projectileList[currentMap].get(i) != null) {
+                    entityList.add(projectileList[currentMap].get(i));
                 }
+            }
+
+            for (int i = 0; i < npc.length; i++) {
+                if (npc[i] != null) entityList.add(npc[i]);
+            }
+
+            for (int i = 0; i < monster.length; i++) {
+                if (monster[i] != null) entityList.add(monster[i]);
             }
 
             for (int i = 0; i < entityList.size(); i++) {
                 entityList.get(i).draw(g2);
             }
 
-            // empty the list
             entityList.clear();
         }
 
         ui.draw(g2);
         g2.dispose();
-
     }
 }

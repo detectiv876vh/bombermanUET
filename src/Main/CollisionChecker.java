@@ -1,21 +1,55 @@
 package Main;
 
 import entity.Entity;
+import entity.Player;
 
 import java.net.SocketOption;
 
 public class CollisionChecker {
-
+    public boolean contactPlayer = false;                        //loi
     gamePanel gp;
 
     public CollisionChecker(gamePanel gp) {
         this.gp = gp;
     }
 
+    public boolean checkPlayer(Entity entity) {                  //loi
+        entity.solidArea.x = entity.worldX + entity.solidArea.x;                // x = (worldX); y = (worldY)
+        entity.solidArea.y = entity.worldY + entity.solidArea.y;
+        gp.player.solidArea.x = gp.player.worldX + gp.player.solidArea.x;
+        gp.player.solidArea.y = gp.player.worldY + gp.player.solidArea.y;
+
+        switch(entity.direction) {
+            case "up":
+                entity.solidArea.y -= entity.speed;
+                break;
+            case "down":
+                entity.solidArea.y += entity.speed;
+                break;
+            case "left":
+                entity.solidArea.x -= entity.speed;
+                break;
+            case "right":
+                entity.solidArea.x += entity.speed;
+                break;
+        }
+
+        if(entity.solidArea.intersects(gp.player.solidArea)) {
+            entity.collisionOn = true;
+            contactPlayer = true;
+        }
+
+        entity.solidArea.x = entity.solidAreaDefauftX;
+        entity.solidArea.y = entity.solidAreaDefauftY;
+        gp.player.solidArea.x = gp.player.solidAreaDefauftX;
+        gp.player.solidArea.y = gp.player.solidAreaDefauftY;
+
+        return contactPlayer;
+    }
     //Kiem tra va cham voi tuong
     public void checkTile(Entity entity) {
 
-        int entityLeftX = entity.worldX + entity.solidArea.x;                            // x = (worldX); y = (worldY)
+        int entityLeftX = entity.worldX + entity.solidArea.x;                // x = (worldX); y = (worldY)
         int entityRightX = entity.worldX + entity.solidArea.x + entity.solidArea.width;
         int entityTopY = entity.worldY + entity.solidArea.y;
         int entityBottomY = entity.worldY + entity.solidArea.y + entity.solidArea.height;
@@ -160,5 +194,44 @@ public class CollisionChecker {
             // Dù là tường thường hay tường nứt: lửa cũng dừng lại
             entity.alive = false;
         }
+    }
+
+    public int checkEntity(Entity entity, Entity[] target) {
+        int index = 999;
+        for(int i = 0 ; i < target.length; i++) {
+            if(target[i] != null) {
+                // lay vi tri solidarea cua entity
+                entity.solidArea.x = entity.worldX + entity.solidArea.x;
+                entity.solidArea.y = entity.worldY + entity.solidArea.y;
+                // lay vi tri solidarea cua object
+                target[i].solidArea.x = target[i].worldX + target[i].solidArea.x;
+                target[i].solidArea.y = target[i].worldY + target[i].solidArea.y;
+
+                switch (entity.direction) {
+                    case "up":
+                        entity.solidArea.y -= entity.speed;
+                        break;
+                    case "down":
+                        entity.solidArea.y += entity.speed;break;
+                    case "left":
+                        entity.solidArea.x -= entity.speed;
+                        break;
+                    case "right":
+                        entity.solidArea.x += entity.speed;                         break;
+                }
+                if (entity.solidArea.intersects(target[i].solidArea)) { //kiem tra va cham
+                    if(target[i] != entity) {
+                        entity.collisionOn = true;
+                        index = i;
+                    }
+                }
+                //khong cho x va y tang lien tuc
+                entity.solidArea.x = entity.solidAreaDefauftX;
+                entity.solidArea.y = entity.solidAreaDefauftY;
+                target[i].solidArea.x = target[i].solidAreaDefauftX;
+                target[i].solidArea.y = target[i].solidAreaDefauftY;
+            }
+        }
+        return index;
     }
 }
