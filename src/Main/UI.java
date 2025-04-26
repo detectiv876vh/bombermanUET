@@ -16,6 +16,7 @@ public class UI {
     BufferedImage heart_full, heart_half, heart_blank;
     public int commandNum = 0;
     Font arial_40;
+    public int subState= 0;
 
 
 
@@ -146,6 +147,7 @@ public class UI {
         }
 
     }
+
     public void drawPauseScreen() {
 
         g2.setColor(new Color(0, 0, 0, 150));
@@ -160,7 +162,7 @@ public class UI {
         text = "Pause";
         g2.setColor(Color.black);
         x = getXforCenteredText(text);
-        y = gp.tileSize * 4;
+        y = gp.tileSize * 3;
         g2.drawString(text, x, y);
 
         // MAIN
@@ -171,19 +173,57 @@ public class UI {
         g2.setFont(g2.getFont().deriveFont(Font.BOLD,50F));
         text = "CONTINUE GAME";
         x = getXforCenteredText(text);
-        y += gp.tileSize * 4;
+        int leftAlignedX = x;
+        y += (int) (gp.tileSize * 2.5);
         g2.drawString(text, x, y);
         if (commandNum == 0) {
             g2.drawString(">", x-40, y);
         }
 
+        // MUSIC CONTROL
+        text = "MUSIC";
+        int labelX = leftAlignedX;
+        y += (int) (gp.tileSize * 1.5);
+        g2.drawString(text, labelX, y);
+        if (commandNum == 1) {
+            g2.drawString(">", labelX - 40, y);
+        }
+
+        // MUSIC VOLUME BOX
+        int boxX = labelX + 300;
+        g2.drawRect(boxX, y - 40, 120, 40);     // 120 / 5 = 24;
+        int volumeWidth = 24 * gp.music.volumeScale;
+        g2.fillRect(boxX, y - 40, volumeWidth, 40);
+
+        // SOUND EFFECT CONTROL
+        text = "SE";
+        labelX = leftAlignedX;
+        y += (int) (gp.tileSize * 1.5);
+        g2.drawString(text, labelX, y);
+        if (commandNum == 2) {
+            g2.drawString(">", labelX-40, y);
+        }
+
+        // SE VOLUME BOX
+        boxX = labelX + 300;
+        g2.drawRect(boxX, y - 40, 120, 40);
+        volumeWidth = 24 * gp.se.volumeScale;
+        g2.fillRect(boxX, y - 40, volumeWidth, 40);
+
         // BACK TO THE TITLE SCREEN
         text = "QUIT";
         x = getXforCenteredText(text);
-        y += 55;
+        y += gp.tileSize * 2;
         g2.drawString(text, x, y);
-        if(commandNum == 1) {
+        if(commandNum == 3) {
             g2.drawString(">", x-40, y);
+        }
+
+
+        switch (subState) {
+            case 0: break;
+            case 1: break;
+            case 2: break;
         }
     }
 
