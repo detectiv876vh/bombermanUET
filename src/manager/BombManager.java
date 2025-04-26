@@ -57,6 +57,7 @@ public class BombManager {
                     gp.projectileList.add(projectileDown);
                     gp.projectileList.add(projectileLeft);
                     gp.projectileList.add(projectileRight);
+                    gp.playSE(5);
                 }
             }, (bomb.maxLife / gp.FPS) * 1000);
         }

@@ -21,6 +21,9 @@ public class Sound {
         soundURL[1] = getClass().getResource("/sound/pickup.mp3");
         soundURL[2] = getClass().getResource("/sound/opendoor.mp3");
         soundURL[3] = getClass().getResource("/sound/teleport.wav");
+        soundURL[4] = getClass().getResource("/sound/buttonchange.wav");
+        soundURL[5] = getClass().getResource("/sound/explosion.wav");
+        soundURL[6] = getClass().getResource("/sound/placebomb.wav");
 
     }
 
@@ -33,7 +36,11 @@ public class Sound {
             clip.open(ais);
             fc = (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);  // Truy xuất bộ điều khiển âm thanh của clip
                                                                                 // và điểu chỉnh nó theo đơn vị dB
-            checkVolume();
+            if (i == 6) { // Nếu là placebomb.wav
+                fc.setValue(6f); // Đặt âm lượng lớn nhất (6dB)
+            } else {
+                checkVolume(); // Các file khác dùng theo volumeScale bình thường
+            }
 
         } catch (Exception e) {
         }

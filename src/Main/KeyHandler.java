@@ -25,12 +25,14 @@ public class KeyHandler implements KeyListener {
 
             if (code == KeyEvent.VK_W) {
                 gp.ui.commandNum--;
+                gp.playSE(4);
                 if (gp.ui.commandNum < 0) {
                     gp.ui.commandNum = 0;
                 }
             }
             if (code == KeyEvent.VK_S) {
                 gp.ui.commandNum++;
+                gp.playSE(4);
                 if (gp.ui.commandNum > 2) {
                     gp.ui.commandNum = 2;
                 }
@@ -38,7 +40,6 @@ public class KeyHandler implements KeyListener {
             if (code == KeyEvent.VK_SPACE || code == KeyEvent.VK_ENTER) {
                 if (gp.ui.commandNum == 0) {
                     gp.gameState = gp.playState;
-                    gp.playMusic(0);
                 }
                 if (gp.ui.commandNum == 1) {
                     gp.gameState = gp.playState;
@@ -51,6 +52,7 @@ public class KeyHandler implements KeyListener {
 
         // ESC: Toggle pause
         if (code == KeyEvent.VK_ESCAPE) {
+            gp.playSE(4);
             if (gp.gameState == gp.playState) {
                 gp.gameState = gp.pauseState;
             } else if (gp.gameState == gp.pauseState) {
@@ -64,6 +66,7 @@ public class KeyHandler implements KeyListener {
 
             if (code == KeyEvent.VK_W) {
                 gp.ui.commandNum--;
+                gp.playSE(4);
                 if (gp.ui.commandNum < 0) {
                     gp.ui.commandNum = 0;
                 }
@@ -71,6 +74,7 @@ public class KeyHandler implements KeyListener {
 
             if (code == KeyEvent.VK_S) {
                 gp.ui.commandNum++;
+                gp.playSE(4);
                 if (gp.ui.commandNum > 3) {
                     gp.ui.commandNum = 3;
                 }
@@ -81,9 +85,11 @@ public class KeyHandler implements KeyListener {
                     if (gp.ui.commandNum == 1 && gp.music.volumeScale > 0) {
                         gp.music.volumeScale--;
                         gp.music.checkVolume();
+                        gp.playSE(4);
                     }
                     if (gp.ui.commandNum == 2 && gp.se.volumeScale > 0) {
                         gp.se.volumeScale--;
+                        gp.playSE(4);
                     }
                 }
             }
@@ -93,9 +99,11 @@ public class KeyHandler implements KeyListener {
                     if (gp.ui.commandNum == 1 && gp.music.volumeScale < 5) {
                         gp.music.volumeScale++;
                         gp.music.checkVolume();
+                        gp.playSE(4);
                     }
                     if (gp.ui.commandNum == 2 && gp.se.volumeScale < 5) {
                         gp.se.volumeScale++;
+                        gp.playSE(4);
                     }
                 }
             }
@@ -130,6 +138,7 @@ public class KeyHandler implements KeyListener {
 
             if (code == KeyEvent.VK_SPACE) {
                 spacePressed = true;
+                gp.playSE(6);
             }
 
             if (code == KeyEvent.VK_R) {
