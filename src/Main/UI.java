@@ -150,7 +150,7 @@ public class UI {
 
     public void drawPauseScreen() {
 
-        g2.setColor(new Color(0, 0, 0, 150));
+        g2.setColor(new Color(0, 0, 0, 120));
         g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 
         int x;

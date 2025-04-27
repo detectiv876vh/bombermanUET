@@ -136,17 +136,12 @@ public class gamePanel extends JPanel implements Runnable {
         if(gameState == pauseState) {
             tileM.draw(g2);
             player.draw(g2);
-            player.draw(g2);//xoa cai tren thay bang cai nay
 
-            entityList.add(player);
-            for (int i = 0; i < projectileList.size(); i++) {
-                if(projectileList.get(i) != null) {
-                    entityList.add(projectileList.get(i));
+
+            for(int i = 0; i < obj.length; i++) {
+                if(obj[currentMap][i] != null) {
+                    obj[currentMap][i].draw(g2);
                 }
-            }
-
-            for (int i = 0; i < entityList.size(); i++) {
-                entityList.get(i).draw(g2);
             }
             ui.draw(g2);
         }
