@@ -17,6 +17,7 @@ public class UI {
     public int commandNum = 0;
     Font arial_40;
     public int subState= 0;
+    int lastHovered = -1; // Lưu trạng thái hover trước đó
 
 
 
@@ -75,19 +76,12 @@ public class UI {
         g2.setColor(Color.gray);
         g2.drawString(text, x+5, y+5);
 
-
-
         //PAUSE STATE
         if(gp.gameState == gp.pauseState) {
             drawPlayerLife();
             drawPauseScreen();
         }
 
-        //DIALOGUE STATE
-//        if(gp.gameState == gp.dialogueState) {
-//            drawPlayerLife();
-//            drawDialogueScreen();
-//        }
         // NAME GAME COLOR
         g2.setColor(Color.white);
         g2.drawString(text, x, y);
@@ -98,26 +92,38 @@ public class UI {
         text = "NEW GAME";
         x = getXforCenteredText(text);
         y += gp.tileSize * 4;
-        g2.drawString(text, x, y);  // viết text ở vị trí x worldY.
+
         if(commandNum == 0) {
+            g2.setColor(Color.yellow);
             g2.drawString(">", x-gp.tileSize, y);
+        } else {
+            g2.setColor(Color.white);
         }
+        g2.drawString(text, x, y);  // viết text ở vị trí x worldY.
 
         text = "CONTINUE GAME";
         x = getXforCenteredText(text);
         y += gp.tileSize;
-        g2.drawString(text, x, y);
+
         if(commandNum == 1) {
+            g2.setColor(Color.yellow);
             g2.drawString(">", x-gp.tileSize, y);
+        } else {
+            g2.setColor(Color.white);
         }
+        g2.drawString(text, x, y);
 
         text = "QUIT";
         x = getXforCenteredText(text);
         y += gp.tileSize;
-        g2.drawString(text, x, y);
+
         if(commandNum == 2) {
+            g2.setColor(Color.yellow);
             g2.drawString(">", x-gp.tileSize, y);
+        } else {
+            g2.setColor(Color.white);
         }
+        g2.drawString(text, x, y);
     }
 
     public void drawPlayerLife() {
