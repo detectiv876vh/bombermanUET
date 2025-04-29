@@ -2,10 +2,11 @@ package Main;
 
 import entity.Entity;
 import object.OBJ_Heart;
-import object.OBJ_Key;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static javax.swing.plaf.basic.BasicGraphicsUtils.drawString;
 
@@ -15,14 +16,26 @@ public class UI {
     Graphics2D g2;
     BufferedImage heart_full, heart_half, heart_blank;
     public int commandNum = 0;
-    Font arial_40;
+    Font theleahFat;
+    public int subState= 0;
+    int lastHovered = -1; // Lưu trạng thái hover trước đó
 
 
 
     public UI (gamePanel gp) {
 
         this.gp = gp;
-        arial_40 = new Font("Arial", Font.PLAIN, 40);
+        theleahFat = new Font("Arial", Font.PLAIN, 40);
+
+        try {
+            InputStream is = getClass().getResourceAsStream("/font/ThaleahFat.ttf");
+            theleahFat = Font.createFont(Font.TRUETYPE_FONT, is);
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         // Load hình từ object
         Entity heart = new OBJ_Heart(gp);
         heart_full = heart.image;
@@ -34,7 +47,7 @@ public class UI {
     public void draw (Graphics2D g2) {
         this.g2 = g2;
         //SET FONT
-        g2.setFont(arial_40);
+        g2.setFont(theleahFat);
         g2.setColor(Color.white);
 //        g2.drawString("Key = " + gp.player.hasKey, 50,50);       //viet so key tren map o 50 50
         // TITLE STATE
@@ -74,19 +87,12 @@ public class UI {
         g2.setColor(Color.gray);
         g2.drawString(text, x+5, y+5);
 
-
-
         //PAUSE STATE
         if(gp.gameState == gp.pauseState) {
             drawPlayerLife();
             drawPauseScreen();
         }
 
-        //DIALOGUE STATE
-//        if(gp.gameState == gp.dialogueState) {
-//            drawPlayerLife();
-//            drawDialogueScreen();
-//        }
         // NAME GAME COLOR
         g2.setColor(Color.white);
         g2.drawString(text, x, y);
@@ -97,26 +103,38 @@ public class UI {
         text = "NEW GAME";
         x = getXforCenteredText(text);
         y += gp.tileSize * 4;
-        g2.drawString(text, x, y);  // viết text ở vị trí x worldY.
+
         if(commandNum == 0) {
+            g2.setColor(Color.yellow);
             g2.drawString(">", x-gp.tileSize, y);
+        } else {
+            g2.setColor(Color.white);
         }
+        g2.drawString(text, x, y);  // viết text ở vị trí x worldY.
 
         text = "CONTINUE GAME";
         x = getXforCenteredText(text);
         y += gp.tileSize;
-        g2.drawString(text, x, y);
+
         if(commandNum == 1) {
+            g2.setColor(Color.yellow);
             g2.drawString(">", x-gp.tileSize, y);
+        } else {
+            g2.setColor(Color.white);
         }
+        g2.drawString(text, x, y);
 
         text = "QUIT";
         x = getXforCenteredText(text);
         y += gp.tileSize;
-        g2.drawString(text, x, y);
+
         if(commandNum == 2) {
+            g2.setColor(Color.yellow);
             g2.drawString(">", x-gp.tileSize, y);
+        } else {
+            g2.setColor(Color.white);
         }
+        g2.drawString(text, x, y);
     }
 
     public void drawPlayerLife() {
@@ -146,16 +164,84 @@ public class UI {
         }
 
     }
+
     public void drawPauseScreen() {
 
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD,96F));
-        g2.setColor(Color.white);
+        g2.setColor(new Color(0, 0, 0, 120));
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 
-        String text = "PAUSE";
-        int x = getXforCenteredText(text);
-        int y = gp.screenHeight / 2;
+        int x;
+        int y;
+        String text;
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD,110F));
 
+        // SHADOW
+        text = "Pause";
+        g2.setColor(Color.black);
+        x = getXforCenteredText(text);
+        y = gp.tileSize * 3;
         g2.drawString(text, x, y);
+
+        // MAIN
+        g2.setColor(Color.white);
+        g2.drawString(text, x - 4, y - 4);
+
+        // CONTINUE GAME
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD,50F));
+        text = "CONTINUE GAME";
+        x = getXforCenteredText(text);
+        int leftAlignedX = x;
+        y += (int) (gp.tileSize * 2.5);
+        g2.drawString(text, x, y);
+        if (commandNum == 0) {
+            g2.drawString(">", x-40, y);
+        }
+
+        // MUSIC CONTROL
+        text = "MUSIC";
+        int labelX = leftAlignedX;
+        y += (int) (gp.tileSize * 1.5);
+        g2.drawString(text, labelX, y);
+        if (commandNum == 1) {
+            g2.drawString(">", labelX - 40, y);
+        }
+
+        // MUSIC VOLUME BOX
+        int boxX = labelX + 200;
+        g2.drawRect(boxX, y - 40, 120, 40);     // 120 / 5 = 24;
+        int volumeWidth = 24 * gp.music.volumeScale;
+        g2.fillRect(boxX, y - 40, volumeWidth, 40);
+
+        // SOUND EFFECT CONTROL
+        text = "SE";
+        labelX = leftAlignedX;
+        y += (int) (gp.tileSize * 1.5);
+        g2.drawString(text, labelX, y);
+        if (commandNum == 2) {
+            g2.drawString(">", labelX-40, y);
+        }
+
+        // SE VOLUME BOX
+        boxX = labelX + 200;
+        g2.drawRect(boxX, y - 40, 120, 40);
+        volumeWidth = 24 * gp.se.volumeScale;
+        g2.fillRect(boxX, y - 40, volumeWidth, 40);
+
+        // BACK TO THE TITLE SCREEN
+        text = "QUIT";
+        x = getXforCenteredText(text);
+        y += gp.tileSize * 2;
+        g2.drawString(text, x, y);
+        if(commandNum == 3) {
+            g2.drawString(">", x-40, y);
+        }
+
+
+        switch (subState) {
+            case 0: break;
+            case 1: break;
+            case 2: break;
+        }
     }
 
     // căn giữa văn bản theo chiều ngang trong phương thức.

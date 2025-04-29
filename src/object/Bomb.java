@@ -75,6 +75,7 @@ public class Bomb extends Projectile {
 
     public void triggerExplosion() {
         exploded = true;
+        gp.playSE(5);
 
         // Phá tường tại vị trí bomb (tâm)
         gp.tileM.explodeTile(bombXpos, bombYpos);

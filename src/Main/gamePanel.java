@@ -7,10 +7,16 @@ import manager.DrawManager;
 import manager.TileManager;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicTreeUI;
 import java.awt.*;
 import java.util.ArrayList;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
 
 public class gamePanel extends JPanel implements Runnable {
+
+    // TILE STATE
+    public MouseHandler mouseH = new MouseHandler();
 
     //SCREEN SETTINGS
     public final int originalTileSize = 16;
@@ -38,6 +44,8 @@ public class gamePanel extends JPanel implements Runnable {
     //SYSTEM
     public TileManager tileM = new TileManager(this);
     public KeyHandler kH = new KeyHandler(this);
+    public Sound music = new Sound();
+    public Sound se = new Sound();
     public UI ui = new UI(this);
     Thread gameThread;
     public AssetSetter aSetter = new AssetSetter(this);
@@ -67,11 +75,15 @@ public class gamePanel extends JPanel implements Runnable {
         this.addKeyListener(kH);
         this.setFocusable(true);
         this.requestFocusInWindow();
+        this.addMouseListener(mouseH);
+        this.addMouseMotionListener(mouseH);
     }
 
     public void setupGame() {
         gameState = titleState;
         aSetter.setObject();
+
+        playMusic(0);
     }
 
     public void startGameThread() {
@@ -138,6 +150,24 @@ public class gamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
+        if(gameState == pauseState) {
+            tileM.draw(g2);
+            player.draw(g2);
+            player.draw(g2);//xoa cai tren thay bang cai nay
+
+            entityList.add(player);
+            for (int i = 0; i < projectileList.size(); i++) {
+                if(projectileList.get(i) != null) {
+                    entityList.add(projectileList.get(i));
+                }
+            }
+
+            for (int i = 0; i < entityList.size(); i++) {
+                entityList.get(i).draw(g2);
+            }
+            ui.draw(g2);
+        }
+
         // TITLE SCREEN
         if(gameState == titleState) {
             ui.draw(g2);
@@ -173,5 +203,75 @@ public class gamePanel extends JPanel implements Runnable {
         ui.draw(g2);
         g2.dispose();
 
+    }
+
+    public void playMusic(int i) {
+
+        music.setFile(i);
+        music.play();
+        music.loop();
+    }
+
+    public void stopMusic() {
+        music.stop();
+    }
+
+    public void playSE(int i) {
+
+        se.setFile(i);
+        se.play();
+    }
+
+    public class MouseHandler extends MouseAdapter {
+        public void mouseClicked(MouseEvent e) {
+            if(gameState == titleState) {
+                int x = e.getX();   // tọa độ con chuột click.
+                int y = e.getY();
+
+                int menuY = tileSize * 7;
+                int menuItemHeight = tileSize;
+
+                if(y >= menuY && y < menuY + menuItemHeight) {
+                    ui.commandNum=0;
+                    gameState = playState;
+                }
+                else if(y >= menuY + menuItemHeight && y < menuY + menuItemHeight*2) {
+                    ui.commandNum=1;
+                }
+                else if(y >= menuY + menuItemHeight*2 && y < menuY + menuItemHeight*3) {
+                    ui.commandNum=2;
+                    System.exit(0);
+                }
+            }
+        }
+
+        public void mouseMoved(MouseEvent e) {
+            if(gameState == titleState) {
+                int y = e.getY();   // tọa độ con trỏ chuột đang ở.
+
+                int menuY = tileSize * 7;
+                int menuItemHeight = tileSize;
+                int newHover = -1;
+
+                if(y >= menuY && y < menuY + menuItemHeight) {
+                    newHover = 0;
+                }
+                else if(y >= menuY + menuItemHeight && y < menuY + menuItemHeight*2) {
+                    newHover = 1;
+                }
+                else if(y >= menuY + menuItemHeight*2 && y < menuY + menuItemHeight*3) {
+                    newHover = 2;
+                }
+
+                if (newHover != -1 && newHover != ui.lastHovered) {
+                    ui.lastHovered = newHover;
+                    playSE(4);
+                }
+
+                if (newHover != -1) {
+                    ui.commandNum = newHover;
+                }
+            }
+        }
     }
 }

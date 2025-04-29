@@ -50,7 +50,7 @@ public class EventHandler {
         }
 
         if(canTouchEvent) {
-            if(hit(0,12,2,"any") == true) {teleport(1,15,4);}
+            if(hit(0,2,2,"any") == true) {teleport(1,15,4);}
             else if(hit(1,15,4,"any") == true) {teleport(0,12,2);}
 
         }
@@ -94,6 +94,7 @@ public class EventHandler {
         previousEventX = gp.player.worldX;
         previousEventY = gp.player.worldY;
         canTouchEvent = false;
+        gp.playSE(3);
 
         gp.player.moving = false;
         gp.player.pixelCounter = 0;
