@@ -3,11 +3,11 @@ package object;
 import Main.gamePanel;
 import entity.Entity;
 
-public class OBJ_Boots extends Entity {
+public class OBJ_Boost extends Entity {
 
-    public OBJ_Boots(gamePanel gp){
+    public OBJ_Boost(gamePanel gp){
         super(gp);
-        name = "Boots";
+        name = "Boost";
         down1 = setup("/objects/boots");
     }
 }

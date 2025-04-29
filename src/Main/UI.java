@@ -41,6 +41,7 @@ public class UI {
         if(gp.gameState == gp.titleState) {
             drawTitleScreen();
         }
+        //draw bombs
         //GAME OVERSTATE
         if(gp.gameState == gp.gameOverState) {
             drawGameOverScreen();
@@ -50,7 +51,10 @@ public class UI {
         if(gp.gameState == gp.playState) {
             drawPlayerLife();
         }
-
+        //ATTACK STATE
+        if(gp.gameState == gp.chemState) {
+        }
+        //PAUSE STATE
         if(gp.gameState == gp.pauseState) {
             drawPauseScreen();
         }

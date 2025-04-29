@@ -1,6 +1,7 @@
 package object;
 
 import Main.gamePanel;
+import entity.Player;
 import entity.Projectile;
 
 public class Bomb extends Projectile {

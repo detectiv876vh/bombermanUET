@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
 
     gamePanel gp;
-    public boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed,qPressed;
 
     public KeyHandler(gamePanel gp) {
         this.gp = gp;
@@ -51,23 +51,31 @@ public class KeyHandler implements KeyListener {
         //PLAY STATE
         if(gp.gameState == gp.playState) {
             if(code == KeyEvent.VK_W){
+                System.out.println("W");
                 upPressed = true;
             }
 
             if(code == KeyEvent.VK_S){
+                System.out.println("S");
                 downPressed = true;
             }
 
             if(code == KeyEvent.VK_A){
+                System.out.println("A");
                 leftPressed = true;
             }
 
             if(code == KeyEvent.VK_D){
+                System.out.println("D");
                 rightPressed = true;
             }
 
             if(code == KeyEvent.VK_SPACE){
                 spacePressed = true;
+            }
+            if(code == KeyEvent.VK_Q){
+                System.out.println("Q");
+                qPressed = true;
             }
 
             if(code == KeyEvent.VK_R) {
@@ -99,23 +107,32 @@ public class KeyHandler implements KeyListener {
         int code = e.getKeyCode();
 
         if(code == KeyEvent.VK_W){
+            System.out.println("W");
             upPressed = false;
         }
 
         if(code == KeyEvent.VK_S){
+            System.out.println("S");
             downPressed = false;
         }
 
         if(code == KeyEvent.VK_A){
+            System.out.println("A");
             leftPressed = false;
         }
 
         if(code == KeyEvent.VK_D){
+            System.out.println("D");
             rightPressed = false;
         }
 
         if(code == KeyEvent.VK_SPACE){
             spacePressed = false;
+        }
+
+        if(code == KeyEvent.VK_Q){
+            System.out.println("Q");
+            qPressed = false;
         }
     }
 }

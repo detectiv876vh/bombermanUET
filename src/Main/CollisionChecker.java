@@ -13,7 +13,8 @@ public class CollisionChecker {
         this.gp = gp;
     }
 
-    public boolean checkPlayer(Entity entity) {                  //loi
+    public boolean checkPlayer(Entity entity) {//loi
+        contactPlayer = false;
         entity.solidArea.x = entity.worldX + entity.solidArea.x;                // x = (worldX); y = (worldY)
         entity.solidArea.y = entity.worldY + entity.solidArea.y;
         gp.player.solidArea.x = gp.player.worldX + gp.player.solidArea.x;
@@ -39,10 +40,10 @@ public class CollisionChecker {
             contactPlayer = true;
         }
 
-        entity.solidArea.x = entity.solidAreaDefauftX;
-        entity.solidArea.y = entity.solidAreaDefauftY;
-        gp.player.solidArea.x = gp.player.solidAreaDefauftX;
-        gp.player.solidArea.y = gp.player.solidAreaDefauftY;
+        entity.solidArea.x = entity.solidAreaDefaultX;
+        entity.solidArea.y = entity.solidAreaDefaultY;
+        gp.player.solidArea.x = gp.player.solidAreaDefaultX;
+        gp.player.solidArea.y = gp.player.solidAreaDefaultY;
 
         return contactPlayer;
     }
@@ -133,10 +134,10 @@ public class CollisionChecker {
                     }
                 }
                 //khong cho x va y tang lien tuc
-                entity.solidArea.x = entity.solidAreaDefauftX;
-                entity.solidArea.y = entity.solidAreaDefauftY;
-                gp.obj[gp.currentMap][i].solidArea.x = gp.obj[gp.currentMap][i].solidAreaDefauftX;
-                gp.obj[gp.currentMap][i].solidArea.y = gp.obj[gp.currentMap][i].solidAreaDefauftY;
+                entity.solidArea.x = entity.solidAreaDefaultX;
+                entity.solidArea.y = entity.solidAreaDefaultY;
+                gp.obj[gp.currentMap][i].solidArea.x = gp.obj[gp.currentMap][i].solidAreaDefaultX;
+                gp.obj[gp.currentMap][i].solidArea.y = gp.obj[gp.currentMap][i].solidAreaDefaultY;
             }
         }
         return index;
@@ -226,10 +227,10 @@ public class CollisionChecker {
                     }
                 }
                 //khong cho x va y tang lien tuc
-                entity.solidArea.x = entity.solidAreaDefauftX;
-                entity.solidArea.y = entity.solidAreaDefauftY;
-                target[i].solidArea.x = target[i].solidAreaDefauftX;
-                target[i].solidArea.y = target[i].solidAreaDefauftY;
+                entity.solidArea.x = entity.solidAreaDefaultX;
+                entity.solidArea.y = entity.solidAreaDefaultY;
+                target[i].solidArea.x = target[i].solidAreaDefaultX;
+                target[i].solidArea.y = target[i].solidAreaDefaultY;
             }
         }
         return index;

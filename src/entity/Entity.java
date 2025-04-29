@@ -15,37 +15,47 @@ public class Entity {
     public gamePanel gp;
     public int worldX, worldY;
     public int speed;
+    boolean attacking = false;
 
     //LOAD IMAGE
     public BufferedImage up1, up2, up3, up4, down1, down2, down3, down4;
     public BufferedImage right1, right2, right3, right4, left1, left2, left3, left4;
-
+    public BufferedImage attackUp1,attackUp2,attackDown1,attackDown2,attackLeft1,attackLeft2,
+            attcackRight1,attcackRight2;
+    public BufferedImage image, image2, image3;
     public String direction = "down";
 
     //COUNTER
     public int spriteCounter = 0;
     public int shotAvailableCounter = 0;
     public int spriteNum = 1;
-    int dyingCounter = 0;
-    int hpBarCounter = 0;
+    public int dyingCounter = 0;
+    public int hpBarCounter = 0;
+    public int actionLockCounter = 0;
+    public int invincibleCounter = 0;
+    public static final int type_consumable = 6;
+    public boolean stackable = false;
+    // =============SHIELD==================
+    public boolean shieldActive = false;
+    public int shieldCounter = 0;
+    public final int shieldDuration = 300;
+
 
     //HITBOX:
     public Rectangle solidArea; //cho all entity
 
-    public int solidAreaDefauftX, solidAreaDefauftY;
     public boolean collisionOn = false;
 
-    public BufferedImage image, image2, image3;
     public String name;
     public boolean collision = false;
     public int type;         // player =0;;; npc =1.,,,2 = monster
-    public int actionLockCounter = 0;
+
 
     //Character status
     public int maxLife;
     public int life;
     public boolean invincible = false; //giu nguoi choi mien nhiem sau khi nhan sat thuong
-    public int invincibleCounter = 0;
+
 
     //OBJECTS
     public Projectile projectileUp, projectileDown, projectileLeft, projectileRight, bomb;
@@ -68,10 +78,6 @@ public class Entity {
     }
 
     public void setAction() {
-    }
-
-    public void damegeReaction() {
-
     }
 
     //Kiểm tra va chạm với tường, quái, vật thể:
@@ -125,6 +131,13 @@ public class Entity {
                 spriteNum = 1;
             }
             spriteCounter = 0;
+        }
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter > 60) { // Giả sử thời gian invincible là 60 frame (1 giây)
+                invincible = false;
+                invincibleCounter = 0;
+            }
         }
     }
 
@@ -189,7 +202,10 @@ public class Entity {
             hpBarOn = true;
             hpBarCounter = 0;
             changAlpha(g2, 0.4f);
+        }else {
+            changAlpha(g2, 1.0f);
         }
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         if (dying == true) {
             dyingAnimation(g2);
         }
@@ -270,5 +286,16 @@ public class Entity {
             e.printStackTrace();
         }
         return image;
+    }
+    public Rectangle getHitbox() {
+        return new Rectangle(
+                worldX + solidArea.x,
+                worldY + solidArea.y,
+                solidArea.width,
+                solidArea.height
+        );
+    }
+
+    protected void damageReaction() {
     }
 }
