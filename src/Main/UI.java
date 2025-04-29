@@ -2,10 +2,11 @@ package Main;
 
 import entity.Entity;
 import object.OBJ_Heart;
-import object.OBJ_Key;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static javax.swing.plaf.basic.BasicGraphicsUtils.drawString;
 
@@ -15,7 +16,7 @@ public class UI {
     Graphics2D g2;
     BufferedImage heart_full, heart_half, heart_blank;
     public int commandNum = 0;
-    Font arial_40;
+    Font theleahFat;
     public int subState= 0;
     int lastHovered = -1; // Lưu trạng thái hover trước đó
 
@@ -24,7 +25,17 @@ public class UI {
     public UI (gamePanel gp) {
 
         this.gp = gp;
-        arial_40 = new Font("Arial", Font.PLAIN, 40);
+        theleahFat = new Font("Arial", Font.PLAIN, 40);
+
+        try {
+            InputStream is = getClass().getResourceAsStream("/font/ThaleahFat.ttf");
+            theleahFat = Font.createFont(Font.TRUETYPE_FONT, is);
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         // Load hình từ object
         Entity heart = new OBJ_Heart(gp);
         heart_full = heart.image;
@@ -36,7 +47,7 @@ public class UI {
     public void draw (Graphics2D g2) {
         this.g2 = g2;
         //SET FONT
-        g2.setFont(arial_40);
+        g2.setFont(theleahFat);
         g2.setColor(Color.white);
 //        g2.drawString("Key = " + gp.player.hasKey, 50,50);       //viet so key tren map o 50 50
         // TITLE STATE
@@ -196,7 +207,7 @@ public class UI {
         }
 
         // MUSIC VOLUME BOX
-        int boxX = labelX + 300;
+        int boxX = labelX + 200;
         g2.drawRect(boxX, y - 40, 120, 40);     // 120 / 5 = 24;
         int volumeWidth = 24 * gp.music.volumeScale;
         g2.fillRect(boxX, y - 40, volumeWidth, 40);
@@ -211,7 +222,7 @@ public class UI {
         }
 
         // SE VOLUME BOX
-        boxX = labelX + 300;
+        boxX = labelX + 200;
         g2.drawRect(boxX, y - 40, 120, 40);
         volumeWidth = 24 * gp.se.volumeScale;
         g2.fillRect(boxX, y - 40, volumeWidth, 40);

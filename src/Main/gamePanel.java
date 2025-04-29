@@ -216,7 +216,7 @@ public class gamePanel extends JPanel implements Runnable {
     public class MouseHandler extends MouseAdapter {
         public void mouseClicked(MouseEvent e) {
             if(gameState == titleState) {
-                int x = e.getX();
+                int x = e.getX();   // tọa độ con chuột click.
                 int y = e.getY();
 
                 int menuY = tileSize * 7;
@@ -238,7 +238,7 @@ public class gamePanel extends JPanel implements Runnable {
 
         public void mouseMoved(MouseEvent e) {
             if(gameState == titleState) {
-                int y = e.getY();
+                int y = e.getY();   // tọa độ con trỏ chuột đang ở.
 
                 int menuY = tileSize * 7;
                 int menuItemHeight = tileSize;
