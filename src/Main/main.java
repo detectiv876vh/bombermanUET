@@ -1,5 +1,7 @@
 package Main;
 
+import manager.DrawManager;
+
 import javax.swing.*;
 
 public class main {
@@ -8,9 +10,9 @@ public class main {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.setTitle("Bomberman");
-        
 
         gamePanel gamePanel = new gamePanel();
+        DrawManager drawManager = new DrawManager(gamePanel);  // Truyền gp vào DrawManager
         window.add(gamePanel);
         window.pack();
         window.setLocationRelativeTo(null);

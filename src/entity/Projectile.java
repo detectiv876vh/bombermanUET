@@ -5,8 +5,6 @@ import Main.gamePanel;
 public class Projectile extends Entity{
 
     public Entity user;
-    public int mapIndex;
-
 
     public Projectile(gamePanel gp) {
         super(gp);

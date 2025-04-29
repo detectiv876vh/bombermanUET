@@ -1,7 +1,5 @@
 package Main;
 
-import entity.NPC_Test;
-import monster.MON_Greenslime;
 import object.OBJ_Boots;
 import object.OBJ_Key;
 import object.OBJ_Door;
@@ -33,17 +31,5 @@ public class AssetSetter {
         gp.obj[mapNum][3] = new OBJ_Chest(gp);
         gp.obj[mapNum][3].worldX = 6* gp.tileSize;       //nhin o map vi tri dat door
         gp.obj[mapNum][3].worldY= 9* gp.tileSize;
-    }
-
-    public void setNPC() {
-        gp.npc[0] = new NPC_Test(gp);
-        gp.npc[0].worldX = gp.tileSize*3;
-        gp.npc[0].worldY = 16* gp.tileSize;
-    }
-
-    public void setMonster() {
-        gp.monster[0] = new MON_Greenslime(gp);
-        gp.monster[0].worldX = gp.tileSize*3;
-        gp.monster[0].worldY = 17* gp.tileSize;
     }
 }

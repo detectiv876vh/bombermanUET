@@ -3,11 +3,13 @@ package entity;
 import Main.KeyHandler;
 import Main.gamePanel;
 import manager.BombManager;
+import object.Bomb;
 
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Timer;
 
 public class Player extends Entity {
 
@@ -17,7 +19,6 @@ public class Player extends Entity {
     public final int screenX;
     public final int screenY;
     public int hasKey = 0; // so key co duoc khi nhat tren map
-    private BombManager bombManager;
     public boolean moving = false;
     public int pixelCounter = 0;
     int standCounter = 0;
@@ -36,8 +37,6 @@ public class Player extends Entity {
 
         setDefaultValues();
         getPlayerImage();
-
-        bombManager = new BombManager(gp, this);
 
     }
 
@@ -58,19 +57,19 @@ public class Player extends Entity {
     //gắn ảnh.
     public void getPlayerImage() {
 
-        up1 = setup("/player/boy_up_1");
-        up2 = setup("/player/boy_up_2");
-        down1 = setup("/player/boy_down_1");
-        down2 = setup("/player/boy_down_2");
-        left1 = setup("/player/boy_left_1");
-        left2 = setup("/player/boy_left_2");
-        right1 = setup("/player/boy_right_1");
-        right2 = setup("/player/boy_right_2");
+        up1 = setup("/entities/boy_up_1");
+        up2 = setup("/entities/boy_up_2");
+        down1 = setup("/entities/boy_down_1");
+        down2 = setup("/entities/boy_down_2");
+        left1 = setup("/entities/boy_left_1");
+        left2 = setup("/entities/boy_left_2");
+        right1 = setup("/entities/boy_right_1");
+        right2 = setup("/entities/boy_right_2");
     }
 
     public void update() {
 
-        if (moving == false) {
+        if(moving == false) {
             if (kH.upPressed || kH.downPressed || kH.leftPressed || kH.rightPressed) {
                 if (kH.upPressed) {
                     direction = "up";
@@ -92,26 +91,20 @@ public class Player extends Entity {
                 int objIndex = gp.checker.checkObject(this, true); //entity va boolean cua player
                 pickUpObject(objIndex);
 
-                // CHECK NPC COLLISION
-                int npcIndex = gp.checker.checkEntity(this, gp.npc);
-                interactNPC(npcIndex);
-                //CHECK MONSTER COLLISION
-                int monsterIndex = gp.checker.checkEntity(this, gp.monster);
-                contactMonster(monsterIndex);
-            } else {
+            }
+            else {
                 standCounter++;
-                if (standCounter == 12) {
+                if(standCounter == 12) {
                     spriteNum = 1;
                     standCounter = 0;
                 }
             }
         }
 
-        if (moving == true) {
-
+        if(moving == true) {
             //false thi di chuyen duoc:
-            if (!collisionOn) {
-                switch (direction) {
+            if(!collisionOn){
+                switch(direction){
                     case "up":
                         worldY -= speed;
                         break;
@@ -128,10 +121,10 @@ public class Player extends Entity {
             }
 
             spriteCounter++;
-            if (spriteCounter > 12) {
-                if (spriteNum == 1) {
+            if(spriteCounter > 12) {
+                if(spriteNum == 1) {
                     spriteNum = 2;
-                } else if (spriteNum == 2) {
+                }else if(spriteNum == 2) {
                     spriteNum = 1;
                 }
 
@@ -140,7 +133,7 @@ public class Player extends Entity {
 
             pixelCounter += speed;
 
-            if (pixelCounter >= 48) {
+            if(pixelCounter >= 48) {
                 moving = false;
                 pixelCounter = 0;
             }
@@ -148,33 +141,12 @@ public class Player extends Entity {
 
         // CHECK EVENT
         gp.eHandler.checkEvent();
-
         if (kH.spacePressed) {
             gp.bombManager.handleBombPlacement();
         }
 
-        if (teleportCooldown > 0) {
-            teleportCooldown--;
-        }
 
-
-        //ngoia cau lenh chinh giup khi nguoi choi dung im thi invincibleCountre van chay
-        if (invincible) {
-            invincibleCounter++;
-            if (invincibleCounter > 60) {
-                invincible = false;
-                invincibleCounter = 0;
-            }
-        }
-        if (life > maxLife) {
-            life = maxLife;
-        }
-
-        if (life <= 0) {
-            gp.gameState = gp.gameOverState;
-        }
     }
-
     public void pickUpObject(int i) {
 
         if(i != 999) {
@@ -182,7 +154,7 @@ public class Player extends Entity {
             String objectName = gp.obj[gp.currentMap][i].name;
 
             switch (objectName) {
-                case "Key":
+                case "Key" :
                     hasKey++;
                     gp.obj[gp.currentMap][i] = null;
                     System.out.println("Key: " + hasKey);
@@ -194,43 +166,10 @@ public class Player extends Entity {
                     }
                     System.out.println("Key: " + hasKey);
                     break;
-                case "Boots":
+                case "Boots" :
                     break;
-                case "Chest":
+                case "Chest" :
                     break;
-            }
-        }
-    }
-
-    public void interactNPC(int i) {
-        if(i != 999) {
-            System.out.println("you are hitting an npc");
-        }
-    }
-
-    public void contactMonster(int i) {          // giong voi interac
-        if(i != 999) {
-            if(invincible == false) {
-
-                invincible = true;
-                life -= 1;
-            }
-            System.out.println("tru " + 1 + "mau" + ", mau con "+life+"  nho xoa cai test nay di");
-
-        }
-
-    }
-
-    public void damegeMonter(int i) {
-        if(i != 999) {
-            if( gp.monster[i].invincible == false) {
-                gp.monster[i].life -= 1;
-                gp.monster[i].invincible = true;
-                gp.monster[i].damegeReaction();
-
-                if(gp.monster[i].life <= 0) {
-                    gp.monster[i].dying = true;
-                }
             }
         }
     }
@@ -296,17 +235,7 @@ public class Player extends Entity {
             y = gp.screenHeight - (gp.worldHeight - worldY);
         }
 
-        if(invincible) {
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));// ve trong suot
-        }
         g2d.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
-
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));// ve trong suot
-
-        //DEBUG
-//        g2d.setFont(new Font("Arial", Font.PLAIN, 26));
-//        g2d.setColor(Color.WHITE);
-//        g2d.drawString("Invincible: " + invincibleCounter + "(nho xoa)", 10, 400);
     }
 
 }

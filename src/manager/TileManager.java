@@ -1,7 +1,8 @@
-package tile;
+package manager;
 
 import Main.UtilityTool;
 import Main.gamePanel;
+import tile.Tile;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -52,22 +53,18 @@ public class TileManager {
     }
 
     //đặt
-    public void explodeTile(int worldX, int worldY) {
-        int col = worldX / gp.tileSize;
-        int row = worldY / gp.tileSize;
+    public void explodeTile(int tileX, int tileY) {
+        if (tileX < 0 || tileY < 0 || tileX >= gp.maxWorldCol || tileY >= gp.maxWorldRow) {
+            return;
+        }
 
-        if (col >= 0 && col < gp.maxWorldCol && row >= 0 && row < gp.maxWorldRow) {
-            int tileIndex = mapTileNum[gp.currentMap][col][row];
-
-            if(gp.currentMap == 0) {
-                if (tile[tileIndex].breakable) {
-                    mapTileNum[0][col][row] = 0; // Gán về tile nền
-                }
-            }
-            else if (gp.currentMap == 1) {
-                if (tile[tileIndex].breakable) {
-                    mapTileNum[1][col][row] = 4; // Gán về tile nền
-                }
+        int tileNum = mapTileNum[gp.currentMap][tileX][tileY];
+        if (tile[tileNum].breakable) {
+            // Thay đổi tùy theo map
+            if (gp.currentMap == 0) {
+                mapTileNum[gp.currentMap][tileX][tileY] = 0; // Gán về tile nền
+            } else if (gp.currentMap == 1) {
+                mapTileNum[gp.currentMap][tileX][tileY] = 4; // Gán về tile nền khác
             }
         }
     }

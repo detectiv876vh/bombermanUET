@@ -95,7 +95,6 @@ public class EventHandler {
         previousEventY = gp.player.worldY;
         canTouchEvent = false;
 
-        gp.kH.spacePressed = false;
         gp.player.moving = false;
         gp.player.pixelCounter = 0;
         gp.player.collisionOn = false;
