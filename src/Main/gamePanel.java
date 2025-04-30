@@ -5,6 +5,7 @@ import entity.Player;
 import manager.BombManager;
 import manager.DrawManager;
 import manager.TileManager;
+import object.Bomb;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicTreeUI;
@@ -82,7 +83,6 @@ public class gamePanel extends JPanel implements Runnable {
     public void setupGame() {
         gameState = titleState;
         aSetter.setObject();
-
         playMusic(0);
     }
 
@@ -126,6 +126,7 @@ public class gamePanel extends JPanel implements Runnable {
             bombManager.handleBombPlacement();
             bombManager.update();
 
+
             for (int i = 0; i < projectileList.size(); i++) {
                 if (projectileList.get(i) != null) {
                     if (projectileList.get(i).alive) {
@@ -137,6 +138,16 @@ public class gamePanel extends JPanel implements Runnable {
                 }
             }
 
+            // Cập nhật bomb - THÊM PHẦN NÀY
+            for (int i = 0; i < bombManager.bombList[currentMap].size(); i++) {
+                Bomb bomb = bombManager.bombList[currentMap].get(i);
+                if (bomb != null && bomb.alive) {
+                    bomb.update();
+                } else {
+                    bombManager.bombList[currentMap].remove(i);
+                    i--;
+                }
+            }
         }
 
         if(gameState == pauseState) {}
@@ -153,7 +164,6 @@ public class gamePanel extends JPanel implements Runnable {
         if(gameState == pauseState) {
             tileM.draw(g2);
             player.draw(g2);
-            player.draw(g2);//xoa cai tren thay bang cai nay
 
             entityList.add(player);
             for (int i = 0; i < projectileList.size(); i++) {
@@ -165,6 +175,13 @@ public class gamePanel extends JPanel implements Runnable {
             for (int i = 0; i < entityList.size(); i++) {
                 entityList.get(i).draw(g2);
             }
+
+            for (Entity bomb : bombManager.bombList[currentMap]) {
+                if (bomb != null && bomb.alive) {
+                    bomb.draw(g2);
+                }
+            }
+
             ui.draw(g2);
         }
 
@@ -189,6 +206,12 @@ public class gamePanel extends JPanel implements Runnable {
             for (int i = 0; i < projectileList.size(); i++) {
                 if(projectileList.get(i) != null) {
                     entityList.add(projectileList.get(i));
+                }
+            }
+
+            for (Entity bomb : bombManager.bombList[currentMap]) {
+                if (bomb != null && bomb.alive) {
+                    bomb.draw(g2);
                 }
             }
 

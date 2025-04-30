@@ -30,7 +30,7 @@ public class Projectile extends Entity{
 
         // đặt kiểm tra va chạm ở đây
         if (user == gp.player) {
-            gp.checker.checkTileProjectile(this);
+//            gp.checker.checkTileProjectile(this);
         }
 
         if (user != gp.player) {

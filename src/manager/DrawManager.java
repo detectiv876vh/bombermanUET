@@ -11,12 +11,9 @@ import java.io.IOException;
 public class DrawManager {
 
     gamePanel gp;
-    public int frameBomb = 0, intervalBomb = 7, indexAnimBomb = 0;
     public BufferedImage[] bombAnim;
     BufferedImage[] fontExplosion, rightExplosion, leftExplosion, upExplosion, downExplosion;
     public BufferedImage[] rightMiddleExplosion, leftMiddleExplosion, upMiddleExplosion, downMiddleExplosion;
-    int frameExplosion = 0;
-    public int intervalExplosion = 3;
     public int indexAnimExplosion = 0;
     BufferedImage view;
 
@@ -139,7 +136,7 @@ public class DrawManager {
 
             // Vẽ 4 hướng...
         } else {
-            g2.drawImage(bombAnim[indexAnimBomb], screenX, screenY, tileSize, tileSize, null);
+            g2.drawImage(bombAnim[bomb.currentFrame], screenX, screenY, tileSize, tileSize, null);
         }
     }
 

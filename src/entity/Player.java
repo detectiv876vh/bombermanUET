@@ -9,6 +9,7 @@ import object.Bomb;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Timer;
 
 public class Player extends Entity {
@@ -83,13 +84,23 @@ public class Player extends Entity {
 
                 moving = true;
 
+
+
                 //Check tile collision.
                 collisionOn = false;
                 gp.checker.checkTile(this);
 
+                    gp.checker.checkBomb(this);
+
+
                 // Kiem tra va cham vat the // check object collision
                 int objIndex = gp.checker.checkObject(this, true); //entity va boolean cua player
                 pickUpObject(objIndex);
+
+                // Bắt đầu di chuyển nếu không có va chạm
+                if (!collisionOn) {
+                    moving = true;
+                }
 
             }
             else {
@@ -239,5 +250,4 @@ public class Player extends Entity {
 
         g2d.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
     }
-
 }
