@@ -6,6 +6,7 @@ import manager.BombManager;
 import manager.DrawManager;
 import manager.TileManager;
 import object.Bomb;
+//import manager.ChemManager;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicTreeUI;
@@ -48,6 +49,7 @@ public class gamePanel extends JPanel implements Runnable {
     public Sound music = new Sound();
     public Sound se = new Sound();
     public UI ui = new UI(this);
+
     Thread gameThread;
     public AssetSetter aSetter = new AssetSetter(this);
     public CollisionChecker checker  = new CollisionChecker(this);
@@ -57,17 +59,23 @@ public class gamePanel extends JPanel implements Runnable {
     public Player player = new Player(this, kH);
     public ArrayList<Entity> entityList = new ArrayList<>();
     public ArrayList<Entity> projectileList = new ArrayList<>();
+    public Entity monster[][] = new Entity[maxMap][20];
+    public Entity npc[][] = new Entity[maxMap][10];           // so  npc co the co
     public Entity obj[][] = new Entity[maxMap][100];   // so item co the xuat hien tai o do
     public BombManager bombManager = new BombManager(this, player);
     public DrawManager drawManager = new DrawManager(this);
+//    public ChemManager chemManager = new ChemManager(this, player);
 
     //GAME STATE
     public int gameState;
     public final int titleState = 0;
     public final int playState = 1;
     public final int pauseState = 2;
-    private Graphics g;
+    public final int chemState = 3;
+    public final int gameOverState = 6;
+    public Graphics g;
     public Graphics2D g2d;
+
 
     public gamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -83,6 +91,8 @@ public class gamePanel extends JPanel implements Runnable {
     public void setupGame() {
         gameState = titleState;
         aSetter.setObject();
+        aSetter.setNPC();
+        aSetter.setMonster();
         playMusic(0);
     }
 
@@ -125,6 +135,7 @@ public class gamePanel extends JPanel implements Runnable {
             player.update();
             bombManager.handleBombPlacement();
             bombManager.update();
+//          chemManager.handleChem();
 
 
             for (int i = 0; i < projectileList.size(); i++) {
@@ -137,8 +148,16 @@ public class gamePanel extends JPanel implements Runnable {
                     }
                 }
             }
+            for (int i = 0; i < monster[currentMap].length; i++) {
+                if (monster[currentMap][i] != null) {
+                    if (monster[currentMap][i].alive && !monster[currentMap][i].dying) {
+                        monster[currentMap][i].update();
+                    } else if (!monster[currentMap][i].alive) {
+                        monster[i] = null;
+                    }
+                }
+            }
 
-            // Cập nhật bomb - THÊM PHẦN NÀY
             for (int i = 0; i < bombManager.bombList[currentMap].size(); i++) {
                 Bomb bomb = bombManager.bombList[currentMap].get(i);
                 if (bomb != null && bomb.alive) {
@@ -203,6 +222,10 @@ public class gamePanel extends JPanel implements Runnable {
             player.draw(g2);//xoa cai tren thay bang cai nay
 
             entityList.add(player);
+            for (int i = 0; i < monster[currentMap].length; i++) {
+                if (monster[currentMap][i] != null) entityList.add(monster[currentMap][i]);
+            }
+
             for (int i = 0; i < projectileList.size(); i++) {
                 if(projectileList.get(i) != null) {
                     entityList.add(projectileList.get(i));
@@ -214,7 +237,7 @@ public class gamePanel extends JPanel implements Runnable {
                     bomb.draw(g2);
                 }
             }
-
+            //DRAW ENTITIES
             for (int i = 0; i < entityList.size(); i++) {
                 entityList.get(i).draw(g2);
             }

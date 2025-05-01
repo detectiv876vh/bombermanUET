@@ -12,5 +12,6 @@ public class OBJ_Heart extends Entity {
         image = setup("/objects/heartfull");
         image2 = setup("/objects/hearthalf");
         image3 = setup("/objects/heartblank");
+
     }
 }

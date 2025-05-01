@@ -10,18 +10,22 @@ public class MON_Greenslime extends Entity {
     public MON_Greenslime(gamePanel gp) {
         super(gp);
 
+        this.gp = gp;
+
         type = 2;
         name = "GreenSlime"; // sua o day
         speed = 1;
-//        maxLife = 20;
-//        life = maxLife;
+        maxLife = 1;
+        life = maxLife;
+//        attack = 5;
+//        defense = 0;
 
         solidArea.x = 3;
         solidArea.y = 18;
         solidArea.width = 42;
         solidArea.height = 30;
-        solidAreaDefauftX =  solidArea.x;
-        solidAreaDefauftY =  solidArea.y;
+        solidAreaDefaultX =  solidArea.x;
+        solidAreaDefaultY =  solidArea.y;
 
         getImage();
     }
@@ -39,6 +43,9 @@ public class MON_Greenslime extends Entity {
     }
 
     public void setAction () {
+
+
+
         actionLockCounter++;
         if (actionLockCounter == 60) {
             String[] directions = {"up", "down", "left", "right"};
@@ -64,5 +71,9 @@ public class MON_Greenslime extends Entity {
     public void damageReaction() {
         actionLockCounter = 0;
         direction = gp.player.direction;
+
+        // Thêm 2 dòng sau để kích hoạt thanh máu
+        hpBarOn = true;
+        hpBarCounter = 0;
     }
 }

@@ -11,15 +11,18 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class Entity {
-
+    //STATE
     public gamePanel gp;
     public int worldX, worldY;
     public int speed;
+    boolean attacking = false;
 
     //LOAD IMAGE
     public BufferedImage up1, up2, up3, up4, down1, down2, down3, down4;
     public BufferedImage right1, right2, right3, right4, left1, left2, left3, left4;
-
+    public BufferedImage attackUp1,attackUp2,attackDown1,attackDown2,attackLeft1,attackLeft2,
+            attcackRight1,attcackRight2;
+    public BufferedImage image, image2, image3;
     public String direction = "down";
 
     //COUNTER
@@ -28,28 +31,42 @@ public class Entity {
     public int shotAvailableCounter = 0;
 
     public int spriteNum = 1;
+    public int dyingCounter = 0;
+    public int hpBarCounter = 0;
+//    public int actionLockCounter = 0;
+    public int invincibleCounter = 0;
+    public static final int type_consumable = 6;
+    public boolean stackable = false;
+    // =============SHIELD==================
+    public boolean shieldActive = false;
+    public int shieldCounter = 0;
+    public final int shieldDuration = 300;
+
+
     //HITBOX:
     public Rectangle solidArea;
 
     public int solidAreaDefauftX, solidAreaDefauftY;
     public boolean collisionOn = false;
 
-    public BufferedImage image, image2, image3;
     public String name;
     public boolean collision = false;
-    public int type;
+    public int type;         // player =0;;; npc =1.,,,2 = monster
+
 
     //Character status
     public int maxLife;
     public int life;
-    public boolean invincible = false;
-    public int invincibleCounter;
+    public boolean invincible = false; //giu nguoi choi mien nhiem sau khi nhan sat thuong
+
 
     //OBJECTS
     public Projectile projectileUp, projectileDown, projectileLeft, projectileRight, bomb;
 
     // ENTITY STATUS
+    public boolean hpBarOn = false;
     public boolean alive = true;
+    public boolean dying = false;
     public int bombCount;
     public int bombXpos, bombYpos;
     public int solidAreaDefaultX;
@@ -71,6 +88,8 @@ public class Entity {
     public void checkCollision() {
         collision = false;
         gp.checker.checkTile(this);
+        gp.checker.checkEntity(this, gp.npc);
+        gp.checker.checkEntity(this, gp.monster);
     }
 
     //UPDATE FPS
@@ -80,7 +99,19 @@ public class Entity {
 
         checkCollision();
 
-        if (collisionOn == false) {
+        boolean contactPlayer = gp.checker.checkPlayer(this);
+
+
+        if(this.type == 2 && contactPlayer) {
+            if(gp.player.invincible == false) {             //loi
+                //can give dame
+                gp.player.life -=1;
+                gp.player.invincible = true;
+            }
+        }
+
+        //neu ko co gi chan thi di tiep
+        if (!collisionOn) {
             switch (direction) {
                 case "up":
                     worldY -= speed;
@@ -105,6 +136,14 @@ public class Entity {
                 spriteNum = 1;
             }
             spriteCounter = 0;
+        }
+
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter > 60) { // Giả sử thời gian invincible là 60 frame (1 giây)
+                invincible = false;
+                invincibleCounter = 0;
+            }
         }
     }
 
@@ -165,6 +204,38 @@ public class Entity {
                 break;
         }
 
+        if (invincible == true) {
+            hpBarOn = true;
+            hpBarCounter = 0;
+            changAlpha(g2, 0.4f);
+        }else {
+            changAlpha(g2, 1.0f);
+        }
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        if (dying == true) {
+            dyingAnimation(g2);
+        }
+
+        //MONSTRE HP BAR
+        if (type == 2 && hpBarOn) {
+
+            double oneScale = (double) gp.tileSize / maxLife;
+            double hpBarValue = oneScale * life;
+
+            g2.setColor(new Color(35, 35, 35));
+            g2.fillRect(screenX - 1, screenY - 16, gp.tileSize + 2, 12);
+
+            g2.setColor(new Color(255, 0, 30));
+            g2.fillRect(screenX, screenY - 15, (int) hpBarValue, 10);   //(int)hpBarValue se thay cho gp.tileSize
+
+            hpBarCounter++;
+
+            if (hpBarCounter > 600) {
+                hpBarCounter = 0;
+                hpBarOn = false;
+            }
+        }
+
         if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
                 worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
                 worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
@@ -179,6 +250,36 @@ public class Entity {
             g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
         }
     }
+    //ANIMATION LUC MONSTER CHET
+    public void dyingAnimation(Graphics2D g2) {
+        dyingCounter++;
+        int i=5;
+
+        if(dyingCounter <= i) {changAlpha(g2,0f);}
+
+        if(dyingCounter > i && dyingCounter <= 2*i) {changAlpha(g2,1f);}
+
+        if(dyingCounter > 2*i && dyingCounter <= 3*i) {changAlpha(g2,0f);}
+
+        if(dyingCounter > 3*i && dyingCounter <= 4*i) {changAlpha(g2,1f);}
+
+        if(dyingCounter > 4*i && dyingCounter <= 5*i) {changAlpha(g2,0f);}
+
+        if(dyingCounter > 5*i && dyingCounter <= 6*i) {changAlpha(g2,1f);}
+
+        if(dyingCounter > 6*i && dyingCounter <= 7*i) {changAlpha(g2,0f);}
+
+        if(dyingCounter > 7*i && dyingCounter <= 8*i) {changAlpha(g2,1f);}
+
+        if(dyingCounter > 8*i) {
+            dying = false;
+            alive = false;
+        }
+    }
+
+    public void changAlpha(Graphics2D g2, float alphaValue) {
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
+    }
 
     public BufferedImage setup(String imagePath) {
 
@@ -192,5 +293,16 @@ public class Entity {
             e.printStackTrace();
         }
         return image;
+    }
+    public Rectangle getHitbox() {
+        return new Rectangle(
+                worldX + solidArea.x,
+                worldY + solidArea.y,
+                solidArea.width,
+                solidArea.height
+        );
+    }
+
+    protected void damageReaction() {
     }
 }

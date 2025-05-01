@@ -2,6 +2,7 @@ package entity;
 
 import Main.gamePanel;
 
+import java.awt.*;
 import java.util.Random;
 
 public class NPC_Test extends Entity{
@@ -31,28 +32,10 @@ public class NPC_Test extends Entity{
     }
 
     public void setAction() {
-        actionLockCounter++;
-        //BẢN TRƯỚC KHI UPDATE
-//        if (actionLockCounter == 60) {
-//            Random random = new Random();
-//            int i = random.nextInt(100) + 1; // +1 de no chay tu 1 den 100 thay vi 0 ddeens 99
-//
-//            if(i <= 25) {
-//                direction = "up";
-//            }
-//            if(i > 25 && i <= 50) {
-//                direction = "down";
-//            }
-//            if(i > 50 && i <= 75) {
-//                direction = "right";
-//            }
-//            if(i > 75 && i <= 100) {
-//                direction = "left";
-//            }
-//        actionLockCounter = 0;
-//        }
-
-        // BẢN SAU UPDATE DO DŨNGGGG
+            actionLockCounter++;
+            int goalCol = (gp.player.worldX + gp.player.solidArea.x) / gp.tileSize;
+            int goalRow = (gp.player.worldY + gp.player.solidArea.y) / gp.tileSize;
+            // BẢN SAU UPDATE DO DŨNGGGG
         if (actionLockCounter == 60) {
             String[] directions = {"up", "down", "left", "right"};
             Random random = new Random();
@@ -61,9 +44,9 @@ public class NPC_Test extends Entity{
                 String tryDir = directions[random.nextInt(4)];
                 direction = tryDir;
 
-                // Thử check va chạm tại hướng này
                 collisionOn = false;
                 gp.checker.checkTile(this);
+
 
                 if (!collisionOn) {
                     break; // nếu không va chạm thì dùng hướng này
