@@ -40,7 +40,6 @@ public class Bomb extends Projectile {
         if (this.drawManager != null) {
             getImage();
         }
-        maxLife = explosionLife; // thời gian sống sau khi nổ
     }
 
     public void getImage() {

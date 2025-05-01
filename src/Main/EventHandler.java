@@ -103,5 +103,6 @@ public class EventHandler {
         gp.player.spriteCounter = 0;
         gp.player.direction = "down";
         gp.player.teleportCooldown = 30;
+        gp.kH.spacePressed = false;
     }
 }

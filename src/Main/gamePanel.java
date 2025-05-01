@@ -30,10 +30,10 @@ public class gamePanel extends JPanel implements Runnable {
     public final int screenHeight = tileSize * maxScreenRow; // 576 pixels: Chiều rộng (đơn vị pixel)
 
     // WORLD SETTINGS
-    public int WIDTH = (tileSize * scale) * 50;
-    public int HEIGHT = (tileSize * scale) * 50;
-    public final int maxWorldCol = 50;
-    public final int maxWorldRow = 50;
+    public final int maxWorldCol = 30;
+    public final int maxWorldRow = 30;
+    public int WIDTH = (tileSize * scale) * maxWorldCol;
+    public int HEIGHT = (tileSize * scale) * maxWorldRow;
     public final int worldWidth = tileSize * maxWorldCol;   // Chiều dài bản đồ
     public final int worldHeight = tileSize * maxWorldRow;  // Chiều rộng bản đồ
     public final int maxMap = 10; // Tổng số map

@@ -61,7 +61,7 @@ public class MON_Greenslime extends Entity {
         }
     }
 
-    public void damegeReaction() {
+    public void damageReaction() {
         actionLockCounter = 0;
         direction = gp.player.direction;
     }
