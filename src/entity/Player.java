@@ -19,10 +19,11 @@ public class Player extends Entity {
 
     KeyHandler kH;
     private Graphics2D g2d;
-    public int maxBombs = 1;            //bom co ban =1
+    public int maxBombs = 1;            //bom co ban = 1
 
     public final int screenX;
     public final int screenY;
+    public int hasBomb = maxBombs;
     public int hasKey = 0; // so key co duoc khi nhat tren map
     public int hasBoost = 0;
 //    private ChemManager chemManager;
@@ -185,6 +186,7 @@ public class Player extends Entity {
         gp.eHandler.checkEvent();
         if (kH.spacePressed) {
             gp.bombManager.handleBombPlacement();
+            gp.kH.spacePressed = false;
         }
 
         if(attackCooldown > 0) {
@@ -282,6 +284,7 @@ public class Player extends Entity {
                     break;
                 case "bombItem":
                     maxBombs ++;
+                    hasBomb = maxBombs;
                     gp.obj[gp.currentMap][i] = null;
                     break;
                 case "heartItem" :

@@ -164,6 +164,7 @@ public class gamePanel extends JPanel implements Runnable {
                     bomb.update();
                 } else {
                     bombManager.bombList[currentMap].remove(i);
+                    player.hasBomb ++;
                     i--;
                 }
             }
