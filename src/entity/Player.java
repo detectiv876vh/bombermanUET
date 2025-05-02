@@ -274,6 +274,7 @@ public class Player extends Entity {
                     System.out.println("Key: " + hasKey);
                     break;
                 case "Boost":
+                    gp.playSE(1);
                     if(hasBoost <2 ) {
                         hasBoost++;
                         speed +=2;
@@ -283,15 +284,18 @@ public class Player extends Entity {
                 case "Chest":
                     break;
                 case "bombItem":
+                    gp.playSE(1);
                     maxBombs ++;
                     hasBomb = maxBombs;
                     gp.obj[gp.currentMap][i] = null;
                     break;
                 case "heartItem" :
+                    gp.playSE(1);
                     life += 1;
                     gp.obj[gp.currentMap][i] = null;
                     break;
                 case "Shield":
+                    gp.playSE(1);
                     shieldActive = true;
                     shieldCounter = 0;
                     gp.obj[gp.currentMap][i] = null;
@@ -308,20 +312,14 @@ public class Player extends Entity {
             }
         }
 
-        public void contactMonster ( int i){          // giong voi interac
-            if (i != 999) {
-                if (invincible == false) {
-                    invincible = true;
-                    life -= 1;
-                }
+        public void contactMonster (int i) {          // giong voi interact
+            if (invincible == false && !shieldActive) {
+                invincible = true;
+                life -= 1;
                 System.out.println("tru " + 1 + "mau" + ", mau con " + life + "  nho xoa cai test nay di");
-                if (!shieldActive) {
-                    invincible = true;
-                    life -= 1;
-                    System.out.println("Took damage! Life: " + life);
-                }
+                System.out.println("Took damage! Life: " + life);
             }
-    }
+        }
 //        public void damageMonster (int i){
 //            if (i != 999 && gp.monster[i] != null) {
 //                if (gp.monster[i].invincible == false) {
@@ -442,5 +440,4 @@ public class Player extends Entity {
 //        g2d.setColor(new Color(255, 0, 0, 100));
 //        g2d.fillRect(attackScreenX, attackScreenY, gp.tileSize, gp.tileSize);
 //    }
-
 }

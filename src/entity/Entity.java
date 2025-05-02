@@ -89,6 +89,7 @@ public class Entity {
     public void checkCollision() {
         collision = false;
         gp.checker.checkTile(this);
+        gp.checker.checkBomb(this);
         gp.checker.checkEntity(this, gp.npc);
         gp.checker.checkEntity(this, gp.monster);
     }
