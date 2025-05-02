@@ -60,8 +60,8 @@ public class Player extends Entity {
         direction = "down";
 
         //PLAYER STATUS
-        maxLife = 100;               //sua lai sau khi test game
-        life = 100;
+        maxLife = 20;               //sua lai sau khi test game
+        life = maxLife - 4;
 
     }
 
@@ -97,7 +97,7 @@ public class Player extends Entity {
 //        gp.checker.checkEntity(this, gp.npc);
 //        gp.checker.checkEntity(this, gp.monster);
 
-        if (moving == false) {
+        if (!moving) {
 //            if (attacking) {
 ////                attacking();
 //            } else
@@ -161,6 +161,7 @@ public class Player extends Entity {
                 }
             }
             gp.kH.qPressed = false;
+
             spriteCounter++;
             if (spriteCounter > 12) {
                 if (spriteNum == 1) {

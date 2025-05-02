@@ -3,6 +3,7 @@ package monster;
 import Main.gamePanel;
 import entity.Entity;
 
+import java.awt.*;
 import java.util.Random;
 
 public class MON_Greenslime extends Entity {
@@ -14,18 +15,13 @@ public class MON_Greenslime extends Entity {
 
         type = 2;
         name = "GreenSlime"; // sua o day
-        speed = 1;
+        speed = 4;
         maxLife = 1;
         life = maxLife;
 //        attack = 5;
 //        defense = 0;
 
-        solidArea.x = 3;
-        solidArea.y = 18;
-        solidArea.width = 42;
-        solidArea.height = 30;
-        solidAreaDefaultX =  solidArea.x;
-        solidAreaDefaultY =  solidArea.y;
+        solidArea = new Rectangle(4, 4, 40, 40);
 
         getImage();
     }

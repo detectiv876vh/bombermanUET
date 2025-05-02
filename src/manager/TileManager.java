@@ -2,6 +2,8 @@ package manager;
 
 import Main.UtilityTool;
 import Main.gamePanel;
+import entity.Entity;
+import object.*;
 import tile.Tile;
 
 import javax.imageio.ImageIO;
@@ -10,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Random;
 
 public class TileManager {
     gamePanel gp;
@@ -66,9 +69,50 @@ public class TileManager {
             } else if (gp.currentMap == 1) {
                 mapTileNum[gp.currentMap][tileX][tileY] = 4; // Gán về tile nền khác
             }
+
+            //random tỉ lệ rơi items
+            maybeDropItem(tileX, tileY);
         }
     }
 
+    public void maybeDropItem(int tileX, int tileY) {
+        Random rand = new Random();
+        int chance = rand.nextInt(100); // 0 - 99
+
+        // 35% cơ hội rơi item
+        if (chance < 35) {
+            int itemType = rand.nextInt(4); // 0 - 3
+            Entity item = null;
+
+            switch (itemType) {
+                case 0:
+                    item = new OBJ_HeartItem(gp);
+                    break;
+                case 1:
+                    item = new OBJ_Boost(gp);
+                    break;
+                case 2:
+                    item = new OBJ_Bomb(gp);
+                    break;
+                case 3:
+                    item = new OBJ_Shield(gp);
+                    break;
+            }
+
+            if (item != null) {
+                item.worldX = tileX * gp.tileSize;
+                item.worldY = tileY * gp.tileSize;
+
+                // Đặt vào mảng object của map hiện tại (tìm chỗ trống)
+                for (int i = 0; i < gp.obj[gp.currentMap].length; i++) {
+                    if (gp.obj[gp.currentMap][i] == null) {
+                        gp.obj[gp.currentMap][i] = item;
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
     public void loadMap(String filePath, int map) {
         try {

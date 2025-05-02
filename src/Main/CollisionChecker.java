@@ -205,7 +205,7 @@ public class CollisionChecker {
                 // lay vi tri solidarea cua object
                 target[gp.currentMap][i].solidArea.x = target[gp.currentMap][i].worldX + target[gp.currentMap][i].solidArea.x;
                 target[gp.currentMap][i].solidArea.y = target[gp.currentMap][i].worldY + target[gp.currentMap][i].solidArea.y;
-                
+
 
                 switch (entity.direction) {
                     case "up":
@@ -226,7 +226,7 @@ public class CollisionChecker {
                         entity.collisionOn = true;
                         index = i;
                     }
-                }
+                } 
                 //khong cho x va y tang lien tuc
                 entity.solidArea.x = entity.solidAreaDefaultX;
                 entity.solidArea.y = entity.solidAreaDefaultY;

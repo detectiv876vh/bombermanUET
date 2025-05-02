@@ -29,6 +29,7 @@ public class Entity {
     public int actionLockCounter = 0;
     public int spriteCounter = 0;
     public int shotAvailableCounter = 0;
+    public int pixelCounter = 0;
 
     public int spriteNum = 1;
     public int dyingCounter = 0;
@@ -101,7 +102,6 @@ public class Entity {
 
         boolean contactPlayer = gp.checker.checkPlayer(this);
 
-
         if(this.type == 2 && contactPlayer) {
             if(gp.player.invincible == false) {             //loi
                 //can give dame
@@ -136,6 +136,13 @@ public class Entity {
                 spriteNum = 1;
             }
             spriteCounter = 0;
+
+        }
+
+        pixelCounter += speed;
+
+        if (pixelCounter >= 48) {
+            pixelCounter = 0;
         }
 
         if (invincible) {
