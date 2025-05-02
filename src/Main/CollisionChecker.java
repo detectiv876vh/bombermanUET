@@ -213,12 +213,14 @@ public class CollisionChecker {
                         entity.solidArea.y -= entity.speed;
                         break;
                     case "down":
-                        entity.solidArea.y += entity.speed;break;
+                        entity.solidArea.y += entity.speed;
+                        break;
                     case "left":
                         entity.solidArea.x -= entity.speed;
                         break;
                     case "right":
-                        entity.solidArea.x += entity.speed;                         break;
+                        entity.solidArea.x += entity.speed;
+                        break;
                 }
                 if (entity.solidArea.intersects(target[i].solidArea)) { //kiem tra va cham
                     if(target[i] != entity) {
@@ -233,6 +235,8 @@ public class CollisionChecker {
                 target[i].solidArea.y = target[i].solidAreaDefaultY;
             }
         }
+
         return index;
     }
+
 }

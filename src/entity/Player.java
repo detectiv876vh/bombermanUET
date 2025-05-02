@@ -216,7 +216,7 @@ public class Player extends Entity {
         //ngoia cau lenh chinh giup khi nguoi choi dung im thi invincibleCountre van chay
         if (invincible) {
             invincibleCounter++;
-            if (invincibleCounter > 60) {
+            if (invincibleCounter > 300) {
                 invincible = false;
                 invincibleCounter = 0;
             }
@@ -297,12 +297,7 @@ public class Player extends Entity {
 
         public void contactMonster ( int i){          // giong voi interac
             if (i != 999) {
-                if (invincible == false) {
-                    invincible = true;
-                    life -= 1;
-                }
-                System.out.println("tru " + 1 + "mau" + ", mau con " + life + "  nho xoa cai test nay di");
-                if (!shieldActive) {
+                if (!invincible && !shieldActive) {
                     invincible = true;
                     life -= 1;
                     System.out.println("Took damage! Life: " + life);
@@ -399,7 +394,7 @@ public class Player extends Entity {
 
             if(invincible) {
                 // Nhấp nháy mỗi 10 frames
-                if(invincibleCounter % 10 >= 5) {
+                if(invincibleCounter % 17 >= 5) {
                     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
                 }
             }

@@ -26,6 +26,7 @@ public class Entity {
     public String direction = "down";
 
     //COUNTER
+    protected int moveCounter = 0;
     public int spriteCounter = 0;
     public int shotAvailableCounter = 0;
     public int spriteNum = 1;
@@ -39,6 +40,8 @@ public class Entity {
     public boolean shieldActive = false;
     public int shieldCounter = 0;
     public final int shieldDuration = 300;
+    public boolean moving = false;
+    public int pixelCounter = 0;
 
 
     //HITBOX:
@@ -82,7 +85,7 @@ public class Entity {
 
     //Kiểm tra va chạm với tường, quái, vật thể:
     public void checkCollision() {
-        collision = false;
+//        collision = false;
         gp.checker.checkTile(this);
     }
 
@@ -96,6 +99,13 @@ public class Entity {
         gp.checker.checkEntity(this, gp.monster);
         boolean contactPlayer = gp.checker.checkPlayer(this);
         checkCollision();
+        if (moving) {
+            pixelCounter += speed;
+            if (pixelCounter >= 48) {
+                moving = false;
+                pixelCounter = 0;
+            }
+        }
 
         if(this.type == 2 && contactPlayer) {
             if(gp.player.invincible == false) {             //loi
