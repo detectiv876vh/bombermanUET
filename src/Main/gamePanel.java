@@ -17,7 +17,7 @@ import java.awt.event.MouseAdapter;
 
 public class gamePanel extends JPanel implements Runnable {
 
-    // TILE STATE
+    // TILE STATE (MOUSE)
     public MouseHandler mouseH = new MouseHandler();
 
     //SCREEN SETTINGS
