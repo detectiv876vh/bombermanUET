@@ -104,5 +104,6 @@ public class EventHandler {
         gp.player.direction = "down";
         gp.player.teleportCooldown = 30;
         gp.kH.spacePressed = false;
+        gp.player.hasBomb = gp.player.maxBombs;
     }
 }
