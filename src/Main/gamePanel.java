@@ -2,6 +2,8 @@ package Main;
 
 import entity.Entity;
 import entity.Player;
+import environment.EnvironmentManager;
+import environment.Lighting;
 import manager.BombManager;
 import manager.DrawManager;
 import manager.TileManager;
@@ -49,6 +51,7 @@ public class gamePanel extends JPanel implements Runnable {
     public Sound music = new Sound();
     public Sound se = new Sound();
     public UI ui = new UI(this);
+    public EnvironmentManager eManager = new EnvironmentManager(this);
 
     Thread gameThread;
     public AssetSetter aSetter = new AssetSetter(this);
@@ -94,6 +97,7 @@ public class gamePanel extends JPanel implements Runnable {
         aSetter.setNPC();
         aSetter.setMonster();
 //        playMusic(0);
+        eManager.setup();
     }
 
     public void startGameThread() {
@@ -201,7 +205,7 @@ public class gamePanel extends JPanel implements Runnable {
                     bomb.draw(g2);
                 }
             }
-
+            // UI
             ui.draw(g2);
         }
 
@@ -247,7 +251,12 @@ public class gamePanel extends JPanel implements Runnable {
             entityList.clear();
         }
 
+        // ENVIRONMENT
+        eManager.draw(g2);
+
+        // UI
         ui.draw(g2);
+
         g2.dispose();
 
     }
