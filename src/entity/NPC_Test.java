@@ -5,8 +5,8 @@ import Main.gamePanel;
 import java.awt.*;
 import java.util.Random;
 
-public class NPC_Test extends Entity {
-    int pixelCounter = 0;
+public class NPC_Test extends Entity{
+
     public NPC_Test(gamePanel gp) {
         super(gp);
 
@@ -15,7 +15,6 @@ public class NPC_Test extends Entity {
 
         getImage();
     }
-
     public void getImage() {
 
         up1 = setup("/npc/testsau1");
@@ -33,55 +32,28 @@ public class NPC_Test extends Entity {
     }
 
     public void setAction() {
-        // Nếu đang di chuyển mà chưa đủ 48 pixel thì không chọn hướng mới
-        if (pixelCounter < gp.tileSize) {
-            return;
-        }
+            actionLockCounter++;
+            int goalCol = (gp.player.worldX + gp.player.solidArea.x) / gp.tileSize;
+            int goalRow = (gp.player.worldY + gp.player.solidArea.y) / gp.tileSize;
+            // BẢN SAU UPDATE DO DŨNGGGG
+        if (actionLockCounter == 60) {
+            String[] directions = {"up", "down", "left", "right"};
+            Random random = new Random();
 
-        // Khi đã đi đủ 1 ô, chọn hướng mới
-        String[] directions = {"up", "down", "left", "right"};
-        Random random = new Random();
+            for (int i = 0; i < 4; i++) {
+                String tryDir = directions[random.nextInt(4)];
+                direction = tryDir;
 
-        for (int i = 0; i < 4; i++) {
-            String tryDir = directions[random.nextInt(4)];
-            direction = tryDir;
+                collisionOn = false;
+                gp.checker.checkTile(this);
+                gp.checker.checkPlayer(this);
 
-            collisionOn = false;
-            gp.checker.checkTile(this);
-
-            if (!collisionOn) {
-                break;
+                if (!collisionOn) {
+                    break; // nếu không va chạm thì dùng hướng này
+                }
             }
-        }
 
-        pixelCounter = 0;
+            actionLockCounter = 0;
+        }
     }
-
-    public void update() {
-        setAction();
-
-        collisionOn = false;
-        gp.checker.checkTile(this);
-
-        if (gp.checker.checkPlayer(this)) {
-            collisionOn = true;
-        }
-
-
-        if (!collisionOn) {
-            switch (direction) {
-                case "up": worldY -= speed; break;
-                case "down": worldY += speed; break;
-                case "left": worldX -= speed; break;
-                case "right": worldX += speed; break;
-            }
-            pixelCounter += speed;
-        } else {
-            // Nếu va chạm, chọn hướng khác
-            pixelCounter = gp.tileSize; // ép gọi setAction lại
-        }
-
-    }
-
 }
-

@@ -2,13 +2,12 @@ package entity;
 
 import Main.UtilityTool;
 import Main.gamePanel;
-import manager.DrawManager;
-import object.Bomb;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.UUID;
 
 public class Entity {
     //STATE
@@ -17,6 +16,7 @@ public class Entity {
     public int speed;
     boolean attacking = false;
 
+
     //LOAD IMAGE
     public BufferedImage up1, up2, up3, up4, down1, down2, down3, down4;
     public BufferedImage right1, right2, right3, right4, left1, left2, left3, left4;
@@ -24,7 +24,7 @@ public class Entity {
             attcackRight1,attcackRight2;
     public BufferedImage image, image2, image3;
     public String direction = "down";
-
+    public String positionId;
     //COUNTER
     protected int moveCounter = 0;
     public int spriteCounter = 0;
@@ -74,7 +74,7 @@ public class Entity {
 
     public Entity(gamePanel gp) {
         this.gp = gp;
-
+        this.positionId = UUID.randomUUID().toString();
         //so-called hitbox:
         solidArea = new Rectangle(0, 0, 48, 48);
 
@@ -94,6 +94,10 @@ public class Entity {
 
         setAction();
         collision = false;
+        //truoc di chuyen
+        int oldX = worldX;
+        int oldY = worldY;
+        // Kiểm tra va chạm theo thứ tự ưu tiên
         gp.checker.checkTile(this);
         gp.checker.checkEntity(this, gp.npc);
         gp.checker.checkEntity(this, gp.monster);
@@ -305,7 +309,6 @@ public class Entity {
                 solidArea.height
         );
     }
-
     protected void damageReaction() {
     }
 }
