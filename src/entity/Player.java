@@ -19,6 +19,7 @@ public class Player extends Entity {
 
     KeyHandler kH;
     private Graphics2D g2d;
+
     public int maxBombs = 1;            //bom co ban = 1
 
     public final int screenX;
