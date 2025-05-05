@@ -5,10 +5,11 @@ import Main.gamePanel;
 import manager.DrawManager;
 import object.Bomb;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
+    import javax.imageio.ImageIO;
+    import java.awt.*;
+    import java.awt.image.BufferedImage;
+    import java.io.IOException;
+    import java.util.UUID;
 
 public class Entity {
     //STATE
@@ -41,37 +42,43 @@ public class Entity {
     // =============SHIELD==================
     public boolean shieldActive = false;
     public int shieldCounter = 0;
+    public boolean moving = false;
     public final int shieldDuration = 300;
 
 
+        public String positionId;
+        //COUNTER
+        protected int moveCounter = 0;
+
+
     //HITBOX:
-    public Rectangle solidArea;
+    public Rectangle solidArea; //cho all entity
 
     public int solidAreaDefauftX, solidAreaDefauftY;
     public boolean collisionOn = false;
 
-    public String name;
-    public boolean collision = false;
-    public int type;         // player =0;;; npc =1.,,,2 = monster
+        public String name;
+        public boolean collision = false;
+        public int type;         // player =0;;; npc =1.,,,2 = monster
 
 
-    //Character status
-    public int maxLife;
-    public int life;
-    public boolean invincible = false; //giu nguoi choi mien nhiem sau khi nhan sat thuong
+        //Character status
+        public int maxLife;
+        public int life;
+        public boolean invincible = false; //giu nguoi choi mien nhiem sau khi nhan sat thuong
 
 
-    //OBJECTS
-    public Projectile projectileUp, projectileDown, projectileLeft, projectileRight, bomb;
+        //OBJECTS
+        public Projectile projectileUp, projectileDown, projectileLeft, projectileRight, bomb;
 
-    // ENTITY STATUS
-    public boolean hpBarOn = false;
-    public boolean alive = true;
-    public boolean dying = false;
-    public int bombCount;
-    public int bombXpos, bombYpos;
-    public int solidAreaDefaultX;
-    public int solidAreaDefaultY;
+        // ENTITY STATUS
+        public boolean hpBarOn = false;
+        public boolean alive = true;
+        public boolean dying = false;
+        public int bombCount;
+        public int bombXpos, bombYpos;
+        public int solidAreaDefaultX;
+        public int solidAreaDefaultY;
 
 
     public Entity(gamePanel gp) {
@@ -80,10 +87,13 @@ public class Entity {
         //so-called hitbox:
         solidArea = new Rectangle(0, 0, 48, 48);
 
+        this.positionId = UUID.randomUUID().toString();
+
+
     }
 
-    public void setAction() {
-    }
+        public void setAction() {
+        }
 
     //Kiểm tra va chạm với tường, quái, vật thể:
     public void checkCollision() {
@@ -94,14 +104,22 @@ public class Entity {
         gp.checker.checkEntity(this, gp.monster);
     }
 
-    //UPDATE FPS
-    public void update() {
+        //UPDATE FPS
+        public void update() {
 
         setAction();
 
         checkCollision();
 
         boolean contactPlayer = gp.checker.checkPlayer(this);
+            checkCollision();
+            if (moving) {
+                pixelCounter += speed;
+                if (pixelCounter >= 48) {
+                    moving = false;
+                    pixelCounter = 0;
+                }
+            }
 
         if(this.type == 2 && contactPlayer) {
             if(gp.player.invincible == false) {             //loi
@@ -293,6 +311,20 @@ public class Entity {
 
     public void changAlpha(Graphics2D g2, float alphaValue) {
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
+    }
+
+    public BufferedImage setup_obj(String imagePath) {
+
+        UtilityTool uTool = new UtilityTool();
+        BufferedImage image = null;
+
+        try {
+            image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
+            image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
     }
 
     public BufferedImage setup(String imagePath) {

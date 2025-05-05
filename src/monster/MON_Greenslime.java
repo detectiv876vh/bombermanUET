@@ -2,32 +2,38 @@ package monster;
 
 import Main.gamePanel;
 import entity.Entity;
+import object.Bomb;
 
 import java.awt.*;
 import java.util.Random;
 
 public class MON_Greenslime extends Entity {
+    private final AI ai;
 
     public MON_Greenslime(gamePanel gp) {
         super(gp);
-
         this.gp = gp;
 
         type = 2;
-        name = "GreenSlime"; // sua o day
-        speed = 4;
-        maxLife = 1;
+        name = "GreenSlime";
+        speed = 2;
+        maxLife = 3;
         life = maxLife;
-//        attack = 5;
-//        defense = 0;
 
-        solidArea = new Rectangle(4, 4, 40, 40);
+        solidArea.x = 3;
+        solidArea.y = 18;
+        solidArea.width = 42;
+        solidArea.height = 30;
+        solidAreaDefaultX = solidArea.x;
+        solidAreaDefaultY = solidArea.y;
 
         getImage();
+
+        // Khởi tạo AI
+        ai = new AI(this, gp);
     }
 
-
-    public void getImage () {
+    public void getImage() {
         up1 = setup("/monster/5");
         up2 = setup("/monster/9");
         down1 = setup("/monster/9");
@@ -38,37 +44,24 @@ public class MON_Greenslime extends Entity {
         right2 = setup("/monster/right2");
     }
 
-    public void setAction () {
+    public void setAction() {
+        ai.updateAI(); // Gọi logic AI
+    }
 
+    public void update() {
+        super.update();
 
-
-        actionLockCounter++;
-        if (actionLockCounter == 60) {
-            String[] directions = {"up", "down", "left", "right"};
-            Random random = new Random();
-
-            for (int i = 0; i < 4; i++) {
-                String tryDir = directions[random.nextInt(4)];
-                direction = tryDir;
-
-                // Thử check va chạm tại hướng này
-                collisionOn = false;
-                gp.checker.checkTile(this);
-
-                if (!collisionOn) {
-                    break; // nếu không va chạm thì dùng hướng này
-                }
+        if (moving) {
+            pixelCounter += speed;
+            if (pixelCounter >= 48) {
+                moving = false;
+                pixelCounter = 0;
             }
-
-            actionLockCounter = 0;
         }
     }
 
     public void damageReaction() {
-        actionLockCounter = 0;
         direction = gp.player.direction;
-
-        // Thêm 2 dòng sau để kích hoạt thanh máu
         hpBarOn = true;
         hpBarCounter = 0;
     }

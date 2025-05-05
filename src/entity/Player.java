@@ -18,9 +18,8 @@ import java.util.Random;
 public class Player extends Entity {
 
     KeyHandler kH;
-    private Graphics2D g2d;
-
-    public int maxBombs = 1;            //bom co ban = 1
+    public Graphics2D g2d;
+    public int maxBombs = 1;            //bom co ban =1
 
     public final int screenX;
     public final int screenY;
@@ -33,9 +32,14 @@ public class Player extends Entity {
     int standCounter = 0;
     public int teleportCooldown = 0;
     public boolean attacking = false;
+    public int attackCounter = 0;
     public int attackCooldown = 0;
     public final int attackCooldownMax = 30;
     public BufferedImage attackUp1, attackUp2, attackDown1, attackDown2, attackLeft1, attackLeft2, attackRight1, attackRight2;
+    // =========XUYEN =========
+    private boolean xuyenMode = false;
+    private int xuyenModeMin = 0;
+    private final int xuyenModeMax = 300;
 
     public Player(gamePanel gp, KeyHandler kH) {
         super(gp);
@@ -131,6 +135,7 @@ public class Player extends Entity {
                 }
 
                 moving = true;
+//                pixelCounter = 0;
 
                 //Check tile collision.
                 collisionOn = false;
@@ -163,37 +168,49 @@ public class Player extends Entity {
             }
         }
 
-        if (moving == true) {
+        // Xử lý di chuyển mượt mà
+        if (moving) {
+            // Tính toán vị trí tiếp theo
+            int nextX = worldX;
+            int nextY = worldY;
 
-            //false thi di chuyen duoc:
-            if (!collisionOn && kH.qPressed==false) {
-                switch (direction) {
-                    case "up": worldY -= speed;
-                        break;
-                    case "down": worldY += speed;
-                        break;
-                    case "left": worldX -= speed;
-                        break;
-                    case "right": worldX += speed;
-                        break;
-                }
-            }
-            gp.kH.qPressed = false;
-
-            spriteCounter++;
-            if (spriteCounter > 12) {
-                if (spriteNum == 1) {
-                    spriteNum = 2;
-                } else if (spriteNum == 2) {
-                    spriteNum = 1;
-                }
-
-                spriteCounter = 0;
+            switch (direction) {
+                case "up": nextY -= speed; break;
+                case "down": nextY += speed; break;
+                case "left": nextX -= speed; break;
+                case "right": nextX += speed; break;
             }
 
-            pixelCounter += speed;
+            // Kiểm tra biên giới map (đảm bảo không đi ra ngoài)
+            boolean withinMap = nextX >= 0 && nextX <= (gp.maxWorldCol-1)*gp.tileSize &&
+                    nextY >= 0 && nextY <= (gp.maxWorldRow-1)*gp.tileSize;
 
-            if (pixelCounter >= 48) {
+            // Điều kiện di chuyển: xuyên tường hoặc không va chạm + trong map
+            boolean canMove = (xuyenMode && withinMap) || (!collisionOn && withinMap);
+
+            if (canMove) {
+                // Cập nhật vị trí thực tế
+                worldX = nextX;
+                worldY = nextY;
+                pixelCounter += speed;
+
+                // Cập nhật animation
+                spriteCounter++;
+                if (spriteCounter > 12) {
+                    spriteNum = (spriteNum == 1) ? 2 : 1;
+                    spriteCounter = 0;
+                }
+
+                // Kết thúc di chuyển khi hoàn thành 1 tile
+                if (pixelCounter >= gp.tileSize) {
+                    moving = false;
+                    pixelCounter = 0;
+                    // Căn chỉnh vị trí chính xác về tile
+                    worldX = (worldX / gp.tileSize) * gp.tileSize;
+                    worldY = (worldY / gp.tileSize) * gp.tileSize;
+                }
+            } else {
+                // Nếu không thể di chuyển, dừng lại ngay
                 moving = false;
                 pixelCounter = 0;
             }
@@ -201,13 +218,13 @@ public class Player extends Entity {
 
         // CHECK EVENT
         gp.eHandler.checkEvent();
+
+        // Xử lý đặt bom (chỉ khi không ở chế độ xuyên)
+        if (kH.spacePressed && !xuyenMode) {
+
         if (kH.spacePressed) {
             gp.bombManager.handleBombPlacement();
-            gp.kH.spacePressed = false;
-        }
-
-        if(attackCooldown > 0) {
-            attackCooldown--;
+            gp.kH.spacePressed = false; // Tránh đặt bom liên tục
         }
 
         if (kH.qPressed) {
@@ -223,15 +240,12 @@ public class Player extends Entity {
         }
 
         // Cập nhật animation tấn công
-        if(attacking) {
-            attacking();
-        }
+//        if(attacking) {
+//            attacking();
+//        }
 
 
-        if (teleportCooldown > 0) {
-            teleportCooldown--;
-        }
-        //===========SHIELD============
+        // Xử lý shield
         if (shieldActive) {
             shieldCounter++;
             if (shieldCounter >= shieldDuration) {
@@ -240,10 +254,19 @@ public class Player extends Entity {
             }
         }
 
-        //ngoia cau lenh chinh giup khi nguoi choi dung im thi invincibleCountre van chay
+        // Xử lý chế độ xuyên tường
+        if (xuyenMode) {
+            xuyenModeMin++;
+            if (xuyenModeMin >= xuyenModeMax) {
+                xuyenMode = false;
+                xuyenModeMin = 0;
+            }
+        }
+
+        // Xử lý bất tử tạm thời sau khi bị đánh
         if (invincible) {
             invincibleCounter++;
-            if (invincibleCounter > 60) {
+            if (invincibleCounter > 300) {
                 invincible = false;
                 invincibleCounter = 0;
             }
@@ -252,73 +275,82 @@ public class Player extends Entity {
             life = maxLife;
         }
 
+        // Kiểm tra máu
+        life = Math.min(life, maxLife);
         if (life <= 0) {
             gp.gameState = gp.gameOverState;
         }
     }
 
     //=====================ATTACK======================
-    public void attacking() {
-        if(attacking) {
-            spriteCounter++;
-            if(spriteCounter > 25) {
-                attacking = false;
-                spriteCounter = 0;
-            }
-            else if(spriteCounter <= 5) spriteNum = 1;
-            else spriteNum = 2;
-        }
-    }
+//    public void attacking() {
+//        if(attacking) {
+//            spriteCounter++;
+//            if(spriteCounter > 25) {
+//                attacking = false;
+//                spriteCounter = 0;
+//            }
+//            else if(spriteCounter <= 5) spriteNum = 1;
+//            else spriteNum = 2;
+//        }
+//    }
         public void pickUpObject (int i) {
 
             if (i != 999) {
 
                 String objectName = gp.obj[gp.currentMap][i].name;
 
-            switch (objectName) {
-                case "Key":
-                    gp.playSE(1);
-                    hasKey++;
-                    gp.obj[gp.currentMap][i] = null;
-                    System.out.println("Key: " + hasKey);
-                    break;
-                case "Door" :
-                    if(hasKey > 0) {
-                        gp.playSE(2);
+                switch (objectName) {
+                    case "Key":
+                        gp.playSE(1);
+                        hasKey++;
                         gp.obj[gp.currentMap][i] = null;
-                        hasKey--;
-                    }
-                    System.out.println("Key: " + hasKey);
-                    break;
-                case "Boost":
-                    gp.playSE(1);
-                    if(hasBoost <2 ) {
-                        hasBoost++;
-                        speed +=2;
-                    }
-                    gp.obj[gp.currentMap][i] = null;
-                    break;
-                case "Chest":
-                    break;
-                case "bombItem":
-                    gp.playSE(1);
-                    maxBombs ++;
-                    hasBomb++;
-                    gp.obj[gp.currentMap][i] = null;
-                    break;
-                case "heartItem" :
-                    gp.playSE(1);
-                    life += 1;
-                    gp.obj[gp.currentMap][i] = null;
-                    break;
-                case "Shield":
-                    gp.playSE(1);
-                    shieldActive = true;
-                    shieldCounter = 0;
-                    gp.obj[gp.currentMap][i] = null;
-                    break;
+                        System.out.println("Key: " + hasKey);
+                        break;
+                    case "Door":
+                        if (hasKey > 0) {
+                            gp.playSE(2);
+                            gp.obj[gp.currentMap][i] = null;
+                            hasKey--;
+                        }
+                        System.out.println("Key: " + hasKey);
+                        break;
+                    case "Boost":
+                        gp.playSE(1);
+                        if(hasBoost <2 ) {
+                            hasBoost++;
+                            speed +=2;
+                        }
+                        gp.obj[gp.currentMap][i] = null;
+                        break;
+                    case "Chest":
+                        break;
+                    case "bombItem":
+                        gp.playSE(1);
+                        maxBombs ++;
+                        gp.obj[gp.currentMap][i] = null;
+                        break;
+                    case "heartItem" :
+                        gp.playSE(1);
+                        life += 1;
+                        gp.obj[gp.currentMap][i] = null;
+                        break;
+                    case "Shield":
+                        gp.playSE(1);
+                        shieldActive = true;
+                        shieldCounter = 0;
+                        gp.obj[gp.currentMap][i] = null;
+                        break;
+                    case "Invisible":
+                        gp.playSE(1);
+                        xuyenMode = true;
+                        xuyenModeMin = 0;
+                        gp.obj[gp.currentMap][i] = null;
+                        break;
+                }
             }
         }
+
     }
 
         public void interactNPC ( int i){
@@ -329,15 +361,14 @@ public class Player extends Entity {
             }
         }
 
-    public void contactMonster (int i) {        // giong voi interact
-        if (i != 999) {
-            if (invincible == false && !shieldActive) {
-                invincible = true;
-                life -= 1;
-                System.out.println("tru " + 1 + "mau" + ", mau con " + life + "  nho xoa cai test nay di");
-                System.out.println("Took damage! Life: " + life);
+        public void contactMonster ( int i){          // giong voi interac
+            if (i != 999) {
+                if (!invincible && !shieldActive) {
+                    invincible = true;
+                    life -= 1;
+                    System.out.println("Took damage! Life: " + life);
+                }
             }
-        }
     }
 //        public void damageMonster (int i){
 //            if (i != 999 && gp.monster[i] != null) {
@@ -428,8 +459,8 @@ public class Player extends Entity {
             }
 
             if(invincible) {
-                // Nhấp nháy mỗi 10 frames
-                if(invincibleCounter % 10 >= 5) {
+                // Nhấp nháy mỗi 17 frames
+                if(invincibleCounter % 17 >= 5) {
                     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
                 }
             }
@@ -443,9 +474,26 @@ public class Player extends Entity {
 //        g2d.setColor(Color.WHITE);
 //        g2d.drawString("Invincible: " + invincibleCounter + "(nho xoa)", 10, 400);
 //            g2d.drawImage(image, tempScreenX, tempScreenY, gp.tileSize, gp.tileSize, null);
-//            if(attacking) {
-//                drawAttackEffect(g2d);
-//            }
+            if(attacking) {
+                drawAttackEffect(g2d);
+            }
+            //=========XUYEN=======
+            if(xuyenMode) {
+                AlphaComposite alcom = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
+                g2d.setComposite(alcom);
+                // Hiển thị thời gian còn lại
+                int secondsLeft = (xuyenModeMax - xuyenModeMin) / 60 + 1;
+                g2d.setFont(new Font("Arial", Font.PLAIN, 12));
+                g2d.setColor(Color.WHITE);
+                g2d.drawString("Ghost: " + secondsLeft + "s", screenX, screenY - 10);
+            }
+
+            if(xuyenMode) {
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            }
+
+
+
         }
 
 //    private void drawAttackEffect(Graphics2D g2d) {
@@ -459,5 +507,17 @@ public class Player extends Entity {
 //        g2d.setColor(new Color(255, 0, 0, 100));
 //        g2d.fillRect(attackScreenX, attackScreenY, gp.tileSize, gp.tileSize);
 //    }
+    public void setXuyenMode(boolean xuyenMode) {
+        this.xuyenMode = xuyenMode;
+
+        if(xuyenMode) {
+            xuyenModeMin = 0;
+        }
+    }
+
+    public boolean isXuyenMode() {
+        return xuyenMode;
+    }
+
 
 }

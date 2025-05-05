@@ -54,15 +54,16 @@ public class AssetSetter {
         gp.obj[mapNum][9] = new OBJ_Shield(gp);
         gp.obj[mapNum][9].worldX = 2* gp.tileSize;
         gp.obj[mapNum][9].worldY= 13* gp.tileSize;
-    }
 
-    public void setNPC() {
-        int mapNum = 0;
-        gp.npc[mapNum][0] = new NPC_Test(gp);
-        gp.npc[mapNum][0].worldX = gp.tileSize*3;
-        gp.npc[mapNum][0].worldY = 16* gp.tileSize;
-    }
+        gp.obj[mapNum][10] = new OBJ_Invisible(gp);
+        gp.obj[mapNum][10].worldX = 7* gp.tileSize;
+        gp.obj[mapNum][10].worldY= 13* gp.tileSize;
 
+        gp.obj[mapNum][11] = new OBJ_Invisible(gp);
+        gp.obj[mapNum][11].worldX = 4* gp.tileSize;
+        gp.obj[mapNum][11].worldY= 33* gp.tileSize;
+
+    }
     public void setMonster() {
         int mapNum = 0;
         gp.monster[mapNum][0] = new MON_Greenslime(gp);

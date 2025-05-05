@@ -12,6 +12,12 @@ public class NPC_Test extends Entity{
 
         direction = "down";
         speed = 1;
+        solidArea.x = 0;
+        solidArea.y = 0;
+        solidArea.width = 48;
+        solidArea.height = 48;
+        solidAreaDefaultX = solidArea.x;
+        solidAreaDefaultY = solidArea.y;
 
         getImage();
     }
@@ -46,7 +52,7 @@ public class NPC_Test extends Entity{
 
                 collisionOn = false;
                 gp.checker.checkTile(this);
-
+                gp.checker.checkPlayer(this);
 
                 if (!collisionOn) {
                     break; // nếu không va chạm thì dùng hướng này

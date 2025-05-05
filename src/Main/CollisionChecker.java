@@ -1,6 +1,7 @@
 package Main;
 
 import entity.Entity;
+import entity.Player;
 import object.Bomb;
 
 import java.awt.*;
@@ -98,6 +99,11 @@ public class CollisionChecker {
                 }
                 break;
         }
+        if (entity instanceof Player && ((Player)entity).isXuyenMode()) {
+            entity.collisionOn = false;
+        }
+
+
     }
 
     public int checkObject(Entity entity,boolean player) {
@@ -196,6 +202,9 @@ public class CollisionChecker {
         }
     }
     public int checkEntity(Entity entity, Entity[][] target) {
+        if (entity instanceof Player && ((Player) entity).isXuyenMode()) {
+            entity.collisionOn = false;
+        } else {
         int index = 999;
         for(int i = 0 ; i < target[gp.currentMap].length; i++) {
             if(target[gp.currentMap][i] != null) {
@@ -226,7 +235,7 @@ public class CollisionChecker {
                         entity.collisionOn = true;
                         index = i;
                     }
-                } 
+                }
                 //khong cho x va y tang lien tuc
                 entity.solidArea.x = entity.solidAreaDefaultX;
                 entity.solidArea.y = entity.solidAreaDefaultY;
@@ -235,5 +244,7 @@ public class CollisionChecker {
             }
         }
         return index;
+        }
+        return 999;
     }
 }
