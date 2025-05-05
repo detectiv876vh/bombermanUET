@@ -161,7 +161,7 @@ public class DrawManager {
             boolean isCollision = gp.tileM.tile[tileNum].collision;
             boolean isBreakable = gp.tileM.tile[tileNum].breakable;
 
-            if (isCollision && !isBreakable) {
+            if (isCollision /*&& !isBreakable*/) {
                 break;
             }
 

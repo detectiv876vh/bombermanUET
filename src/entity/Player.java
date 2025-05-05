@@ -69,14 +69,30 @@ public class Player extends Entity {
     //gắn ảnh.
     public void getPlayerImage() {
 
-        up1 = setup("/entities/boy_up_1");
-        up2 = setup("/entities/boy_up_2");
-        down1 = setup("/entities/boy_down_1");
-        down2 = setup("/entities/boy_down_2");
-        left1 = setup("/entities/boy_left_1");
-        left2 = setup("/entities/boy_left_2");
-        right1 = setup("/entities/boy_right_1");
-        right2 = setup("/entities/boy_right_2");
+        up1 = setup("/entities/spr_player_back_walk-ezgif.com-crop");
+        up2 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
+        up3 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
+        up4 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
+        up5 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
+        up6 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
+        down1 = setup("/entities/spr_player_front_walk-ezgif.com-crop");
+        down2 = setup("/entities/spr_player_front_walk-ezgif.com-crop (1)");
+        down3 = setup("/entities/spr_player_front_walk-ezgif.com-crop (2)");
+        down4 = setup("/entities/spr_player_front_walk-ezgif.com-crop (3)");
+        down5 = setup("/entities/spr_player_front_walk-ezgif.com-crop (4)");
+        down6 = setup("/entities/spr_player_front_walk-ezgif.com-crop (5)");
+        left1 = setup("/entities/spr_player_left_walk-ezgif.com-crop");
+        left2 = setup("/entities/spr_player_left_walk-ezgif.com-crop (1)");
+        left3 = setup("/entities/spr_player_left_walk-ezgif.com-crop (2)");
+        left4 = setup("/entities/spr_player_left_walk-ezgif.com-crop (3)");
+        left5 = setup("/entities/spr_player_left_walk-ezgif.com-crop (4)");
+        left6 = setup("/entities/spr_player_left_walk-ezgif.com-crop (5)");
+        right1 = setup("/entities/spr_player_right_walk-ezgif.com-crop");
+        right2 = setup("/entities/spr_player_right_walk-ezgif.com-crop (1)");
+        right3 = setup("/entities/spr_player_right_walk-ezgif.com-crop (2)");
+        right4 = setup("/entities/spr_player_right_walk-ezgif.com-crop (3)");
+        right5 = setup("/entities/spr_player_right_walk-ezgif.com-crop (4)");
+        right6 = setup("/entities/spr_player_right_walk-ezgif.com-crop (5)");
     }
 
     public void getPlayerAttackImage() {
@@ -274,6 +290,7 @@ public class Player extends Entity {
                     System.out.println("Key: " + hasKey);
                     break;
                 case "Boost":
+                    gp.playSE(1);
                     if(hasBoost <2 ) {
                         hasBoost++;
                         speed +=2;
@@ -283,15 +300,18 @@ public class Player extends Entity {
                 case "Chest":
                     break;
                 case "bombItem":
+                    gp.playSE(1);
                     maxBombs ++;
-                    hasBomb = maxBombs;
+                    hasBomb++;
                     gp.obj[gp.currentMap][i] = null;
                     break;
                 case "heartItem" :
+                    gp.playSE(1);
                     life += 1;
                     gp.obj[gp.currentMap][i] = null;
                     break;
                 case "Shield":
+                    gp.playSE(1);
                     shieldActive = true;
                     shieldCounter = 0;
                     gp.obj[gp.currentMap][i] = null;
@@ -308,19 +328,15 @@ public class Player extends Entity {
             }
         }
 
-        public void contactMonster ( int i){          // giong voi interac
-            if (i != 999) {
-                if (invincible == false) {
-                    invincible = true;
-                    life -= 1;
-                }
+    public void contactMonster (int i) {        // giong voi interact
+        if (i != 999) {
+            if (invincible == false && !shieldActive) {
+                invincible = true;
+                life -= 1;
                 System.out.println("tru " + 1 + "mau" + ", mau con " + life + "  nho xoa cai test nay di");
-                if (!shieldActive) {
-                    invincible = true;
-                    life -= 1;
-                    System.out.println("Took damage! Life: " + life);
-                }
+                System.out.println("Took damage! Life: " + life);
             }
+        }
     }
 //        public void damageMonster (int i){
 //            if (i != 999 && gp.monster[i] != null) {

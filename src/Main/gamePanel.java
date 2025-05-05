@@ -31,8 +31,8 @@ public class gamePanel extends JPanel implements Runnable {
     public final int screenHeight = tileSize * maxScreenRow; // 576 pixels: Chiều rộng (đơn vị pixel)
 
     // WORLD SETTINGS
-    public final int maxWorldCol = 30;
-    public final int maxWorldRow = 30;
+    public final int maxWorldCol = 50;
+    public final int maxWorldRow = 25;
     public int WIDTH = (tileSize * scale) * maxWorldCol;
     public int HEIGHT = (tileSize * scale) * maxWorldRow;
     public final int worldWidth = tileSize * maxWorldCol;   // Chiều dài bản đồ
@@ -153,7 +153,7 @@ public class gamePanel extends JPanel implements Runnable {
                     if (monster[currentMap][i].alive && !monster[currentMap][i].dying) {
                         monster[currentMap][i].update();
                     } else if (!monster[currentMap][i].alive) {
-                        monster[i] = null;
+                        monster[currentMap][i] = null;
                     }
                 }
             }
@@ -164,7 +164,7 @@ public class gamePanel extends JPanel implements Runnable {
                     bomb.update();
                 } else {
                     bombManager.bombList[currentMap].remove(i);
-                    player.hasBomb ++;
+                    player.hasBomb++;
                     i--;
                 }
             }
@@ -214,7 +214,7 @@ public class gamePanel extends JPanel implements Runnable {
             // TILE
             tileM.draw(g2);
             //OBJECT
-            for(int i = 0; i < obj.length; i++) {
+            for(int i = 0; i < obj[currentMap].length; i++) {
                 if(obj[currentMap][i] != null) {
                     obj[currentMap][i].draw(g2);
                 }

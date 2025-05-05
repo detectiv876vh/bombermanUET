@@ -32,7 +32,7 @@ public class TileManager {
 
     public void getTileImage() {
         //tải ảnh các tile (ô vuông) từ file PNG và gán vào mảng tile.
-        setup(0, "tile3", false, false);
+        setup(0, "spr_tileset_sunnysideworld_16px-ezgif.com-crop", false, false);
         setup(1, "New_wall", true, false);
         setup(2, "crack_wall", true, true);
         setup(4,"tile4", false, false);

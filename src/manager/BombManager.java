@@ -31,7 +31,10 @@ public class BombManager {
         // Tính toán vị trí tile chính xác
         int bombTileX = (player.worldX + player.solidArea.x + player.solidArea.width/2) / gp.tileSize;
         int bombTileY = (player.worldY + player.solidArea.y + player.solidArea.height/2) / gp.tileSize;
-        if (gp.kH.spacePressed && canPlaceBomb(bombTileX, bombTileY) &&  player.teleportCooldown <= 0 && player.hasBomb > 0) {
+        if (gp.kH.spacePressed
+                && canPlaceBomb(bombTileX, bombTileY)
+                && player.teleportCooldown <= 0
+                && player.hasBomb > 0) {
 
             Bomb newBomb = new Bomb(gp, gp.drawManager);
 

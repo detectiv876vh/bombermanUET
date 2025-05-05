@@ -18,8 +18,8 @@ public class Entity {
     boolean attacking = false;
 
     //LOAD IMAGE
-    public BufferedImage up1, up2, up3, up4, down1, down2, down3, down4;
-    public BufferedImage right1, right2, right3, right4, left1, left2, left3, left4;
+    public BufferedImage up1, up2, up3, up4,up5, up6, down1, down2, down3, down4, down5, down6;
+    public BufferedImage right1, right2, right3, right4,right5, right6, left1, left2, left3, left4, left5, left6;
     public BufferedImage attackUp1,attackUp2,attackDown1,attackDown2,attackLeft1,attackLeft2,
             attcackRight1,attcackRight2;
     public BufferedImage image, image2, image3;
@@ -89,6 +89,7 @@ public class Entity {
     public void checkCollision() {
         collision = false;
         gp.checker.checkTile(this);
+        gp.checker.checkBomb(this);
         gp.checker.checkEntity(this, gp.npc);
         gp.checker.checkEntity(this, gp.monster);
     }
@@ -132,7 +133,13 @@ public class Entity {
         if (spriteCounter > 12) {
             if (spriteNum == 1) {
                 spriteNum = 2;
-            } else if (spriteNum == 2) {
+            } else if (spriteNum == 3) {
+                spriteNum = 4;
+            } else if (spriteNum == 4) {
+                spriteNum = 5;
+            } else if (spriteNum == 5) {
+                spriteNum = 6;
+            } else if (spriteNum == 6) {
                 spriteNum = 1;
             }
             spriteCounter = 0;
@@ -295,12 +302,19 @@ public class Entity {
 
         try {
             image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
+
+            // Cắt khoảng trống xung quanh nếu có
+            image = uTool.cropToContent(image);
+
+            // Scale lên đúng tileSize
             image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         return image;
     }
+
     public Rectangle getHitbox() {
         return new Rectangle(
                 worldX + solidArea.x,
