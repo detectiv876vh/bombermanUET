@@ -39,7 +39,9 @@ public class KeyHandler implements KeyListener {
             }
             if (code == KeyEvent.VK_SPACE || code == KeyEvent.VK_ENTER) {
                 if (gp.ui.commandNum == 0) {
-                    gp.gameState = gp.playState;
+                    gp.gameState = gp.transitionState;
+                    gp.ui.showTransition = true;
+                    gp.ui.transitionTimer = 0;
                 }
                 if (gp.ui.commandNum == 1) {
                     gp.gameState = gp.playState;

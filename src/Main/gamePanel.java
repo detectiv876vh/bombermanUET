@@ -75,6 +75,7 @@ public class gamePanel extends JPanel implements Runnable {
     public final int playState = 1;
     public final int pauseState = 2;
     public final int chemState = 3;
+    public final int transitionState = 5;
     public final int gameOverState = 6;
     public Graphics g;
     public Graphics2D g2d;
@@ -93,6 +94,8 @@ public class gamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         gameState = titleState;
+        currentMap = 0;
+
         aSetter.setObject();
         aSetter.setNPC();
         aSetter.setMonster();
@@ -134,6 +137,18 @@ public class gamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
+
+        if (ui.showTransition) {
+            return;
+        }
+
+//        if (player.life <= 0) {
+//            gameState = gameOverState;
+//            ui.showTransition = true;
+//            ui.transitionTimer = 0;
+//            return;
+//        }
+
         if (gameState == playState) {
 
             player.update();
@@ -185,6 +200,12 @@ public class gamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
+        if (ui.showTransition) {
+            ui.draw(g2);
+            g2.dispose();
+            return;
+        }
+
         if(gameState == pauseState) {
             tileM.draw(g2);
             player.draw(g2);
@@ -213,6 +234,12 @@ public class gamePanel extends JPanel implements Runnable {
         if(gameState == titleState) {
             ui.draw(g2);
         }
+
+        // GAMEOVER
+        else if(gameState == gameOverState) {
+            ui.draw(g2);
+        }
+
         // OTHERS
         else if(gameState == playState) {
             // TILE
@@ -261,6 +288,51 @@ public class gamePanel extends JPanel implements Runnable {
 
     }
 
+    public void changeMap(int mapIndex) {
+        gameState = transitionState;
+        int targetMap = mapIndex;
+
+        ui.showTransition = true;
+        ui.transitionTimer = 0;
+        ui.transitionText = "Level " + (targetMap + 1);
+
+        loadMap(targetMap);
+    }
+
+    public void completeLevel() {
+        int nextMap = currentMap + 1;
+
+        if (nextMap < maxMap) {
+            changeMap(nextMap);
+        } else {
+            gameState = gameOverState;
+            ui.showTransition = true;
+            ui.transitionTimer = 0;
+            ui.commandNum = 0;
+        }
+    }
+
+    public void loadMap(int mapIndex) {
+
+        player.setDefaultValues();
+
+        clearMapEntities();
+
+        aSetter.setObject();
+        aSetter.setMonster();
+        aSetter.setNPC();
+
+    }
+
+    public void clearMapEntities() {
+        projectileList.clear();
+        entityList.clear();
+
+        if (bombManager.bombList[currentMap] != null) {
+            bombManager.bombList[currentMap].clear();
+        }
+    }
+
     public void playMusic(int i) {
 
         music.setFile(i);
@@ -289,10 +361,13 @@ public class gamePanel extends JPanel implements Runnable {
 
                 if(y >= menuY && y < menuY + menuItemHeight) {
                     ui.commandNum=0;
-                    gameState = playState;
+                    gameState = transitionState;
+                    ui.showTransition = true;
+                    ui.transitionTimer = 0;
                 }
                 else if(y >= menuY + menuItemHeight && y < menuY + menuItemHeight*2) {
                     ui.commandNum=1;
+                    gameState = playState;
                 }
                 else if(y >= menuY + menuItemHeight*2 && y < menuY + menuItemHeight*3) {
                     ui.commandNum=2;

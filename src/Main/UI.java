@@ -20,7 +20,11 @@ public class UI {
     public int subState= 0;
     int lastHovered = -1; // Lưu trạng thái hover trước đó
 
-
+    // MAP TRANSITION
+    public boolean showTransition = false;
+    public int transitionTimer = 0;
+    String transitionText = "";
+    final int TRANSITION_DURATION = 120;
 
     public UI (gamePanel gp) {
 
@@ -50,6 +54,13 @@ public class UI {
         g2.setFont(theleahFat);
         g2.setColor(Color.white);
 //        g2.drawString("Key = " + gp.player.hasKey, 50,50);       //viet so key tren map o 50 50
+
+        // MAP TRANSITION
+        if (showTransition) {
+            drawMapTransition();
+            return;
+        }
+
         // TITLE STATE
         if(gp.gameState == gp.titleState) {
             drawTitleScreen();
@@ -63,10 +74,17 @@ public class UI {
         //PLAYER STATE
         if(gp.gameState == gp.playState) {
             drawPlayerLife();
+//            drawMapTransition();
         }
         //ATTACK STATE
         if(gp.gameState == gp.chemState) {
         }
+
+        // GAME OVER STATE
+        if (gp.gameState == gp.gameOverState) {
+            drawMapTransition();
+        }
+
         //PAUSE STATE
         if(gp.gameState == gp.pauseState) {
             drawPauseScreen();
@@ -77,6 +95,7 @@ public class UI {
         heart_full = heart.image;
         heart_half = heart.image2;
         heart_blank = heart.image3;
+
     }
 
     public void drawTitleScreen() {
@@ -173,6 +192,10 @@ public class UI {
 
     }
 
+//    public void drawGameOverScreen() {
+//
+//    }
+
     public void drawPauseScreen() {
 
         g2.setColor(new Color(0, 0, 0, 120));
@@ -252,11 +275,52 @@ public class UI {
         }
     }
 
+    public void drawMapTransition() {
+
+        g2.setColor(Color.black);
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+        g2.setFont(theleahFat.deriveFont(Font.BOLD,48F));
+        g2.setColor(Color.white);
+
+        transitionText = "Level " + (gp.currentMap + 1);
+        int x = getXforCenteredText(transitionText);
+        int y = gp.screenHeight / 2;
+        g2.drawString(transitionText, x, y);
+
+        transitionTimer++;
+        if(transitionTimer >= TRANSITION_DURATION) {
+            showTransition = false;
+            transitionTimer = 0;
+
+            if (gp.gameState == gp.gameOverState) {
+                if (gp.currentMap + 1 < gp.maxMap) {
+                    gp.changeMap(gp.currentMap + 1);
+                }
+//                else {
+//                    // Nếu hết level, quay lại màn hình title
+//                    gp.gameState = gp.titleState;
+//                    gp.ui.commandNum = 0;
+//                }
+            } else {
+                // Sau khi hiển thị level, chuyển sang trạng thái chơi
+                gp.gameState = gp.playState;
+            }
+        }
+
+    }
+
     // căn giữa văn bản theo chiều ngang trong phương thức.
     public int getXforCenteredText(String text) {
         int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();  // tính toán độ rộng của văn bản text.
         int x = gp.screenWidth / 2 - length / 2;
         return x;
+    }
+
+    public void startMapTransition(String mapName) {
+        this.showTransition = true;
+        this.transitionTimer = 0;
+        this.transitionText = mapName;
     }
 
 }
