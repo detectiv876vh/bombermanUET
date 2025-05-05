@@ -80,7 +80,7 @@ public class TileManager {
         int chance = rand.nextInt(100); // 0 - 99
 
         // 35% cơ hội rơi item
-        if (chance < 35) {
+        if (chance < 40) {
             int itemType = rand.nextInt(4); // 0 - 3
             Entity item = null;
 

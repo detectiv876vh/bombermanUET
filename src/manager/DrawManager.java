@@ -35,25 +35,25 @@ public class DrawManager {
             upExplosion = new BufferedImage[4];
             downExplosion = new BufferedImage[4];
 
-            // Center explosion
+            // Center end explosion
             fontExplosion[0] = spriteSheet.getSubimage(2 * gp.originalTileSize, 6 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             fontExplosion[1] = spriteSheet.getSubimage(7 * gp.originalTileSize, 6 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             fontExplosion[2] = spriteSheet.getSubimage(2 * gp.originalTileSize, 11 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             fontExplosion[3] = spriteSheet.getSubimage(7 * gp.originalTileSize, 11 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
 
-            // Right explosion
+            // Right end explosion
             rightExplosion[0] = spriteSheet.getSubimage(4 * gp.originalTileSize, 6 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             rightExplosion[1] = spriteSheet.getSubimage(9 * gp.originalTileSize, 6 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             rightExplosion[2] = spriteSheet.getSubimage(4 * gp.originalTileSize, 11 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             rightExplosion[3] = spriteSheet.getSubimage(9 * gp.originalTileSize, 11 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
 
-            // Left explosion
+            // Left end explosion
             leftExplosion[0] = spriteSheet.getSubimage(0, 6 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             leftExplosion[1] = spriteSheet.getSubimage(5 * gp.originalTileSize, 6 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             leftExplosion[2] = spriteSheet.getSubimage(0, 11 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             leftExplosion[3] = spriteSheet.getSubimage(5 * gp.originalTileSize, 11 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
 
-            // Up explosion
+            // Up end explosion
             upExplosion[0] = spriteSheet.getSubimage(2 * gp.originalTileSize, 4 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             upExplosion[1] = spriteSheet.getSubimage(7 * gp.originalTileSize, 4 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             upExplosion[2] = spriteSheet.getSubimage(2 * gp.originalTileSize, 9 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
@@ -65,28 +65,28 @@ public class DrawManager {
             downExplosion[2] = spriteSheet.getSubimage(2 * gp.originalTileSize, 13 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             downExplosion[3] = spriteSheet.getSubimage(7 * gp.originalTileSize, 13 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
 
-// Right middle explosion (phần thân hướng phải)
+            // Right middle explosion (phần thân hướng phải)
             rightMiddleExplosion = new BufferedImage[4];
             rightMiddleExplosion[0] = spriteSheet.getSubimage(3 * gp.originalTileSize, 6 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             rightMiddleExplosion[1] = spriteSheet.getSubimage(8 * gp.originalTileSize, 6 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             rightMiddleExplosion[2] = spriteSheet.getSubimage(3 * gp.originalTileSize, 11 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             rightMiddleExplosion[3] = spriteSheet.getSubimage(8 * gp.originalTileSize, 11 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
 
-// Left middle explosion (phần thân hướng trái)
+            // Left middle explosion (phần thân hướng trái)
             leftMiddleExplosion = new BufferedImage[4];
             leftMiddleExplosion[0] = spriteSheet.getSubimage(1 * gp.originalTileSize, 6 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             leftMiddleExplosion[1] = spriteSheet.getSubimage(6 * gp.originalTileSize, 6 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             leftMiddleExplosion[2] = spriteSheet.getSubimage(1 * gp.originalTileSize, 11 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             leftMiddleExplosion[3] = spriteSheet.getSubimage(6 * gp.originalTileSize, 11 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
 
-// Up middle explosion (phần thân hướng lên)
+            // Up middle explosion (phần thân hướng lên)
             upMiddleExplosion = new BufferedImage[4];
             upMiddleExplosion[0] = spriteSheet.getSubimage(2 * gp.originalTileSize, 5 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             upMiddleExplosion[1] = spriteSheet.getSubimage(7 * gp.originalTileSize, 5 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             upMiddleExplosion[2] = spriteSheet.getSubimage(2 * gp.originalTileSize, 10 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             upMiddleExplosion[3] = spriteSheet.getSubimage(7 * gp.originalTileSize, 10 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
 
-// Down middle explosion (phần thân hướng xuống)
+            // Down middle explosion (phần thân hướng xuống)
             downMiddleExplosion = new BufferedImage[4];
             downMiddleExplosion[0] = spriteSheet.getSubimage(2 * gp.originalTileSize, 7 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
             downMiddleExplosion[1] = spriteSheet.getSubimage(7 * gp.originalTileSize, 7 * gp.originalTileSize, gp.originalTileSize, gp.originalTileSize);
