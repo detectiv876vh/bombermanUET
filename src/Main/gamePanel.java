@@ -49,7 +49,7 @@ public class gamePanel extends JPanel implements Runnable {
     public ArrayList<Entity> entityList = new ArrayList<>();
     public ArrayList<Entity>[] projectileList = new ArrayList[maxMap];
     public Entity monster[] = new Entity[20];
-    public Entity npc[] = new Entity[10];           // so  npc co the co
+    public Entity npc[] = new Entity[100];           // so  npc co the co
     public Entity obj[][] = new Entity[maxMap][100];   // so item co the xuat hien tai o do
     public BombManager bombManager = new BombManager(this, player);
     public ChemManager chemManager = new ChemManager(this, player);

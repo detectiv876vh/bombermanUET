@@ -54,6 +54,15 @@ public class AssetSetter {
         gp.obj[mapNum][9] = new OBJ_Shield(gp);
         gp.obj[mapNum][9].worldX = 2* gp.tileSize;
         gp.obj[mapNum][9].worldY= 13* gp.tileSize;
+
+        gp.obj[mapNum][10] = new OBJ_Invisible(gp);
+        gp.obj[mapNum][10].worldX = 7* gp.tileSize;
+        gp.obj[mapNum][10].worldY= 13* gp.tileSize;
+
+        gp.obj[mapNum][11] = new OBJ_Invisible(gp);
+        gp.obj[mapNum][11].worldX = 4* gp.tileSize;
+        gp.obj[mapNum][11].worldY= 33* gp.tileSize;
+
     }
 
     public void setNPC() {

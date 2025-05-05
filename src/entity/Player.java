@@ -15,7 +15,7 @@ import java.util.Random;
 public class Player extends Entity {
 
     KeyHandler kH;
-    private Graphics2D g2d;
+    public Graphics2D g2d;
     public int maxBombs = 1;            //bom co ban =1
 
     public final int screenX;
@@ -29,9 +29,14 @@ public class Player extends Entity {
     int standCounter = 0;
     public int teleportCooldown = 0;
     public boolean attacking = false;
+    public int attackCounter = 0;
     public int attackCooldown = 0;
     public final int attackCooldownMax = 30;
     public BufferedImage attackUp1, attackUp2, attackDown1, attackDown2, attackLeft1, attackLeft2, attackRight1, attackRight2;
+    // =========XUYEN =========
+    private boolean xuyenMode = false;
+    private int xuyenModeMin = 0;
+    private final int xuyenModeMax = 300;
 
     public Player(gamePanel gp, KeyHandler kH) {
         super(gp);
@@ -90,121 +95,111 @@ public class Player extends Entity {
     }
 
     public void update() {
-
+        // Xử lý va chạm cơ bản
         collisionOn = false;
         gp.checker.checkTile(this);
         gp.checker.checkObject(this, true);
         gp.checker.checkEntity(this, gp.npc);
         gp.checker.checkEntity(this, gp.monster);
 
-        if (moving == false) {
-//            if (attacking) {
-////                attacking();
-//            } else
-                if (!attacking && (kH.upPressed || kH.downPressed || kH.leftPressed || kH.rightPressed)) {
-                if (kH.upPressed) {
-                    direction = "up";
-                } else if (kH.downPressed) {
-                    direction = "down";
-                } else if (kH.leftPressed) {
-                    direction = "left";
-                } else if (kH.rightPressed) {
-                    direction = "right";
-                }
+        // Xử lý trạng thái đứng yên và bắt đầu di chuyển
+        if (!moving && !attacking) {
+            if (kH.upPressed) direction = "up";
+            else if (kH.downPressed) direction = "down";
+            else if (kH.leftPressed) direction = "left";
+            else if (kH.rightPressed) direction = "right";
 
+            if (kH.upPressed || kH.downPressed || kH.leftPressed || kH.rightPressed) {
                 moving = true;
+                pixelCounter = 0;
 
-                //Check tile collision.
-                collisionOn = false;
+                // Kiểm tra va chạm ngay khi bắt đầu di chuyển
                 gp.checker.checkTile(this);
-
-                // Kiem tra va cham vat the // check object collision
-                int objIndex = gp.checker.checkObject(this, true); //entity va boolean cua player
+                int objIndex = gp.checker.checkObject(this, true);
                 pickUpObject(objIndex);
-
-                // CHECK NPC COLLISION
-                int npcIndex = gp.checker.checkEntity(this, gp.npc);
-                interactNPC(npcIndex);
-                //CHECK MONSTER COLLISION
-                int monsterIndex = gp.checker.checkEntity(this, gp.monster);
-                contactMonster(monsterIndex);
-            } else {
-                standCounter++;
-                if (standCounter == 12) {
-                    spriteNum = 1;
-                    standCounter = 0;
-                }
+                interactNPC(gp.checker.checkEntity(this, gp.npc));
+                contactMonster(gp.checker.checkEntity(this, gp.monster));
             }
         }
 
-        if (moving == true) {
+        // Xử lý di chuyển mượt mà
+        if (moving) {
+            // Tính toán vị trí tiếp theo
+            int nextX = worldX;
+            int nextY = worldY;
 
-            //false thi di chuyen duoc:
-            if (!collisionOn && kH.qPressed==false) {
-                switch (direction) {
-                    case "up": worldY -= speed;
-                        break;
-                    case "down": worldY += speed;
-                        break;
-                    case "left": worldX -= speed;
-                        break;
-                    case "right": worldX += speed;
-                        break;
-                }
-            }
-            gp.kH.qPressed = false;
-            spriteCounter++;
-            if (spriteCounter > 12) {
-                if (spriteNum == 1) {
-                    spriteNum = 2;
-                } else if (spriteNum == 2) {
-                    spriteNum = 1;
-                }
-
-                spriteCounter = 0;
+            switch (direction) {
+                case "up": nextY -= speed; break;
+                case "down": nextY += speed; break;
+                case "left": nextX -= speed; break;
+                case "right": nextX += speed; break;
             }
 
-            pixelCounter += speed;
+            // Kiểm tra biên giới map (đảm bảo không đi ra ngoài)
+            boolean withinMap = nextX >= 0 && nextX <= (gp.maxWorldCol-1)*gp.tileSize &&
+                    nextY >= 0 && nextY <= (gp.maxWorldRow-1)*gp.tileSize;
 
-            if (pixelCounter >= 48) {
+            // Điều kiện di chuyển: xuyên tường hoặc không va chạm + trong map
+            boolean canMove = (xuyenMode && withinMap) || (!collisionOn && withinMap);
+
+            if (canMove) {
+                // Cập nhật vị trí thực tế
+                worldX = nextX;
+                worldY = nextY;
+                pixelCounter += speed;
+
+                // Cập nhật animation
+                spriteCounter++;
+                if (spriteCounter > 12) {
+                    spriteNum = (spriteNum == 1) ? 2 : 1;
+                    spriteCounter = 0;
+                }
+
+                // Kết thúc di chuyển khi hoàn thành 1 tile
+                if (pixelCounter >= gp.tileSize) {
+                    moving = false;
+                    pixelCounter = 0;
+                    // Căn chỉnh vị trí chính xác về tile
+                    worldX = (worldX / gp.tileSize) * gp.tileSize;
+                    worldY = (worldY / gp.tileSize) * gp.tileSize;
+                }
+            } else {
+                // Nếu không thể di chuyển, dừng lại ngay
                 moving = false;
                 pixelCounter = 0;
             }
         }
 
-        // CHECK EVENT
-        gp.eHandler.checkEvent();
-
-        if (kH.spacePressed) {
+        // Xử lý đặt bom (chỉ khi không ở chế độ xuyên)
+        if (kH.spacePressed && !xuyenMode) {
             gp.bombManager.handleBombPlacement();
+            gp.kH.spacePressed = false; // Tránh đặt bom liên tục
         }
 
-        if(attackCooldown > 0) {
-            attackCooldown--;
-        }
-
-        if (kH.qPressed) {
-            // Chỉ tấn công nếu KHÔNG đang di chuyển
-            if (!moving) {
-                gp.chemManager.handleChem();
-                attacking = true;
-            }
-            // Reset trạng thái di chuyển
-            moving = false;
-            pixelCounter = 0;
-            spriteCounter = 0;
+        // Xử lý tấn công (chỉ khi không di chuyển)
+        if (kH.qPressed && !moving) {
+            gp.chemManager.handleChem();
+            attacking = true;
+            attackCooldown = attackCooldownMax;
+            gp.kH.qPressed = false; // Tránh tấn công liên tục
         }
 
         // Cập nhật animation tấn công
-        if(attacking) {
-            attacking();
+        if (attacking) {
+            attackCounter++;
+            if (attackCounter <= 5) spriteNum = 1;
+            else if (attackCounter <= 10) spriteNum = 2;
+            else {
+                attacking = false;
+                attackCounter = 0;
+                spriteNum = 1;
+            }
         }
 
+        // Giảm thời gian hồi chiêu
+        if (attackCooldown > 0) attackCooldown--;
 
-        if (teleportCooldown > 0) {
-            teleportCooldown--;
-        }
-        //===========SHIELD============
+        // Xử lý shield
         if (shieldActive) {
             shieldCounter++;
             if (shieldCounter >= shieldDuration) {
@@ -213,7 +208,16 @@ public class Player extends Entity {
             }
         }
 
-        //ngoia cau lenh chinh giup khi nguoi choi dung im thi invincibleCountre van chay
+        // Xử lý chế độ xuyên tường
+        if (xuyenMode) {
+            xuyenModeMin++;
+            if (xuyenModeMin >= xuyenModeMax) {
+                xuyenMode = false;
+                xuyenModeMin = 0;
+            }
+        }
+
+        // Xử lý bất tử tạm thời sau khi bị đánh
         if (invincible) {
             invincibleCounter++;
             if (invincibleCounter > 300) {
@@ -221,10 +225,9 @@ public class Player extends Entity {
                 invincibleCounter = 0;
             }
         }
-        if (life > maxLife) {
-            life = maxLife;
-        }
 
+        // Kiểm tra máu
+        life = Math.min(life, maxLife);
         if (life <= 0) {
             gp.gameState = gp.gameOverState;
         }
@@ -281,6 +284,11 @@ public class Player extends Entity {
                     case "Shield":
                         shieldActive = true;
                         shieldCounter = 0;
+                        gp.obj[gp.currentMap][i] = null;
+                        break;
+                    case "Invisible":
+                        xuyenMode = true;
+                        xuyenModeMin = 0;
                         gp.obj[gp.currentMap][i] = null;
                         break;
                 }
@@ -411,6 +419,23 @@ public class Player extends Entity {
             if(attacking) {
                 drawAttackEffect(g2d);
             }
+            //=========XUYEN=======
+            if(xuyenMode) {
+                AlphaComposite alcom = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
+                g2d.setComposite(alcom);
+                // Hiển thị thời gian còn lại
+                int secondsLeft = (xuyenModeMax - xuyenModeMin) / 60 + 1;
+                g2d.setFont(new Font("Arial", Font.PLAIN, 12));
+                g2d.setColor(Color.WHITE);
+                g2d.drawString("Ghost: " + secondsLeft + "s", screenX, screenY - 10);
+            }
+
+            if(xuyenMode) {
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            }
+
+
+
         }
 
     private void drawAttackEffect(Graphics2D g2d) {
@@ -424,5 +449,17 @@ public class Player extends Entity {
         g2d.setColor(new Color(255, 0, 0, 100));
         g2d.fillRect(attackScreenX, attackScreenY, gp.tileSize, gp.tileSize);
     }
+    public void setXuyenMode(boolean xuyenMode) {
+        this.xuyenMode = xuyenMode;
+
+        if(xuyenMode) {
+            xuyenModeMin = 0;
+        }
+    }
+
+    public boolean isXuyenMode() {
+        return xuyenMode;
+    }
+
 
 }

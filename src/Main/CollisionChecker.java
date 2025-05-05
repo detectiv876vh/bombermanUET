@@ -96,6 +96,10 @@ public class CollisionChecker {
                 }
                 break;
         }
+        if (entity instanceof Player && ((Player)entity).isXuyenMode()) {
+            entity.collisionOn = false;
+        }
+
 
     }
     public int checkObject(Entity entity,boolean player) {
@@ -198,44 +202,51 @@ public class CollisionChecker {
     }
 
     public int checkEntity(Entity entity, Entity[] target) {
-        int index = 999;
-        for(int i = 0 ; i < target.length; i++) {
-            if(target[i] != null) {
-                // lay vi tri solidarea cua entity
-                entity.solidArea.x = entity.worldX + entity.solidArea.x;
-                entity.solidArea.y = entity.worldY + entity.solidArea.y;
-                // lay vi tri solidarea cua object
-                target[i].solidArea.x = target[i].worldX + target[i].solidArea.x;
-                target[i].solidArea.y = target[i].worldY + target[i].solidArea.y;
 
-                switch (entity.direction) {
-                    case "up":
-                        entity.solidArea.y -= entity.speed;
-                        break;
-                    case "down":
-                        entity.solidArea.y += entity.speed;
-                        break;
-                    case "left":
-                        entity.solidArea.x -= entity.speed;
-                        break;
-                    case "right":
-                        entity.solidArea.x += entity.speed;
-                        break;
-                }
-                if (entity.solidArea.intersects(target[i].solidArea)) { //kiem tra va cham
-                    if(target[i] != entity) {
-                        entity.collisionOn = true;
-                        index = i;
+        if (entity instanceof Player && ((Player) entity).isXuyenMode()) {
+            entity.collisionOn = false;
+        } else {
+
+            int index = 999;
+            for (int i = 0; i < target.length; i++) {
+                if (target[i] != null) {
+                    // lay vi tri solidarea cua entity
+                    entity.solidArea.x = entity.worldX + entity.solidArea.x;
+                    entity.solidArea.y = entity.worldY + entity.solidArea.y;
+                    // lay vi tri solidarea cua object
+                    target[i].solidArea.x = target[i].worldX + target[i].solidArea.x;
+                    target[i].solidArea.y = target[i].worldY + target[i].solidArea.y;
+
+                    switch (entity.direction) {
+                        case "up":
+                            entity.solidArea.y -= entity.speed;
+                            break;
+                        case "down":
+                            entity.solidArea.y += entity.speed;
+                            break;
+                        case "left":
+                            entity.solidArea.x -= entity.speed;
+                            break;
+                        case "right":
+                            entity.solidArea.x += entity.speed;
+                            break;
                     }
+                    if (entity.solidArea.intersects(target[i].solidArea)) { //kiem tra va cham
+                        if (target[i] != entity) {
+                            entity.collisionOn = true;
+                            index = i;
+                        }
+                    }
+                    //khong cho x va y tang lien tuc
+                    entity.solidArea.x = entity.solidAreaDefaultX;
+                    entity.solidArea.y = entity.solidAreaDefaultY;
+                    target[i].solidArea.x = target[i].solidAreaDefaultX;
+                    target[i].solidArea.y = target[i].solidAreaDefaultY;
                 }
-                //khong cho x va y tang lien tuc
-                entity.solidArea.x = entity.solidAreaDefaultX;
-                entity.solidArea.y = entity.solidAreaDefaultY;
-                target[i].solidArea.x = target[i].solidAreaDefaultX;
-                target[i].solidArea.y = target[i].solidAreaDefaultY;
             }
-        }
 
-        return index;
+            return index;
+        }
+        return 999;
     }
 }
