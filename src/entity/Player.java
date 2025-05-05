@@ -209,13 +209,22 @@ public class Player extends Entity {
         }
 
         // Xử lý chế độ xuyên tường
-        if (xuyenMode) {
-            xuyenModeMin++;
-            if (xuyenModeMin >= xuyenModeMax) {
-                xuyenMode = false;
-                xuyenModeMin = 0;
+            if (xuyenMode) {
+                xuyenModeMin++;
+                if (xuyenModeMin >= xuyenModeMax) {
+                    xuyenMode = false;
+                    xuyenModeMin = 0;
+
+                    // Kiểm tra xem player có đang trong tường không
+                    int playerCol = worldX / gp.tileSize;
+                    int playerRow = worldY / gp.tileSize;
+                    int tileNum = gp.tileM.mapTileNum[gp.currentMap][playerCol][playerRow];
+
+                    if (gp.tileM.tile[tileNum].collision) {
+                        pushOutFromWall(); // Đẩy ra khỏi tường nếu đang ở trong
+                    }
+                }
             }
-        }
 
         // Xử lý bất tử tạm thời sau khi bị đánh
         if (invincible) {
@@ -460,6 +469,63 @@ public class Player extends Entity {
     public boolean isXuyenMode() {
         return xuyenMode;
     }
+        private void pushOutFromWall() {
+            if (!isInsideWall()) return;
+            // Danh sách các hướng kiểm tra (ưu tiên hướng hiện tại trước)
+            String[] directionsToCheck = {direction, "up", "down", "left", "right"};
 
+            for (String dir : directionsToCheck) {
+                // Tính toán vị trí giả lập khi di chuyển theo hướng này
+                int testX = worldX;
+                int testY = worldY;
 
+                switch (dir) {
+                    case "up": testY -= gp.tileSize; break;
+                    case "down": testY += gp.tileSize; break;
+                    case "left": testX -= gp.tileSize; break;
+                    case "right": testX += gp.tileSize; break;
+                }
+
+                // Kiểm tra xem vị trí này có hợp lệ không
+                boolean canMoveTo = true;
+
+                // Kiểm tra biên giới map
+                if (testX < 0 || testX >= gp.maxWorldCol * gp.tileSize ||
+                        testY < 0 || testY >= gp.maxWorldRow * gp.tileSize) {
+                    canMoveTo = false;
+                }
+
+                // Kiểm tra va chạm với tile (nếu trong map)
+                if (canMoveTo) {
+                    int col = testX / gp.tileSize;
+                    int row = testY / gp.tileSize;
+                    int tileNum = gp.tileM.mapTileNum[gp.currentMap][col][row];
+                    canMoveTo = gp.tileM.tile[tileNum].collision == false;
+                }
+
+                // Nếu vị trí này hợp lệ, di chuyển player tới đó
+                if (canMoveTo) {
+                    worldX = (testX / gp.tileSize) * gp.tileSize;
+                    worldY = (testY / gp.tileSize) * gp.tileSize;
+                    return; // Thoát sau khi tìm được hướng
+                }
+            }
+
+            // Nếu không tìm được hướng nào, đẩy ra vị trí spawn
+            worldX = gp.tileSize;
+            worldY = gp.tileSize;
+        }
+        public boolean isInsideWall() {
+            int playerCol = worldX / gp.tileSize;
+            int playerRow = worldY / gp.tileSize;
+
+            // Kiểm tra xem có đang ở ngoài map không
+            if (playerCol < 0 || playerCol >= gp.maxWorldCol ||
+                    playerRow < 0 || playerRow >= gp.maxWorldRow) {
+                return true;
+            }
+
+            int tileNum = gp.tileM.mapTileNum[gp.currentMap][playerCol][playerRow];
+            return gp.tileM.tile[tileNum].collision;
+        }
 }
