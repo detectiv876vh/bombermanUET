@@ -50,7 +50,7 @@ public class EventHandler {
         }
 
         if(canTouchEvent) {
-            if(hit(0,12,2,"any") == true) {teleport(1,15,4);}
+            if(hit(0,2,2,"any") == true) {teleport(1,15,4);}
             else if(hit(1,15,4,"any") == true) {teleport(0,12,2);}
 
         }
@@ -94,8 +94,8 @@ public class EventHandler {
         previousEventX = gp.player.worldX;
         previousEventY = gp.player.worldY;
         canTouchEvent = false;
+        gp.playSE(3);
 
-        gp.kH.spacePressed = false;
         gp.player.moving = false;
         gp.player.pixelCounter = 0;
         gp.player.collisionOn = false;
@@ -103,5 +103,7 @@ public class EventHandler {
         gp.player.spriteCounter = 0;
         gp.player.direction = "down";
         gp.player.teleportCooldown = 30;
+        gp.kH.spacePressed = false;
+        gp.player.hasBomb = gp.player.maxBombs;
     }
 }

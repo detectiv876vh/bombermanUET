@@ -1,7 +1,9 @@
-    package entity;
+package entity;
 
-    import Main.UtilityTool;
-    import Main.gamePanel;
+import Main.UtilityTool;
+import Main.gamePanel;
+import manager.DrawManager;
+import object.Bomb;
 
     import javax.imageio.ImageIO;
     import java.awt.*;
@@ -9,48 +11,52 @@
     import java.io.IOException;
     import java.util.UUID;
 
-    public class Entity {
-        //STATE
-        public gamePanel gp;
-        public int worldX, worldY;
-        public int speed;
-        boolean attacking = false;
+public class Entity {
+    //STATE
+    public gamePanel gp;
+    public int worldX, worldY;
+    public int speed;
+    boolean attacking = false;
+
+    //LOAD IMAGE
+    public BufferedImage up1, up2, up3, up4,up5, up6, down1, down2, down3, down4, down5, down6;
+    public BufferedImage right1, right2, right3, right4,right5, right6, left1, left2, left3, left4, left5, left6;
+    public BufferedImage attackUp1,attackUp2,attackDown1,attackDown2,attackLeft1,attackLeft2,
+            attcackRight1,attcackRight2;
+    public BufferedImage[] dyingSprites;
+    public BufferedImage image, image2, image3;
+    public String direction = "down";
+
+    //COUNTER
+    public int actionLockCounter = 0;
+    public int spriteCounter = 0;
+    public int shotAvailableCounter = 0;
+    public int pixelCounter = 0;
+
+    public int spriteNum = 1;
+    public int dyingCounter = 0;
+    public int hpBarCounter = 0;
+//    public int actionLockCounter = 0;
+    public int invincibleCounter = 0;
+    public static final int type_consumable = 6;
+    public boolean stackable = false;
+    // =============SHIELD==================
+    public boolean shieldActive = false;
+    public int shieldCounter = 0;
+    public boolean moving = false;
+    public final int shieldDuration = 300;
 
 
-        //LOAD IMAGE
-        public BufferedImage up1, up2, up3, up4, down1, down2, down3, down4;
-        public BufferedImage right1, right2, right3, right4, left1, left2, left3, left4;
-        public BufferedImage attackUp1,attackUp2,attackDown1,attackDown2,attackLeft1,attackLeft2,
-                attcakRight1,attcackRight2;
-        public BufferedImage image, image2, image3;
-        public String direction = "down";
         public String positionId;
         //COUNTER
         protected int moveCounter = 0;
-        public int spriteCounter = 0;
-        public int shotAvailableCounter = 0;
-        public int spriteNum = 1;
-        public int dyingCounter = 0;
-        public int hpBarCounter = 0;
-        public int actionLockCounter = 0;
-        public int invincibleCounter = 0;
-        public static final int type_consumable = 6;
-        public boolean stackable = false;
-        // =============SHIELD==================
-        public boolean shieldActive = false;
-        public int shieldCounter = 0;
-        public final int shieldDuration = 300;
-        public boolean moving = false;
-        public int pixelCounter = 0;
-        //===========Boss======
-        public int width;  // Mặc định bằng kích thước tile
-        public int height; // Mặc định bằng kích thước tile
-        public int screenX; // Sẽ được tính trong draw()
-        public int screenY; // Sẽ được tính trong draw()
-        //HITBOX:
-        public Rectangle solidArea; //cho all entity
 
-        public boolean collisionOn = false;
+
+    //HITBOX:
+    public Rectangle solidArea; //cho all entity
+
+    public int solidAreaDefauftX, solidAreaDefauftY;
+    public boolean collisionOn = false;
 
         public String name;
         public boolean collision = false;
@@ -75,261 +81,361 @@
         public int solidAreaDefaultX;
         public int solidAreaDefaultY;
 
-        public Entity(gamePanel gp) {
-            this.gp = gp;
-            this.positionId = UUID.randomUUID().toString();
-            this.width = gp.tileSize;
-            this.height = gp.tileSize;
-            solidArea = new Rectangle(0, 0, gp.tileSize, gp.tileSize);
 
-        }
+    public Entity(gamePanel gp) {
+        this.gp = gp;
+
+        //so-called hitbox:
+        solidArea = new Rectangle(0, 0, 48, 48);
+
+        dyingSprites = new BufferedImage[4]; // ví dụ: 4 frame chết
+
+        this.positionId = UUID.randomUUID().toString();
+
+
+    }
 
         public void setAction() {
         }
 
-        //Kiểm tra va chạm với tường, quái, vật thể:
-        public void checkCollision() {
-    //        collision = false;
-            gp.checker.checkTile(this);
-        }
+    //Kiểm tra va chạm với tường, quái, vật thể:
+    public void checkCollision() {
+        collision = false;
+        gp.checker.checkTile(this);
+        gp.checker.checkBomb(this);
+        gp.checker.checkEntity(this, gp.npc);
+        gp.checker.checkEntity(this, gp.monster);
+    }
 
         //UPDATE FPS
         public void update() {
 
-            setAction();
-            collision = false;
-            //truoc di chuyen
-            int oldX = worldX;
-            int oldY = worldY;
-            // Kiểm tra va chạm theo thứ tự ưu tiên
-            gp.checker.checkTile(this);
-            gp.checker.checkEntity(this, gp.npc);
-            gp.checker.checkEntity(this, gp.monster);
-            boolean contactPlayer = gp.checker.checkPlayer(this);
+        setAction();
+
+        checkCollision();
+
+        boolean contactPlayer = gp.checker.checkPlayer(this);
             checkCollision();
             if (moving) {
                 pixelCounter += speed;
-                if (pixelCounter >= gp.tileSize) {
+                if (pixelCounter >= 48) {
                     moving = false;
                     pixelCounter = 0;
                 }
             }
 
-            if(this.type == 2 && contactPlayer) {
-                if(gp.player.invincible == false) {             //loi
-                    //can give dame
-                    gp.player.life -=1;
-                    gp.player.invincible = true;
-                    gp.player.invincibleCounter = 0;
-                }
+        if(this.type == 2 && contactPlayer) {
+            if(gp.player.invincible == false) {             //loi
+                //can give dame
+                gp.player.life -=1;
+                gp.player.invincible = true;
             }
-
-            //neu ko co gi chan thi di tiep
-            if (!collisionOn) {
-                switch (direction) {
-                    case "up":
-                        worldY -= speed;
-                        break;
-                    case "down":
-                        worldY += speed;
-                        break;
-                    case "left":
-                        worldX -= speed;
-                        break;
-                    case "right":
-                        worldX += speed;
-                        break;
-                }
-            }
-
-            spriteCounter++;
-            if (spriteCounter > 12) {
-                if (spriteNum == 1) {
-                    spriteNum = 2;
-                } else if (spriteNum == 2) {
-                    spriteNum = 1;
-                }
-                spriteCounter = 0;
-            }
-            if (invincible) {
-                invincibleCounter++;
-                if (invincibleCounter > 60) { // Giả sử thời gian invincible là 60 frame (1 giây)
-                    invincible = false;
-                    invincibleCounter = 0;
-                }
-            }
-
         }
 
-        public void draw(Graphics2D g2) {
-
-            BufferedImage image = null;
-            int screenX = worldX - gp.player.worldX + gp.player.screenX;
-            int screenY = worldY - gp.player.worldY + gp.player.screenY;
-
-            // STOP MOVING CAMERA
-            if (gp.player.worldX < gp.player.screenX) {
-                screenX = worldX;
-            }
-            if (gp.player.worldY < gp.player.screenY) {
-                screenY = worldY;
-            }
-            int rightOffset = gp.screenWidth - gp.player.screenX;
-            if (rightOffset > gp.worldWidth - gp.player.worldX) {
-                screenX = gp.screenWidth - (gp.worldWidth - worldX);
-            }
-            int bottomOffset = gp.screenHeight - gp.player.screenY;
-            if (bottomOffset > gp.worldHeight - gp.player.worldY) {
-                screenY = gp.screenHeight - (gp.worldHeight - worldY);
-            }
-
+        //neu ko co gi chan thi di tiep
+        if (!collisionOn) {
             switch (direction) {
                 case "up":
-                    if (spriteNum == 1) {
-                        image = up1;
-                    }
-                    if (spriteNum == 2) {
-                        image = up2;
-                    }
+                    worldY -= speed;
                     break;
                 case "down":
-                    if (spriteNum == 1) {
-                        image = down1;
-                    }
-                    if (spriteNum == 2) {
-                        image = down2;
-                    }
+                    worldY += speed;
                     break;
                 case "left":
-                    if (spriteNum == 1) {
-                        image = left1;
-                    }
-                    if (spriteNum == 2) {
-                        image = left2;
-                    }
+                    worldX -= speed;
                     break;
                 case "right":
-                    if (spriteNum == 1) {
-                        image = right1;
-                    }
-                    if (spriteNum == 2) {
-                        image = right2;
-                    }
+                    worldX += speed;
                     break;
             }
+        }
 
-            if (invincible == true) {
-                hpBarOn = true;
-                hpBarCounter = 0;
-                changAlpha(g2, 0.4f);
-            }else {
-                changAlpha(g2, 1.0f);
+        spriteCounter++;
+        if (spriteCounter > 12) {
+            if (spriteNum == 1) {
+                spriteNum = 2;
+            } else if (spriteNum == 3) {
+                spriteNum = 4;
+            } else if (spriteNum == 4) {
+                spriteNum = 5;
+            } else if (spriteNum == 5) {
+                spriteNum = 6;
+            } else if (spriteNum == 6) {
+                spriteNum = 1;
             }
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-            if (dying == true) {
-                dyingAnimation(g2);
+            spriteCounter = 0;
+
+        }
+
+        pixelCounter += speed;
+
+        if (pixelCounter >= 48) {
+            pixelCounter = 0;
+        }
+
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter > 60) { // Giả sử thời gian invincible là 60 frame (1 giây)
+                invincible = false;
+                invincibleCounter = 0;
             }
+        }
 
-            //MONSTRE HP BAR
-            if (type == 2 && hpBarOn) {
+            if (dying) {
+                dyingCounter++;
 
-                double oneScale = (double) gp.tileSize / maxLife;
-                double hpBarValue = oneScale * life;
-
-                g2.setColor(new Color(35, 35, 35));
-                g2.fillRect(screenX - 1, screenY - 16, gp.tileSize + 2, 12);
-
-                g2.setColor(new Color(255, 0, 30));
-                g2.fillRect(screenX, screenY - 15, (int) hpBarValue, 10);   //(int)hpBarValue se thay cho gp.tileSize
-
-                hpBarCounter++;
-
-                if (hpBarCounter > 600) {
-                    hpBarCounter = 0;
-                    hpBarOn = false;
+                // mỗi 12 frame đổi sprite chết
+                int frameIndex = dyingCounter / 12;
+                if (frameIndex >= dyingSprites.length) {
+                    alive = false;
+                    dying = false;
                 }
+
+                return; // không cập nhật logic khác nữa
             }
 
-            if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
-                    worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
-                    worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
-                    worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
-                g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        }
+
+    public void draw(Graphics2D g2) {
+
+        BufferedImage image = null;
+        int screenX = worldX - gp.player.worldX + gp.player.screenX;
+        int screenY = worldY - gp.player.worldY + gp.player.screenY;
+
+        // STOP MOVING CAMERA
+        if (gp.player.worldX < gp.player.screenX) {
+            screenX = worldX;
+        }
+        if (gp.player.worldY < gp.player.screenY) {
+            screenY = worldY;
+        }
+        int rightOffset = gp.screenWidth - gp.player.screenX;
+        if (rightOffset > gp.worldWidth - gp.player.worldX) {
+            screenX = gp.screenWidth - (gp.worldWidth - worldX);
+        }
+        int bottomOffset = gp.screenHeight - gp.player.screenY;
+        if (bottomOffset > gp.worldHeight - gp.player.worldY) {
+            screenY = gp.screenHeight - (gp.worldHeight - worldY);
+        }
+
+        switch (direction) {
+            case "up":
+                if (spriteNum == 1) {
+                    image = up1;
+                }
+                if (spriteNum == 2) {
+                    image = up2;
+                }
+                if (spriteNum == 3) {
+                    image = up3;
+                }
+                if (spriteNum == 4) {
+                    image = up4;
+                }
+                if (spriteNum == 5) {
+                    image = up5;
+                }
+                if (spriteNum == 6) {
+                    image = up6;
+                }
+                break;
+            case "down":
+                if (spriteNum == 1) {
+                    image = down1;
+                }
+                if (spriteNum == 2) {
+                    image = down2;
+                }
+                if (spriteNum == 3) {
+                    image = down3;
+                }
+                if (spriteNum == 4) {
+                    image = down4;
+                }
+                if (spriteNum == 5) {
+                    image = down5;
+                }
+                if (spriteNum == 6) {
+                    image = down6;
+                }
+                break;
+            case "left":
+                if (spriteNum == 1) {
+                    image = left1;
+                }
+                if (spriteNum == 2) {
+                    image = left2;
+                }
+                if (spriteNum == 3) {
+                    image = left3;
+                }
+                if (spriteNum == 4) {
+                    image = left4;
+                }
+                if (spriteNum == 5) {
+                    image = left5;
+                }
+                if (spriteNum == 6) {
+                    image = left6;
+                }
+                break;
+            case "right":
+                if (spriteNum == 1) {
+                    image = right1;
+                }
+                if (spriteNum == 2) {
+                    image = right2;
+                }
+                if (spriteNum == 3) {
+                    image = right3;
+                }
+                if (spriteNum == 4) {
+                    image = right4;
+                }
+                if (spriteNum == 5) {
+                    image = right5;
+                }
+                if (spriteNum == 6) {
+                    image = right6;
+                }
+                break;
+        }
+
+        if (invincible == true) {
+            hpBarOn = true;
+            hpBarCounter = 0;
+            changAlpha(g2, 0.4f);
+        }else {
+            changAlpha(g2, 1.0f);
+        }
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+
+        if (dying) {
+            int frameIndex = dyingCounter / 12;
+            if (frameIndex >= dyingSprites.length) {
+                frameIndex = dyingSprites.length - 1;
             }
-            // If player is around the edge, draw everything
-            else if (gp.player.worldX < gp.player.screenX ||
-                    gp.player.worldY < gp.player.screenY ||
-                    rightOffset > gp.worldWidth - gp.player.worldX ||
-                    bottomOffset > gp.worldHeight - gp.player.worldY) {
-                g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
-            }
+            g2.drawImage(dyingSprites[frameIndex], screenX, screenY, gp.tileSize, gp.tileSize, null);
+            return; // Không vẽ gì khác nếu đang chết
         }
-        //ANIMATION LUC MONSTER CHET
-        public void dyingAnimation(Graphics2D g2) {
-            dyingCounter++;
-            int i=5;
 
-            if(dyingCounter <= i) {changAlpha(g2,0f);}
 
-            if(dyingCounter > i && dyingCounter <= 2*i) {changAlpha(g2,1f);}
+        //MONSTRE HP BAR
+        if (type == 2 && hpBarOn) {
 
-            if(dyingCounter > 2*i && dyingCounter <= 3*i) {changAlpha(g2,0f);}
+            double oneScale = (double) gp.tileSize / maxLife;
+            double hpBarValue = oneScale * life;
 
-            if(dyingCounter > 3*i && dyingCounter <= 4*i) {changAlpha(g2,1f);}
+            g2.setColor(new Color(35, 35, 35));
+            g2.fillRect(screenX - 1, screenY - 16, gp.tileSize + 2, 12);
 
-            if(dyingCounter > 4*i && dyingCounter <= 5*i) {changAlpha(g2,0f);}
+            g2.setColor(new Color(255, 0, 30));
+            g2.fillRect(screenX, screenY - 15, (int) hpBarValue, 10);   //(int)hpBarValue se thay cho gp.tileSize
 
-            if(dyingCounter > 5*i && dyingCounter <= 6*i) {changAlpha(g2,1f);}
+            hpBarCounter++;
 
-            if(dyingCounter > 6*i && dyingCounter <= 7*i) {changAlpha(g2,0f);}
-
-            if(dyingCounter > 7*i && dyingCounter <= 8*i) {changAlpha(g2,1f);}
-
-            if(dyingCounter > 8*i) {
-                dying = false;
-                alive = false;
+            if (hpBarCounter > 600) {
+                hpBarCounter = 0;
+                hpBarOn = false;
             }
         }
 
-        public void changAlpha(Graphics2D g2, float alphaValue) {
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
+        if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
+                worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
+                worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
+                worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
+            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
         }
-        public BufferedImage setup(String imagePath) {
-
-            UtilityTool uTool = new UtilityTool();
-            BufferedImage image = null;
-
-            try {
-                image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
-                image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return image;
-        }
-
-        public BufferedImage setup1(String imagePath, int width, int height) {
-
-            UtilityTool uTool = new UtilityTool();
-            BufferedImage image = null;
-
-            try {
-                image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
-                image = uTool.scaleImage(image, width,height);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return image;
-        }
-
-        public Rectangle getHitbox() {
-            return new Rectangle(
-                    worldX + solidArea.x,
-                    worldY + solidArea.y,
-                    solidArea.width,
-                    solidArea.height
-            );
-        }
-        protected void damageReaction() {
+        // If player is around the edge, draw everything
+        else if (gp.player.worldX < gp.player.screenX ||
+                gp.player.worldY < gp.player.screenY ||
+                rightOffset > gp.worldWidth - gp.player.worldX ||
+                bottomOffset > gp.worldHeight - gp.player.worldY) {
+            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
         }
     }
+    //ANIMATION LUC MONSTER CHET
+    public void dyingAnimation(Graphics2D g2) {
+        dyingCounter++;
+        int i=5;
+
+        if(dyingCounter <= i) {changAlpha(g2,0f);}
+
+        if(dyingCounter > i && dyingCounter <= 2*i) {changAlpha(g2,1f);}
+
+        if(dyingCounter > 2*i && dyingCounter <= 3*i) {changAlpha(g2,0f);}
+
+        if(dyingCounter > 3*i && dyingCounter <= 4*i) {changAlpha(g2,1f);}
+
+        if(dyingCounter > 4*i && dyingCounter <= 5*i) {changAlpha(g2,0f);}
+
+        if(dyingCounter > 5*i && dyingCounter <= 6*i) {changAlpha(g2,1f);}
+
+        if(dyingCounter > 6*i && dyingCounter <= 7*i) {changAlpha(g2,0f);}
+
+        if(dyingCounter > 7*i && dyingCounter <= 8*i) {changAlpha(g2,1f);}
+
+        if(dyingCounter > 8*i) {
+            dying = false;
+            alive = false;
+        }
+    }
+
+    public void changAlpha(Graphics2D g2, float alphaValue) {
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
+    }
+
+    // =============GET IMAGE LINK==================
+    public void loadDyingSprites(String basePath) {
+        for (int i = 0; i < dyingSprites.length; i++) {
+            dyingSprites[i] = setup(basePath + "_dead" + (i + 1));
+        }
+    }
+
+
+    public BufferedImage setup_obj(String imagePath) {
+
+        UtilityTool uTool = new UtilityTool();
+        BufferedImage image = null;
+
+        try {
+            image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
+            image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
+
+    public BufferedImage setup(String imagePath) {
+
+        UtilityTool uTool = new UtilityTool();
+        BufferedImage image = null;
+
+        try {
+            image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
+
+            // Cắt khoảng trống xung quanh nếu có
+            image = uTool.cropToContent(image);
+
+            // Scale lên đúng tileSize
+            image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
+
+    public Rectangle getHitbox() {
+        return new Rectangle(
+                worldX + solidArea.x,
+                worldY + solidArea.y,
+                solidArea.width,
+                solidArea.height
+        );
+    }
+
+    protected void damageReaction() {
+    }
+}

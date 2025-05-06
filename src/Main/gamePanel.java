@@ -2,20 +2,29 @@ package Main;
 
 import entity.Entity;
 import entity.Player;
-import entity.Projectile;
+import environment.EnvironmentManager;
+import environment.Lighting;
 import manager.BombManager;
-import manager.ChemManager;
-import tile.TileManager;
+import manager.DrawManager;
+import manager.TileManager;
+import object.Bomb;
+//import manager.ChemManager;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicTreeUI;
 import java.awt.*;
 import java.util.ArrayList;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
 
 public class gamePanel extends JPanel implements Runnable {
 
+    // TILE STATE (MOUSE)
+    public MouseHandler mouseH = new MouseHandler();
+
     //SCREEN SETTINGS
-    final int originalTileSize = 16;
-    final int scale = 3;
+    public final int originalTileSize = 16;
+    public final int scale = 3;
 
     public final int tileSize = originalTileSize * scale; //48x48 tile  (1 ô gạch)
     public final int maxScreenCol = 16;     // Chiều dài (đơn vị số block) theo phương Ox của screen
@@ -25,7 +34,9 @@ public class gamePanel extends JPanel implements Runnable {
 
     // WORLD SETTINGS
     public final int maxWorldCol = 50;
-    public final int maxWorldRow = 50;
+    public final int maxWorldRow = 25;
+    public int WIDTH = (tileSize * scale) * maxWorldCol;
+    public int HEIGHT = (tileSize * scale) * maxWorldRow;
     public final int worldWidth = tileSize * maxWorldCol;   // Chiều dài bản đồ
     public final int worldHeight = tileSize * maxWorldRow;  // Chiều rộng bản đồ
     public final int maxMap = 10; // Tổng số map
@@ -37,7 +48,10 @@ public class gamePanel extends JPanel implements Runnable {
     //SYSTEM
     public TileManager tileM = new TileManager(this);
     public KeyHandler kH = new KeyHandler(this);
+    public Sound music = new Sound();
+    public Sound se = new Sound();
     public UI ui = new UI(this);
+    public EnvironmentManager eManager = new EnvironmentManager(this);
 
     Thread gameThread;
     public AssetSetter aSetter = new AssetSetter(this);
@@ -47,12 +61,13 @@ public class gamePanel extends JPanel implements Runnable {
     //ENTITIES AND OBJECTS
     public Player player = new Player(this, kH);
     public ArrayList<Entity> entityList = new ArrayList<>();
-    public ArrayList<Entity>[] projectileList = new ArrayList[maxMap];
-    public Entity monster[] = new Entity[20];
-    public Entity npc[] = new Entity[100];           // so  npc co the co
+    public ArrayList<Entity> projectileList = new ArrayList<>();
+    public Entity monster[][] = new Entity[maxMap][20];
+    public Entity npc[][] = new Entity[maxMap][10];           // so  npc co the co
     public Entity obj[][] = new Entity[maxMap][100];   // so item co the xuat hien tai o do
     public BombManager bombManager = new BombManager(this, player);
-    public ChemManager chemManager = new ChemManager(this, player);
+    public DrawManager drawManager = new DrawManager(this);
+//    public ChemManager chemManager = new ChemManager(this, player);
 
     //GAME STATE
     public int gameState;
@@ -62,6 +77,7 @@ public class gamePanel extends JPanel implements Runnable {
     public final int chemState = 3;
     public final int gameOverState = 6;
     public Graphics g;
+    public Graphics2D g2d;
 
 
     public gamePanel() {
@@ -71,21 +87,17 @@ public class gamePanel extends JPanel implements Runnable {
         this.addKeyListener(kH);
         this.setFocusable(true);
         this.requestFocusInWindow();
-        this.ui = new UI(this);
+        this.addMouseListener(mouseH);
+        this.addMouseMotionListener(mouseH);
     }
 
     public void setupGame() {
         gameState = titleState;
-
-        for (int i = 0; i < maxMap; i++) {
-            if (projectileList[i] == null) {
-                projectileList[i] = new ArrayList<>();
-            }
-        }
         aSetter.setObject();
-        aSetter.setNPC();
+//        aSetter.setNPC();
         aSetter.setMonster();
-        aSetter.setBoss();
+//        playMusic(0);
+        eManager.setup();
     }
 
     public void startGameThread() {
@@ -123,105 +135,199 @@ public class gamePanel extends JPanel implements Runnable {
 
     public void update() {
         if (gameState == playState) {
+
             player.update();
             bombManager.handleBombPlacement();
             bombManager.update();
-            chemManager.handleChem();
+//          chemManager.handleChem();
 
-            for (int i = 0; i < npc.length; i++) {
-                if (npc[i] != null) npc[i].update();
-            }
-            // UPDATE BOMB
-            for (int i = 0; i < obj[currentMap].length; i++) {
-                if (obj[currentMap][i] != null && obj[currentMap][i].name.equals("bombItem")) {
-                    obj[currentMap][i].update();
-                }
-            }
 
-            for (int i = 0; i < monster.length; i++) {
-                if (monster[i] != null) {
-                    if (monster[i].alive && !monster[i].dying) {
-                        monster[i].update();
-                    } else if (!monster[i].alive) {
-                        monster[i] = null;
-                    }
-                }
-            }
-
-            for (int i = 0; i < projectileList[currentMap].size(); i++) {
-                Entity p = projectileList[currentMap].get(i);
-                if (p != null) {
-                    if (p.alive) {
-                        p.update();
-                        // THÊM CODE KIỂM TRA ĐẠN TRÚNG QUÁI VẬT TẠI ĐÂY
-                        for (int j = 0; j < monster.length; j++) {
-                            if (monster[j] != null && monster[j].alive) {
-                                if (p.getHitbox().intersects(monster[j].getHitbox())) {
-                                    player.damageMonster(j);
-                                    p.alive = false; // Hủy đạn sau khi trúng
-                                }
-                            }
-                        }
+            for (int i = 0; i < projectileList.size(); i++) {
+                if (projectileList.get(i) != null) {
+                    if (projectileList.get(i).alive) {
+                        projectileList.get(i).update();
                     } else {
-                        projectileList[currentMap].remove(i);
+                        projectileList.remove(i);
                         i--;
                     }
                 }
             }
+            for (int i = 0; i < monster[currentMap].length; i++) {
+                if (monster[currentMap][i] != null) {
+                    if (monster[currentMap][i].alive && !monster[currentMap][i].dying) {
+                        monster[currentMap][i].update();
+                    } else if (!monster[currentMap][i].alive) {
+                        monster[currentMap][i] = null;
+                    }
+                }
+            }
+
+            for (int i = 0; i < bombManager.bombList[currentMap].size(); i++) {
+                Bomb bomb = bombManager.bombList[currentMap].get(i);
+                if (bomb != null && bomb.alive) {
+                    bomb.update();
+                } else {
+                    bombManager.bombList[currentMap].remove(i);
+                    player.hasBomb++;
+                    i--;
+                }
+            }
         }
-        player.attackCooldown = Math.max(0, player.attackCooldown - 1);
 
         if(gameState == pauseState) {}
 
+
     }
+
     public void paintComponent(Graphics g) {
         this.g = g;
 
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        if (gameState == titleState) {
-            ui.draw(g2);
-        } else if (gameState == playState) {
+        if(gameState == pauseState) {
             tileM.draw(g2);
+            player.draw(g2);
 
-            for (int i = 0; i < obj[currentMap].length; i++) {
-                if (obj[currentMap][i] != null) {
+            entityList.add(player);
+            for (int i = 0; i < projectileList.size(); i++) {
+                if(projectileList.get(i) != null) {
+                    entityList.add(projectileList.get(i));
+                }
+            }
+
+            for (int i = 0; i < entityList.size(); i++) {
+                entityList.get(i).draw(g2);
+            }
+
+            for (Entity bomb : bombManager.bombList[currentMap]) {
+                if (bomb != null && bomb.alive) {
+                    bomb.draw(g2);
+                }
+            }
+            // UI
+            ui.draw(g2);
+        }
+
+        // TITLE SCREEN
+        if(gameState == titleState) {
+            ui.draw(g2);
+        }
+        // OTHERS
+        else if(gameState == playState) {
+            // TILE
+            tileM.draw(g2);
+            //OBJECT
+            for(int i = 0; i < obj[currentMap].length; i++) {
+                if(obj[currentMap][i] != null) {
                     obj[currentMap][i].draw(g2);
                 }
             }
-
-            player.draw(g2);
-
-            for (int i = 0; i < npc.length; i++) {
-                if (npc[i] != null) {
-                    npc[i].draw(g2);
-                }
-            }
+            // PLAYER
+            player.draw(g2);//xoa cai tren thay bang cai nay
 
             entityList.add(player);
+            for (int i = 0; i < monster[currentMap].length; i++) {
+                if (monster[currentMap][i] != null) entityList.add(monster[currentMap][i]);
+            }
 
-            for (int i = 0; i < projectileList[currentMap].size(); i++) {
-                if (projectileList[currentMap].get(i) != null) {
-                    entityList.add(projectileList[currentMap].get(i));
+            for (int i = 0; i < projectileList.size(); i++) {
+                if(projectileList.get(i) != null) {
+                    entityList.add(projectileList.get(i));
                 }
             }
 
-            for (int i = 0; i < npc.length; i++) {
-                if (npc[i] != null) entityList.add(npc[i]);
-            }
-
-            for (int i = 0; i < monster.length; i++) {
-                if (monster[i] != null) entityList.add(monster[i]);
+            for (Entity bomb : bombManager.bombList[currentMap]) {
+                if (bomb != null && bomb.alive) {
+                    bomb.draw(g2);
+                }
             }
             //DRAW ENTITIES
             for (int i = 0; i < entityList.size(); i++) {
                 entityList.get(i).draw(g2);
             }
+
+            // empty the list
             entityList.clear();
         }
 
+        // ENVIRONMENT
+        eManager.draw(g2);
+
+        // UI
         ui.draw(g2);
+
         g2.dispose();
+
+    }
+
+    public void playMusic(int i) {
+
+        music.setFile(i);
+        music.play();
+        music.loop();
+    }
+
+    public void stopMusic() {
+        music.stop();
+    }
+
+    public void playSE(int i) {
+
+        se.setFile(i);
+        se.play();
+    }
+
+    public class MouseHandler extends MouseAdapter {
+        public void mouseClicked(MouseEvent e) {
+            if(gameState == titleState) {
+                int x = e.getX();   // tọa độ con chuột click.
+                int y = e.getY();
+
+                int menuY = tileSize * 7;
+                int menuItemHeight = tileSize;
+
+                if(y >= menuY && y < menuY + menuItemHeight) {
+                    ui.commandNum=0;
+                    gameState = playState;
+                }
+                else if(y >= menuY + menuItemHeight && y < menuY + menuItemHeight*2) {
+                    ui.commandNum=1;
+                }
+                else if(y >= menuY + menuItemHeight*2 && y < menuY + menuItemHeight*3) {
+                    ui.commandNum=2;
+                    System.exit(0);
+                }
+            }
+        }
+
+        public void mouseMoved(MouseEvent e) {
+            if(gameState == titleState) {
+                int y = e.getY();   // tọa độ con trỏ chuột đang ở.
+
+                int menuY = tileSize * 7;
+                int menuItemHeight = tileSize;
+                int newHover = -1;
+
+                if(y >= menuY && y < menuY + menuItemHeight) {
+                    newHover = 0;
+                }
+                else if(y >= menuY + menuItemHeight && y < menuY + menuItemHeight*2) {
+                    newHover = 1;
+                }
+                else if(y >= menuY + menuItemHeight*2 && y < menuY + menuItemHeight*3) {
+                    newHover = 2;
+                }
+
+                if (newHover != -1 && newHover != ui.lastHovered) {
+                    ui.lastHovered = newHover;
+                    playSE(4);
+                }
+
+                if (newHover != -1) {
+                    ui.commandNum = newHover;
+                }
+            }
+        }
     }
 }

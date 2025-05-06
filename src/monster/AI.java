@@ -123,7 +123,7 @@ public class AI {
     }
 
     private Bomb findNearbyBomb() {
-        for (Entity entity : gp.projectileList[gp.currentMap]) {
+        for (Entity entity : gp.bombManager.bombList[gp.currentMap]) {
             if (entity instanceof Bomb) {
                 int dx = Math.abs(this.entity.worldX - entity.worldX);
                 int dy = Math.abs(this.entity.worldY - entity.worldY);
@@ -315,7 +315,7 @@ public class AI {
     }
 
     private boolean isBombAt(int x, int y) {
-        for (Entity entity : gp.projectileList[gp.currentMap]) {
+        for (Entity entity : gp.bombManager.bombList[gp.currentMap]) {
             if (entity instanceof Bomb) {
                 int bombX = entity.worldX / TILE_SIZE;
                 int bombY = entity.worldY / TILE_SIZE;

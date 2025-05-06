@@ -1,7 +1,10 @@
-package tile;
+package manager;
 
 import Main.UtilityTool;
 import Main.gamePanel;
+import entity.Entity;
+import object.*;
+import tile.Tile;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -9,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Random;
 
 public class TileManager {
     gamePanel gp;
@@ -28,7 +32,7 @@ public class TileManager {
 
     public void getTileImage() {
         //tải ảnh các tile (ô vuông) từ file PNG và gán vào mảng tile.
-        setup(0, "tile3", false, false);
+        setup(0, "spr_tileset_sunnysideworld_16px-ezgif.com-crop", false, false);
         setup(1, "New_wall", true, false);
         setup(2, "crack_wall", true, true);
         setup(4,"tile4", false, false);
@@ -52,21 +56,56 @@ public class TileManager {
     }
 
     //đặt
-    public void explodeTile(int worldX, int worldY) {
-        int col = worldX / gp.tileSize;
-        int row = worldY / gp.tileSize;
+    public void explodeTile(int tileX, int tileY) {
+        if (tileX < 0 || tileY < 0 || tileX >= gp.maxWorldCol || tileY >= gp.maxWorldRow) {
+            return;
+        }
 
-        if (col >= 0 && col < gp.maxWorldCol && row >= 0 && row < gp.maxWorldRow) {
-            int tileIndex = mapTileNum[gp.currentMap][col][row];
-
-            if(gp.currentMap == 0) {
-                if (tile[tileIndex].breakable) {
-                    mapTileNum[0][col][row] = 0; // Gán về tile nền
-                }
+        int tileNum = mapTileNum[gp.currentMap][tileX][tileY];
+        if (tile[tileNum].breakable) {
+            // Thay đổi tùy theo map
+            if (gp.currentMap == 0) {
+                mapTileNum[gp.currentMap][tileX][tileY] = 0; // Gán về tile nền
+            } else if (gp.currentMap == 1) {
+                mapTileNum[gp.currentMap][tileX][tileY] = 4; // Gán về tile nền khác
             }
-            else if (gp.currentMap == 1) {
-                if (tile[tileIndex].breakable) {
-                    mapTileNum[1][col][row] = 4; // Gán về tile nền
+
+            //random tỉ lệ rơi items
+            maybeDropItem(tileX, tileY);
+        }
+    }
+
+    public void maybeDropItem(int tileX, int tileY) {
+        Random rand = new Random();
+        int chance = rand.nextInt(100); // 0 - 99
+
+        // 25% cơ hội rơi item
+        if (chance < 25) {
+            Entity item = null;
+
+            if (chance < 2) {
+                item = new OBJ_HeartItem(gp); // (0-1]: 1%
+            } else if (chance < 10) {
+                item = new OBJ_Boost(gp);     // 1-9: 8%
+            } else if (chance < 13) {
+                item = new OBJ_Bomb(gp);      // 10-13: 3%
+            } else if (chance < 15) {
+                item = new OBJ_Shield(gp);    // 13-15: 2%
+            } else if (chance < 16) {
+                item = new OBJ_Invisible(gp); //15-16: 1%
+            } else if (chance < 25) {
+                item = new OBJ_Explosion(gp);
+            }
+
+            if (item != null) {
+                item.worldX = tileX * gp.tileSize;
+                item.worldY = tileY * gp.tileSize;
+
+                for (int i = 0; i < gp.obj[gp.currentMap].length; i++) {
+                    if (gp.obj[gp.currentMap][i] == null) {
+                        gp.obj[gp.currentMap][i] = item;
+                        break;
+                    }
                 }
             }
         }
