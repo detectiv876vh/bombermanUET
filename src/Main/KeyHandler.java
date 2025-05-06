@@ -35,7 +35,7 @@ public class KeyHandler implements KeyListener {
                 if (gp.ui.commandNum == 0) {
                     gp.gameState = gp.transitionState;
                     gp.ui.startMapTransition("Level 1");
-                } else if (gp.ui.commandNum == 2) {
+                } else if (gp.ui.commandNum == 1) {
                     System.exit(0);
                 }
             }

@@ -29,7 +29,7 @@ public class UI {
     public int commandNum = 0;
     Font theleahFat;
     public int subState= 0;
-    int lastHovered = -1; // Lưu trạng thái hover trước đó
+    public int lastHovered = -1; // Lưu trạng thái hover trước đó
 
     // MAP TRANSITION
     public boolean showTransition = false;
@@ -198,14 +198,14 @@ public class UI {
         int buttonHeight = playButton.getHeight();
         int spacing = gp.tileSize - 20; // khoảng cách giữa các nút.
 
-// Tính tổng chiều cao của cả menu
+// Tính tổng chiều cao của cả menu.
         int totalHeight = buttonHeight * 2 + spacing;
         int yStart = gp.screenHeight / 2 - totalHeight / 2 + 80;
         x = gp.screenWidth / 2 - buttonWidth / 2;
         y = yStart;
 
-// PLAY
-        if (commandNum == 0) {
+// PLAY - sử dụng mouseHandler để kiểm tra trạng thái nhấn.
+        if (gp.mouseH.playButtonPressed) {
             g2.drawImage(playButtonPress, x, y, null);
         } else {
             g2.drawImage(playButton, x, y, null);
@@ -213,7 +213,7 @@ public class UI {
 
 // QUIT
         y += buttonHeight + spacing;
-        if (commandNum == 2) {
+        if (gp.mouseH.quitButtonPressed) {
             g2.drawImage(quitButtonPress, x, y, null);
         } else {
             g2.drawImage(quitButton, x, y, null);
