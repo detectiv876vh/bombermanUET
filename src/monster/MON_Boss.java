@@ -10,7 +10,7 @@
 //    private int scanRangeHeight = 48; // 1 tile height
 //    private boolean playerDetected = false;
 //    private int attackCooldown = 0;
-//    private final int attackDelay = 90; // 1.5 giây (90 frames với 60 FPS)
+//    private final int attackDelay = 60; // 1.5 giây (90 frames với 60 FPS)
 //    private int attackCounter = 0;
 //    private boolean isAttacking = false;
 //    private Rectangle laserArea;
@@ -21,7 +21,7 @@
 //        this.type = 2; // Monster type
 //        this.name = "Boss";
 //        this.speed = 1;
-//        this.maxLife = 30;
+//        this.maxLife = 3;
 //        this.life = maxLife;
 //        this.solidArea = new Rectangle(16, 16, 64, 64); // Hitbox nhỏ hơn sprite
 //

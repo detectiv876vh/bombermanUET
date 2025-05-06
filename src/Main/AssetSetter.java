@@ -1,7 +1,7 @@
 package Main;
 
 import entity.NPC_Test;
-//import monster.MON_Boss;
+import monster.MON_Boss;
 import monster.MON_Greenslime;
 import object.*;
 
@@ -77,10 +77,10 @@ public class AssetSetter {
         gp.monster[0].worldX = gp.tileSize*3;
         gp.monster[0].worldY = 17* gp.tileSize;
     }
-//
-//    public void setBoss() {
-//        gp.monster[0] = new MON_Boss(gp);
-//        gp.monster[0].worldX = gp.tileSize*4;
-//        gp.monster[0].worldY = 17* gp.tileSize;
-//    }
+
+    public void setBoss() {
+        gp.monster[0] = new MON_Boss(gp);
+        gp.monster[0].worldX = gp.tileSize*4;
+        gp.monster[0].worldY = 17* gp.tileSize;
+    }
 }

@@ -85,7 +85,7 @@ public class gamePanel extends JPanel implements Runnable {
         aSetter.setObject();
         aSetter.setNPC();
         aSetter.setMonster();
-//        aSetter.setBoss();
+        aSetter.setBoss();
     }
 
     public void startGameThread() {
