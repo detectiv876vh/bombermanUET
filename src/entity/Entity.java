@@ -21,7 +21,7 @@
         public BufferedImage up1, up2, up3, up4, down1, down2, down3, down4;
         public BufferedImage right1, right2, right3, right4, left1, left2, left3, left4;
         public BufferedImage attackUp1,attackUp2,attackDown1,attackDown2,attackLeft1,attackLeft2,
-                attcackRight1,attcackRight2;
+                attcakRight1,attcackRight2;
         public BufferedImage image, image2, image3;
         public String direction = "down";
         public String positionId;
@@ -42,8 +42,11 @@
         public final int shieldDuration = 300;
         public boolean moving = false;
         public int pixelCounter = 0;
-
-
+        //===========Boss======
+        public int width;  // Mặc định bằng kích thước tile
+        public int height; // Mặc định bằng kích thước tile
+        public int screenX; // Sẽ được tính trong draw()
+        public int screenY; // Sẽ được tính trong draw()
         //HITBOX:
         public Rectangle solidArea; //cho all entity
 
@@ -75,8 +78,9 @@
         public Entity(gamePanel gp) {
             this.gp = gp;
             this.positionId = UUID.randomUUID().toString();
-            //so-called hitbox:
-            solidArea = new Rectangle(0, 0, 48, 48);
+            this.width = gp.tileSize;
+            this.height = gp.tileSize;
+            solidArea = new Rectangle(0, 0, gp.tileSize, gp.tileSize);
 
         }
 
@@ -105,7 +109,7 @@
             checkCollision();
             if (moving) {
                 pixelCounter += speed;
-                if (pixelCounter >= 48) {
+                if (pixelCounter >= gp.tileSize) {
                     moving = false;
                     pixelCounter = 0;
                 }
@@ -116,6 +120,7 @@
                     //can give dame
                     gp.player.life -=1;
                     gp.player.invincible = true;
+                    gp.player.invincibleCounter = 0;
                 }
             }
 
@@ -153,6 +158,7 @@
                     invincibleCounter = 0;
                 }
             }
+
         }
 
         public void draw(Graphics2D g2) {
@@ -301,6 +307,21 @@
             }
             return image;
         }
+
+        public BufferedImage setup1(String imagePath, int width, int height) {
+
+            UtilityTool uTool = new UtilityTool();
+            BufferedImage image = null;
+
+            try {
+                image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
+                image = uTool.scaleImage(image, width,height);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return image;
+        }
+
         public Rectangle getHitbox() {
             return new Rectangle(
                     worldX + solidArea.x,

@@ -71,6 +71,7 @@ public class gamePanel extends JPanel implements Runnable {
         this.addKeyListener(kH);
         this.setFocusable(true);
         this.requestFocusInWindow();
+        this.ui = new UI(this);
     }
 
     public void setupGame() {
@@ -84,6 +85,7 @@ public class gamePanel extends JPanel implements Runnable {
         aSetter.setObject();
         aSetter.setNPC();
         aSetter.setMonster();
+//        aSetter.setBoss();
     }
 
     public void startGameThread() {

@@ -22,8 +22,8 @@ public class Player extends Entity {
     public final int screenY;
     public int hasKey = 0; // so key co duoc khi nhat tren map
     public int hasBoost = 0;
-    private BombManager bombManager;
-    private ChemManager chemManager;
+    public  BombManager bombManager;
+    public ChemManager chemManager;
     public boolean moving = false;
     public int pixelCounter = 0;
     int standCounter = 0;
@@ -90,8 +90,8 @@ public class Player extends Entity {
         attackDown2 = setup("/player/3");
         attackLeft1 = setup("/player/2");
         attackLeft2 = setup("/player/3");
-        attcackRight2 = setup("/player/2");
-        attcackRight1 = setup("/player/3");
+        attackRight2 = setup("/player/2");
+        attackRight1 = setup("/player/3");
     }
 
     public void update() {
@@ -217,7 +217,7 @@ public class Player extends Entity {
 
                     // Kiểm tra xem player có đang trong tường không
                     if (isInsideWall()) {
-                        pushOutFromWall(); // Đẩy ra khỏi tường nếu đang ở trong
+                        pushToNearestValidPosition();
                     }
                 }
             }
@@ -531,5 +531,67 @@ public class Player extends Entity {
 
         int tileNum = gp.tileM.mapTileNum[gp.currentMap][playerCol][playerRow];
         return gp.tileM.tile[tileNum].collision;
+    }
+
+    private void pushToNearestValidPosition() {
+        // Lưu lại vị trí ban đầu để so sánh
+        int originalX = worldX;
+        int originalY = worldY;
+
+        // Tìm kiếm theo hình xoắn ốc từ trong ra ngoài
+        for (int radius = 1; radius <= 5; radius++) {
+            // Kiểm tra theo 4 hướng chính trước
+            for (int i = 0; i < 4; i++) {
+                int testX = originalX;
+                int testY = originalY;
+
+                switch (i) {
+                    case 0: testX += radius * gp.tileSize; break; // Phải
+                    case 1: testX -= radius * gp.tileSize; break; // Trái
+                    case 2: testY += radius * gp.tileSize; break; // Xuống
+                    case 3: testY -= radius * gp.tileSize; break; // Lên
+                }
+
+                if (isValidPosition(testX, testY)) {
+                    worldX = testX;
+                    worldY = testY;
+                    return;
+                }
+            }
+
+            // Kiểm tra các hướng chéo nếu cần
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dy = -radius; dy <= radius; dy++) {
+                    if (dx == 0 || dy == 0) continue; // Đã kiểm tra ở trên
+
+                    int testX = originalX + dx * gp.tileSize;
+                    int testY = originalY + dy * gp.tileSize;
+
+                    if (isValidPosition(testX, testY)) {
+                        worldX = testX;
+                        worldY = testY;
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Nếu vẫn không tìm thấy (rất hiếm), dùng vị trí mặc định gần nhất
+        worldX = gp.tileSize * 3; // Ví dụ vị trí an toàn
+        worldY = gp.tileSize * 3;
+    }
+
+    private boolean isValidPosition(int x, int y) {
+        // Kiểm tra trong map
+        if (x < 0 || x >= gp.maxWorldCol * gp.tileSize ||
+                y < 0 || y >= gp.maxWorldRow * gp.tileSize) {
+            return false;
+        }
+
+        // Kiểm tra tile không phải tường
+        int col = x / gp.tileSize;
+        int row = y / gp.tileSize;
+        int tileNum = gp.tileM.mapTileNum[gp.currentMap][col][row];
+        return !gp.tileM.tile[tileNum].collision;
     }
 }
