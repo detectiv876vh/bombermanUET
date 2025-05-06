@@ -12,6 +12,6 @@ public class OBJ_Key extends Entity {
     public OBJ_Key(gamePanel gp) {
         super(gp);
         name = "Key";
-        down1 = setup("/objects/key");
+        down1 = setup_obj("/objects/key");
     }
 }

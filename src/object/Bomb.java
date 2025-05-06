@@ -9,7 +9,7 @@ import manager.DrawManager;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Bomb extends Projectile {
+public class Bomb extends Entity {
 
     public boolean exploded = false;
     DrawManager drawManager;
@@ -17,7 +17,7 @@ public class Bomb extends Projectile {
     public int[][][] mapTileNum;   // Reference đến tile map
     public int countToExplode = 0;
     public int intervalToExplode = 180; // Số lần hoạt ảnh trước khi nổ
-    public int radius = 3; // Range mặc định (1 ô)
+    public int radius = 1; // Range mặc định (1 ô)
     int frameExplosion = 0;
     int intervalExplosion = 5;
     public boolean explosionAnimationComplete = false;
@@ -152,7 +152,7 @@ public class Bomb extends Projectile {
             checkMonsterHit(targetTileX, targetTileY);
 
             // Dừng nếu gặp vật cản không phá được
-            if (isCollision) {
+            if (isCollision /*&& isBreakable*/) {
                 break;
             }
         }

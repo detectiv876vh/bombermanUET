@@ -17,8 +17,8 @@ public class OBJ_Bomb extends Entity {
 
         type = type_consumable;
         name = "bombItem";
-        image1 = setup("/objects/bomb1");
-        image2 = setup("/objects/bomb2");
+        image1 = setup("/objects/Bomb");
+//        image2 = setup("/objects/bomb2");
         down1 = image1;
         stackable = true;
 

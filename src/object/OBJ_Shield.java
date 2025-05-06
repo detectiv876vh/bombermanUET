@@ -12,6 +12,6 @@ public class OBJ_Shield extends Entity {
     public OBJ_Shield(gamePanel gp) {
         super(gp);
         name = "Shield";
-        down1 = setup("/objects/shield");
+        down1 = setup_obj("/objects/shield");
     }
 }

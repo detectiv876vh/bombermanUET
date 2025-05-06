@@ -15,7 +15,7 @@ public class OBJ_Invisible extends Entity {
         name = "Invisible";
         stackable = true;
 
-        down1 = setup("/objects/xuyen");
+        down1 = setup_obj("/objects/xuyen");
 
         // Các thuộc tính của item
         solidArea.x = 0;

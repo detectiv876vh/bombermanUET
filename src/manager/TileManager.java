@@ -79,31 +79,28 @@ public class TileManager {
         Random rand = new Random();
         int chance = rand.nextInt(100); // 0 - 99
 
-        // 35% cơ hội rơi item
-        if (chance < 40) {
-            int itemType = rand.nextInt(4); // 0 - 3
+        // 25% cơ hội rơi item
+        if (chance < 25) {
             Entity item = null;
 
-            switch (itemType) {
-                case 0:
-                    item = new OBJ_HeartItem(gp);
-                    break;
-                case 1:
-                    item = new OBJ_Boost(gp);
-                    break;
-                case 2:
-                    item = new OBJ_Bomb(gp);
-                    break;
-                case 3:
-                    item = new OBJ_Shield(gp);
-                    break;
+            if (chance < 2) {
+                item = new OBJ_HeartItem(gp); // (0-1]: 1%
+            } else if (chance < 10) {
+                item = new OBJ_Boost(gp);     // 1-9: 8%
+            } else if (chance < 13) {
+                item = new OBJ_Bomb(gp);      // 10-13: 3%
+            } else if (chance < 15) {
+                item = new OBJ_Shield(gp);    // 13-15: 2%
+            } else if (chance < 16) {
+                item = new OBJ_Invisible(gp); //15-16: 1%
+            } else if (chance < 25) {
+                item = new OBJ_Explosion(gp);
             }
 
             if (item != null) {
                 item.worldX = tileX * gp.tileSize;
                 item.worldY = tileY * gp.tileSize;
 
-                // Đặt vào mảng object của map hiện tại (tìm chỗ trống)
                 for (int i = 0; i < gp.obj[gp.currentMap].length; i++) {
                     if (gp.obj[gp.currentMap][i] == null) {
                         gp.obj[gp.currentMap][i] = item;
@@ -113,6 +110,7 @@ public class TileManager {
             }
         }
     }
+
 
     public void loadMap(String filePath, int map) {
         try {

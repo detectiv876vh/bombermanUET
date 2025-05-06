@@ -23,6 +23,7 @@ public class Entity {
     public BufferedImage right1, right2, right3, right4,right5, right6, left1, left2, left3, left4, left5, left6;
     public BufferedImage attackUp1,attackUp2,attackDown1,attackDown2,attackLeft1,attackLeft2,
             attcackRight1,attcackRight2;
+    public BufferedImage[] dyingSprites;
     public BufferedImage image, image2, image3;
     public String direction = "down";
 
@@ -86,6 +87,8 @@ public class Entity {
 
         //so-called hitbox:
         solidArea = new Rectangle(0, 0, 48, 48);
+
+        dyingSprites = new BufferedImage[4]; // ví dụ: 4 frame chết
 
         this.positionId = UUID.randomUUID().toString();
 
@@ -177,7 +180,21 @@ public class Entity {
                 invincibleCounter = 0;
             }
         }
-    }
+
+            if (dying) {
+                dyingCounter++;
+
+                // mỗi 12 frame đổi sprite chết
+                int frameIndex = dyingCounter / 12;
+                if (frameIndex >= dyingSprites.length) {
+                    alive = false;
+                    dying = false;
+                }
+
+                return; // không cập nhật logic khác nữa
+            }
+
+        }
 
     public void draw(Graphics2D g2) {
 
@@ -209,6 +226,18 @@ public class Entity {
                 if (spriteNum == 2) {
                     image = up2;
                 }
+                if (spriteNum == 3) {
+                    image = up3;
+                }
+                if (spriteNum == 4) {
+                    image = up4;
+                }
+                if (spriteNum == 5) {
+                    image = up5;
+                }
+                if (spriteNum == 6) {
+                    image = up6;
+                }
                 break;
             case "down":
                 if (spriteNum == 1) {
@@ -216,6 +245,18 @@ public class Entity {
                 }
                 if (spriteNum == 2) {
                     image = down2;
+                }
+                if (spriteNum == 3) {
+                    image = down3;
+                }
+                if (spriteNum == 4) {
+                    image = down4;
+                }
+                if (spriteNum == 5) {
+                    image = down5;
+                }
+                if (spriteNum == 6) {
+                    image = down6;
                 }
                 break;
             case "left":
@@ -225,6 +266,18 @@ public class Entity {
                 if (spriteNum == 2) {
                     image = left2;
                 }
+                if (spriteNum == 3) {
+                    image = left3;
+                }
+                if (spriteNum == 4) {
+                    image = left4;
+                }
+                if (spriteNum == 5) {
+                    image = left5;
+                }
+                if (spriteNum == 6) {
+                    image = left6;
+                }
                 break;
             case "right":
                 if (spriteNum == 1) {
@@ -232,6 +285,18 @@ public class Entity {
                 }
                 if (spriteNum == 2) {
                     image = right2;
+                }
+                if (spriteNum == 3) {
+                    image = right3;
+                }
+                if (spriteNum == 4) {
+                    image = right4;
+                }
+                if (spriteNum == 5) {
+                    image = right5;
+                }
+                if (spriteNum == 6) {
+                    image = right6;
                 }
                 break;
         }
@@ -244,9 +309,16 @@ public class Entity {
             changAlpha(g2, 1.0f);
         }
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-        if (dying == true) {
-            dyingAnimation(g2);
+
+        if (dying) {
+            int frameIndex = dyingCounter / 12;
+            if (frameIndex >= dyingSprites.length) {
+                frameIndex = dyingSprites.length - 1;
+            }
+            g2.drawImage(dyingSprites[frameIndex], screenX, screenY, gp.tileSize, gp.tileSize, null);
+            return; // Không vẽ gì khác nếu đang chết
         }
+
 
         //MONSTRE HP BAR
         if (type == 2 && hpBarOn) {
@@ -312,6 +384,14 @@ public class Entity {
     public void changAlpha(Graphics2D g2, float alphaValue) {
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
     }
+
+    // =============GET IMAGE LINK==================
+    public void loadDyingSprites(String basePath) {
+        for (int i = 0; i < dyingSprites.length; i++) {
+            dyingSprites[i] = setup(basePath + "_dead" + (i + 1));
+        }
+    }
+
 
     public BufferedImage setup_obj(String imagePath) {
 

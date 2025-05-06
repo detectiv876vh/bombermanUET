@@ -42,7 +42,7 @@ public class BombManager {
             newBomb.worldY = bombTileY * gp.tileSize;
             newBomb.bombXpos = bombTileX; // Lưu cả tọa độ tile
             newBomb.bombYpos = bombTileY;
-            newBomb.radius = 3;
+            newBomb.radius = gp.player.bombRadius;
             newBomb.life = 30;
             newBomb.mapTileNum = gp.tileM.mapTileNum;
 
