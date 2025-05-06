@@ -3,6 +3,7 @@ package Main;
 import entity.Entity;
 import object.OBJ_Heart;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -14,7 +15,11 @@ public class UI {
 
     gamePanel gp;
     Graphics2D g2;
+
     BufferedImage heart_full, heart_half, heart_blank;
+    BufferedImage background;
+    Image backgroundFixed;
+
     public int commandNum = 0;
     Font theleahFat;
     public int subState= 0;
@@ -46,6 +51,13 @@ public class UI {
         heart_half = heart.image2;
         heart_blank = heart.image3;
 
+        // BACKGROUND
+        try {
+            background = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/background.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        backgroundFixed = background.getScaledInstance(gp.screenWidth, gp.screenHeight, Image.SCALE_SMOOTH);
     }
 
     public void draw (Graphics2D g2) {
@@ -100,9 +112,12 @@ public class UI {
 
     public void drawTitleScreen() {
 
-        //BACKGROUND COLOR
-        g2.setColor(Color.BLACK);
-        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+//        //BACKGROUND COLOR
+//        g2.setColor(Color.BLACK);
+//        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+        // BACKGROUND IMAGE
+        g2.drawImage(backgroundFixed, 0, 0, null);
 
         // TITLE NAME
         g2.setFont(g2.getFont().deriveFont(Font.BOLD,96F));
