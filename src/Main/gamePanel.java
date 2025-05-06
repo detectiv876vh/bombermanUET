@@ -352,25 +352,30 @@ public class gamePanel extends JPanel implements Runnable {
 
     public class MouseHandler extends MouseAdapter {
         public void mouseClicked(MouseEvent e) {
-            if(gameState == titleState) {
-                int x = e.getX();   // tọa độ con chuột click.
+            if (gameState == titleState) {
+                int x = e.getX();
                 int y = e.getY();
 
-                int menuY = tileSize * 7;
-                int menuItemHeight = tileSize;
+                // Vị trí và kích thước các nút
+                int buttonWidth = ui.playButton.getWidth();
+                int buttonHeight = ui.playButton.getHeight();
+                int centerX = screenWidth/2 - buttonWidth/2;
+                int playY = screenHeight/2 - buttonHeight/2 + 80;
+                int quitY = playY + buttonHeight + (tileSize - 20);
 
-                if(y >= menuY && y < menuY + menuItemHeight) {
-                    ui.commandNum=0;
+                // Kiểm tra click vào nút Play
+                if (x >= centerX && x <= centerX + buttonWidth &&
+                        y >= playY && y <= playY + buttonHeight) {
+                    ui.commandNum = 0;
                     gameState = transitionState;
-                    ui.showTransition = true;
-                    ui.transitionTimer = 0;
+                    ui.startMapTransition("Level 1");
+                    playSE(4);
                 }
-                else if(y >= menuY + menuItemHeight && y < menuY + menuItemHeight*2) {
-                    ui.commandNum=1;
-                    gameState = playState;
-                }
-                else if(y >= menuY + menuItemHeight*2 && y < menuY + menuItemHeight*3) {
-                    ui.commandNum=2;
+
+                // Kiểm tra click vào nút Quit
+                if (x >= centerX && x <= centerX + buttonWidth &&
+                        y >= quitY && y <= quitY + buttonHeight) {
+                    ui.commandNum = 2;
                     System.exit(0);
                 }
             }
@@ -378,29 +383,33 @@ public class gamePanel extends JPanel implements Runnable {
 
         public void mouseMoved(MouseEvent e) {
             if(gameState == titleState) {
+                int x = e.getX();
                 int y = e.getY();   // tọa độ con trỏ chuột đang ở.
 
-                int menuY = tileSize * 7;
-                int menuItemHeight = tileSize;
+                int buttonWidth = ui.playButton.getWidth();
+                int buttonHeight = ui.playButton.getHeight();
+                int centerX = screenWidth/2 - buttonWidth/2;
+                int playY = screenHeight/2 - buttonHeight/2 + 80;
+                int quitY = playY + buttonHeight + (tileSize - 20);
+
                 int newHover = -1;
 
-                if(y >= menuY && y < menuY + menuItemHeight) {
+                // Kiểm tra hover nút Play
+                if (x >= centerX && x <= centerX + buttonWidth &&
+                        y >= playY && y <= playY + buttonHeight) {
                     newHover = 0;
                 }
-                else if(y >= menuY + menuItemHeight && y < menuY + menuItemHeight*2) {
-                    newHover = 1;
-                }
-                else if(y >= menuY + menuItemHeight*2 && y < menuY + menuItemHeight*3) {
+                // Kiểm tra hover nút Quit
+                else if (x >= centerX && x <= centerX + buttonWidth &&
+                        y >= quitY && y <= quitY + buttonHeight) {
                     newHover = 2;
                 }
 
+                // Phát âm thanh khi thay đổi hover
                 if (newHover != -1 && newHover != ui.lastHovered) {
                     ui.lastHovered = newHover;
-                    playSE(4);
-                }
-
-                if (newHover != -1) {
                     ui.commandNum = newHover;
+                    playSE(4);
                 }
             }
         }
