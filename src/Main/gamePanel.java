@@ -27,8 +27,8 @@ public class gamePanel extends JPanel implements Runnable {
     public final int scale = 3;
 
     public final int tileSize = originalTileSize * scale; //48x48 tile  (1 ô gạch)
-    public final int maxScreenCol = 20;     // Chiều dài (đơn vị số block) theo phương Ox của screen
-    public final int maxScreenRow = 20;     // Chiều rộng (đơn vị số block) theo phương Oy của
+    public final int maxScreenCol = 16;     // Chiều dài (đơn vị số block) theo phương Ox của screen
+    public final int maxScreenRow = 12;     // Chiều rộng (đơn vị số block) theo phương Oy của
     public final int screenWidth = tileSize * maxScreenCol; // 768 pixels: Chiều dài (đơn vị pixel)
     public final int screenHeight = tileSize * maxScreenRow; // 576 pixels: Chiều rộng (đơn vị pixel)
 
@@ -75,6 +75,7 @@ public class gamePanel extends JPanel implements Runnable {
     public final int playState = 1;
     public final int pauseState = 2;
     public final int chemState = 3;
+    public final int transitionState = 5;
     public final int gameOverState = 6;
     public Graphics g;
     public Graphics2D g2d;
@@ -93,6 +94,8 @@ public class gamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         gameState = titleState;
+        currentMap = 0;
+
         aSetter.setObject();
 //        aSetter.setNPC();
         aSetter.setMonster();
@@ -134,6 +137,18 @@ public class gamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
+
+        if (ui.showTransition) {
+            return;
+        }
+
+//        if (player.life <= 0) {
+//            gameState = gameOverState;
+//            ui.showTransition = true;
+//            ui.transitionTimer = 0;
+//            return;
+//        }
+
         if (gameState == playState) {
 
             player.update();
@@ -183,6 +198,12 @@ public class gamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
+        if (ui.showTransition) {
+            ui.draw(g2);
+            g2.dispose();
+            return;
+        }
+
         if(gameState == pauseState) {
             tileM.draw(g2);
             player.draw(g2);
@@ -211,6 +232,12 @@ public class gamePanel extends JPanel implements Runnable {
         if(gameState == titleState) {
             ui.draw(g2);
         }
+
+        // GAMEOVER
+        else if(gameState == gameOverState) {
+            ui.draw(g2);
+        }
+
         // OTHERS
         else if(gameState == playState) {
             // TILE
@@ -259,6 +286,51 @@ public class gamePanel extends JPanel implements Runnable {
 
     }
 
+    public void changeMap(int mapIndex) {
+        gameState = transitionState;
+        int targetMap = mapIndex;
+
+        ui.showTransition = true;
+        ui.transitionTimer = 0;
+        ui.transitionText = "Level " + (targetMap + 1);
+
+        loadMap(targetMap);
+    }
+
+    public void completeLevel() {
+        int nextMap = currentMap + 1;
+
+        if (nextMap < maxMap) {
+            changeMap(nextMap);
+        } else {
+            gameState = gameOverState;
+            ui.showTransition = true;
+            ui.transitionTimer = 0;
+            ui.commandNum = 0;
+        }
+    }
+
+    public void loadMap(int mapIndex) {
+
+        player.setDefaultValues();
+
+        clearMapEntities();
+
+        aSetter.setObject();
+        aSetter.setMonster();
+//        aSetter.setNPC();
+
+    }
+
+    public void clearMapEntities() {
+        projectileList.clear();
+        entityList.clear();
+
+        if (bombManager.bombList[currentMap] != null) {
+            bombManager.bombList[currentMap].clear();
+        }
+    }
+
     public void playMusic(int i) {
 
         music.setFile(i);
@@ -277,52 +349,117 @@ public class gamePanel extends JPanel implements Runnable {
     }
 
     public class MouseHandler extends MouseAdapter {
-        public void mouseClicked(MouseEvent e) {
-            if(gameState == titleState) {
-                int x = e.getX();   // tọa độ con chuột click.
+        boolean playButtonPressed = false;
+        boolean quitButtonPressed = false;
+
+        public void mousePressed(MouseEvent e) {
+            if (gameState == titleState) {
+                int x = e.getX();
                 int y = e.getY();
 
-                int menuY = tileSize * 7;
-                int menuItemHeight = tileSize;
+                // Debug information
+                System.out.println("Mouse pressed at: " + x + ", " + y);
 
-                if(y >= menuY && y < menuY + menuItemHeight) {
-                    ui.commandNum=0;
-                    gameState = playState;
+                // Vị trí và kích thước các nút.
+                int buttonWidth = ui.playButton.getWidth();
+                int buttonHeight = ui.playButton.getHeight();
+                int centerX = screenWidth/2 - buttonWidth/2;
+                int playY = screenHeight/2 - buttonHeight/2 + 80;
+                int quitY = playY + buttonHeight + (tileSize - 20);
+
+                // Debug button positions
+                System.out.println("Play button: " + centerX + "," + playY + " to " +
+                        (centerX + buttonWidth) + "," + (playY + buttonHeight));
+                System.out.println("Quit button: " + centerX + "," + quitY + " to " +
+                        (centerX + buttonWidth) + "," + (quitY + buttonHeight));
+
+                // Kiểm tra giữ click vào nút Play.
+                if (x >= centerX && x <= centerX + buttonWidth &&
+                        y >= playY && y <= playY + buttonHeight) {
+                    System.out.println("Play button pressed!");
+
+                    playButtonPressed = true;
+                    ui.commandNum = 0;
                 }
-                else if(y >= menuY + menuItemHeight && y < menuY + menuItemHeight*2) {
-                    ui.commandNum=1;
+
+                // Kiểm tra click vào nút Quit.
+                if (x >= centerX && x <= centerX + buttonWidth &&
+                        y >= quitY && y <= quitY + buttonHeight) {
+                    System.out.println("Quit button pressed!");
+
+                    quitButtonPressed = true;
+                    ui.commandNum = 2;
                 }
-                else if(y >= menuY + menuItemHeight*2 && y < menuY + menuItemHeight*3) {
-                    ui.commandNum=2;
+                repaint();  // Yêu cầu vẽ lại để hiển thị trạng thái nhấn.
+            }
+        }
+
+        public void mouseReleased(MouseEvent e) {
+            if (gameState == titleState) {
+                int x = e.getX();
+                int y = e.getY();
+
+                // Vị trí và kích thước các nút.
+                int buttonWidth = ui.playButton.getWidth();
+                int buttonHeight = ui.playButton.getHeight();
+                int centerX = screenWidth/2 - buttonWidth/2;
+                int playY = screenHeight/2 - buttonHeight/2 + 80;
+                int quitY = playY + buttonHeight + (tileSize - 20);
+
+                // Kiểm tra thả chuột trên nút Play.
+                if (playButtonPressed && x >= centerX && x <= centerX + buttonWidth &&
+                                         y >= playY && y <= playY + buttonHeight) {
+                    gameState = transitionState;
+                    ui.startMapTransition("Level 1");
+                    playSE(4);
+                }
+
+                // Kiểm tra thả chuột trên nút Quit.
+                if (quitButtonPressed && x >= centerX && x <= centerX + buttonWidth
+                                      && y >= quitY && y <= quitY + buttonHeight) {
+                    playSE(4);
                     System.exit(0);
                 }
+
+                // Reset trạng thái nhấn.
+                playButtonPressed = false;
+                quitButtonPressed = false;
+                repaint();
             }
         }
 
         public void mouseMoved(MouseEvent e) {
             if(gameState == titleState) {
+                int x = e.getX();
                 int y = e.getY();   // tọa độ con trỏ chuột đang ở.
 
-                int menuY = tileSize * 7;
-                int menuItemHeight = tileSize;
+                int buttonWidth = ui.playButton.getWidth();
+                int buttonHeight = ui.playButton.getHeight();
+                int centerX = screenWidth/2 - buttonWidth/2;
+                int playY = screenHeight/2 - buttonHeight/2 + 80;
+                int quitY = playY + buttonHeight + (tileSize - 20);
+
                 int newHover = -1;
 
-                if(y >= menuY && y < menuY + menuItemHeight) {
+                // Kiểm tra hover nút Play
+                if (x >= centerX && x <= centerX + buttonWidth &&
+                        y >= playY && y <= playY + buttonHeight) {
                     newHover = 0;
                 }
-                else if(y >= menuY + menuItemHeight && y < menuY + menuItemHeight*2) {
+                // Kiểm tra hover nút Quit
+                else if (x >= centerX && x <= centerX + buttonWidth &&
+                        y >= quitY && y <= quitY + buttonHeight) {
                     newHover = 1;
                 }
-                else if(y >= menuY + menuItemHeight*2 && y < menuY + menuItemHeight*3) {
-                    newHover = 2;
-                }
 
-                if (newHover != -1 && newHover != ui.lastHovered) {
+                // Phát âm thanh khi thay đổi hover
+                if (newHover != ui.lastHovered) {
+//                    // Phát âm thanh khi hover vào nít, không phát khi rời nút.
+//                    if (newHover != -1 && ui.lastHovered == -1) {
+//                        playSE(4);
+//                    }
+
                     ui.lastHovered = newHover;
-                    playSE(4);
-                }
-
-                if (newHover != -1) {
                     ui.commandNum = newHover;
                 }
             }

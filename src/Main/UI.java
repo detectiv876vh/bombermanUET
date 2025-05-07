@@ -3,6 +3,7 @@ package Main;
 import entity.Entity;
 import object.OBJ_Heart;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -14,13 +15,27 @@ public class UI {
 
     gamePanel gp;
     Graphics2D g2;
+
     BufferedImage heart_full, heart_half, heart_blank;
+
+    // Standby Screen
+    BufferedImage background;
+    Image backgroundFixed;
+    BufferedImage playButton;
+    Image playButtonPress;
+    BufferedImage quitButton;
+    Image quitButtonPress;
+
     public int commandNum = 0;
     Font theleahFat;
     public int subState= 0;
-    int lastHovered = -1; // Lưu trạng thái hover trước đó
+    public int lastHovered = -1; // Lưu trạng thái hover trước đó
 
-
+    // MAP TRANSITION
+    public boolean showTransition = false;
+    public int transitionTimer = 0;
+    String transitionText = "";
+    final int TRANSITION_DURATION = 120;
 
     public UI (gamePanel gp) {
 
@@ -42,6 +57,24 @@ public class UI {
         heart_half = heart.image2;
         heart_blank = heart.image3;
 
+        // BACKGROUND
+        try {
+            background = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/background.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        backgroundFixed = background.getScaledInstance(gp.screenWidth, gp.screenHeight, Image.SCALE_SMOOTH);
+
+        // BUTTON
+        try {
+            playButton = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/play.png"));
+            playButtonPress = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/playPress.png"));
+
+            quitButton = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/quit.png"));
+            quitButtonPress = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/quitPress.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void draw (Graphics2D g2) {
@@ -50,6 +83,13 @@ public class UI {
         g2.setFont(theleahFat);
         g2.setColor(Color.white);
 //        g2.drawString("Key = " + gp.player.hasKey, 50,50);       //viet so key tren map o 50 50
+
+        // MAP TRANSITION
+        if (showTransition) {
+            drawMapTransition();
+            return;
+        }
+
         // TITLE STATE
         if(gp.gameState == gp.titleState) {
             drawTitleScreen();
@@ -63,10 +103,17 @@ public class UI {
         //PLAYER STATE
         if(gp.gameState == gp.playState) {
             drawPlayerLife();
+//            drawMapTransition();
         }
         //ATTACK STATE
         if(gp.gameState == gp.chemState) {
         }
+
+        // GAME OVER STATE
+        if (gp.gameState == gp.gameOverState) {
+            drawMapTransition();
+        }
+
         //PAUSE STATE
         if(gp.gameState == gp.pauseState) {
             drawPauseScreen();
@@ -77,13 +124,17 @@ public class UI {
         heart_full = heart.image;
         heart_half = heart.image2;
         heart_blank = heart.image3;
+
     }
 
     public void drawTitleScreen() {
 
-        //BACKGROUND COLOR
-        g2.setColor(Color.BLACK);
-        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+//        //BACKGROUND COLOR
+//        g2.setColor(Color.BLACK);
+//        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+        // BACKGROUND IMAGE
+        g2.drawImage(backgroundFixed, 0, 0, null);
 
         // TITLE NAME
         g2.setFont(g2.getFont().deriveFont(Font.BOLD,96F));
@@ -105,44 +156,68 @@ public class UI {
         g2.setColor(Color.white);
         g2.drawString(text, x, y);
 
-        //MENU
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 48F));
+//        //MENU
+//        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 48F));
+//
+//        text = "NEW GAME";
+//        x = getXforCenteredText(text);
+//        y += gp.tileSize * 4;
+//
+//        if(commandNum == 0) {
+//            g2.setColor(Color.yellow);
+//            g2.drawString(">", x-gp.tileSize, y);
+//        } else {
+//            g2.setColor(Color.white);
+//        }
+//        g2.drawString(text, x, y);  // viết text ở vị trí x worldY.
+//
+//        text = "CONTINUE GAME";
+//        x = getXforCenteredText(text);
+//        y += gp.tileSize;
+//
+//        if(commandNum == 1) {
+//            g2.setColor(Color.yellow);
+//            g2.drawString(">", x-gp.tileSize, y);
+//        } else {
+//            g2.setColor(Color.white);
+//        }
+//        g2.drawString(text, x, y);
+//
+//        text = "QUIT";
+//        x = getXforCenteredText(text);
+//        y += gp.tileSize;
+//
+//        if(commandNum == 2) {
+//            g2.setColor(Color.yellow);
+//            g2.drawString(">", x-gp.tileSize, y);
+//        } else {
+//            g2.setColor(Color.white);
+//        }
+//        g2.drawString(text, x, y);
+        int buttonWidth = playButton.getWidth();
+        int buttonHeight = playButton.getHeight();
+        int spacing = gp.tileSize - 20; // khoảng cách giữa các nút.
 
-        text = "NEW GAME";
-        x = getXforCenteredText(text);
-        y += gp.tileSize * 4;
+// Tính tổng chiều cao của cả menu.
+        int totalHeight = buttonHeight * 2 + spacing;
+        int yStart = gp.screenHeight / 2 - totalHeight / 2 + 80;
+        x = gp.screenWidth / 2 - buttonWidth / 2;
+        y = yStart;
 
-        if(commandNum == 0) {
-            g2.setColor(Color.yellow);
-            g2.drawString(">", x-gp.tileSize, y);
+// PLAY - sử dụng mouseHandler để kiểm tra trạng thái nhấn.
+        if (gp.mouseH.playButtonPressed) {
+            g2.drawImage(playButtonPress, x, y, null);
         } else {
-            g2.setColor(Color.white);
+            g2.drawImage(playButton, x, y, null);
         }
-        g2.drawString(text, x, y);  // viết text ở vị trí x worldY.
 
-        text = "CONTINUE GAME";
-        x = getXforCenteredText(text);
-        y += gp.tileSize;
-
-        if(commandNum == 1) {
-            g2.setColor(Color.yellow);
-            g2.drawString(">", x-gp.tileSize, y);
+// QUIT
+        y += buttonHeight + spacing;
+        if (gp.mouseH.quitButtonPressed) {
+            g2.drawImage(quitButtonPress, x, y, null);
         } else {
-            g2.setColor(Color.white);
+            g2.drawImage(quitButton, x, y, null);
         }
-        g2.drawString(text, x, y);
-
-        text = "QUIT";
-        x = getXforCenteredText(text);
-        y += gp.tileSize;
-
-        if(commandNum == 2) {
-            g2.setColor(Color.yellow);
-            g2.drawString(">", x-gp.tileSize, y);
-        } else {
-            g2.setColor(Color.white);
-        }
-        g2.drawString(text, x, y);
     }
 
     public void drawPlayerLife() {
@@ -172,6 +247,10 @@ public class UI {
         }
 
     }
+
+//    public void drawGameOverScreen() {
+//
+//    }
 
     public void drawPauseScreen() {
 
@@ -252,11 +331,52 @@ public class UI {
         }
     }
 
+    public void drawMapTransition() {
+
+        g2.setColor(Color.black);
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+        g2.setFont(theleahFat.deriveFont(Font.BOLD,48F));
+        g2.setColor(Color.white);
+
+        transitionText = "Level " + (gp.currentMap + 1);
+        int x = getXforCenteredText(transitionText);
+        int y = gp.screenHeight / 2;
+        g2.drawString(transitionText, x, y);
+
+        transitionTimer++;
+        if(transitionTimer >= TRANSITION_DURATION) {
+            showTransition = false;
+            transitionTimer = 0;
+
+            if (gp.gameState == gp.gameOverState) {
+                if (gp.currentMap + 1 < gp.maxMap) {
+                    gp.changeMap(gp.currentMap + 1);
+                }
+//                else {
+//                    // Nếu hết level, quay lại màn hình title
+//                    gp.gameState = gp.titleState;
+//                    gp.ui.commandNum = 0;
+//                }
+            } else {
+                // Sau khi hiển thị level, chuyển sang trạng thái chơi
+                gp.gameState = gp.playState;
+            }
+        }
+
+    }
+
     // căn giữa văn bản theo chiều ngang trong phương thức.
     public int getXforCenteredText(String text) {
         int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();  // tính toán độ rộng của văn bản text.
         int x = gp.screenWidth / 2 - length / 2;
         return x;
+    }
+
+    public void startMapTransition(String mapName) {
+        this.showTransition = true;
+        this.transitionTimer = 0;
+        this.transitionText = mapName;
     }
 
 }

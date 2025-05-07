@@ -307,6 +307,9 @@ public class Player extends Entity {
         life = Math.min(life, maxLife);
         if (life <= 0) {
             gp.gameState = gp.gameOverState;
+            gp.ui.showTransition = true;
+            gp.ui.transitionTimer = 0;
+            return;
         }
     }
 
