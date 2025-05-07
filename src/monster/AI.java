@@ -11,7 +11,7 @@ public class AI {
     private final Random rand = new Random();
 
     // Constants
-    private static final int VISION_RANGE = 5 * 48;
+    private static final int VISION_RANGE = 15 * 48;
     private static final int BOMB_ESCAPE_RANGE = 2 * 48;
     private static final int ESCAPE_DURATION = 120;
     private static final int SAFE_DISTANCE_FROM_BOMB = 3 * 48;

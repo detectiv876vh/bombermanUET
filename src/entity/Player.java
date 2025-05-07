@@ -27,7 +27,7 @@ public class Player extends Entity {
     public int hasBomb = maxBombs;
     public int hasKey = 0; // so key co duoc khi nhat tren map
     public int hasBoost = 0;
-//    private ChemManager chemManager;
+    //    private ChemManager chemManager;
     public boolean moving = false;
     public int pixelCounter = 0;
     int standCounter = 0;
@@ -40,7 +40,7 @@ public class Player extends Entity {
     // =========XUYEN =========
     private boolean xuyenMode = false;
     private int xuyenModeMin = 0;
-    private final int xuyenModeMax = 60;
+    private final int xuyenModeMax = 300;
 
     public Player(gamePanel gp, KeyHandler kH) {
         super(gp);
@@ -67,7 +67,7 @@ public class Player extends Entity {
         direction = "down";
 
         //PLAYER STATUS
-        maxLife = 20;               //sua lai sau khi test game
+        maxLife = 6;               //sua lai sau khi test game
         life = maxLife - 4;
 
     }
@@ -108,8 +108,8 @@ public class Player extends Entity {
         attackDown2 = setup("/player/3");
         attackLeft1 = setup("/player/2");
         attackLeft2 = setup("/player/3");
-        attcackRight2 = setup("/player/2");
-        attcackRight1 = setup("/player/3");
+        attackRight2 = setup("/player/2");
+        attackRight1 = setup("/player/3");
     }
 
     public void update() {
@@ -205,8 +205,21 @@ public class Player extends Entity {
 
                 // Cập nhật animation
                 spriteCounter++;
-                if (spriteCounter > 12) {
-                    spriteNum = (spriteNum == 1) ? 2 : 1;
+                if (spriteCounter > 8) {
+                    if (spriteNum == 1) {
+                        spriteNum = 2;
+                    } else if (spriteNum == 2) {
+                        spriteNum = 3;
+                    }
+                    if (spriteNum == 3) {
+                        spriteNum = 4;
+                    } else if (spriteNum == 4) {
+                        spriteNum = 5;
+                    } else if (spriteNum == 5) {
+                        spriteNum = 6;
+                    } else if (spriteNum == 6) {
+                        spriteNum = 1;
+                    }
                     spriteCounter = 0;
                 }
 
@@ -232,77 +245,71 @@ public class Player extends Entity {
             teleportCooldown--;
         }
 
-        // Xử lý đặt bom (chỉ khi không ở chế độ xuyên)
-        if (kH.spacePressed && !xuyenMode) {
+        if (kH.spacePressed) {
+            gp.bombManager.handleBombPlacement();
+            gp.kH.spacePressed = false; // Tránh đặt bom liên tục
+        }
 
-            if (kH.spacePressed) {
-                gp.bombManager.handleBombPlacement();
-                gp.kH.spacePressed = false; // Tránh đặt bom liên tục
-            }
-
-            if (kH.qPressed) {
-                // Chỉ tấn công nếu KHÔNG đang di chuyển
-                if (!moving) {
+        if (kH.qPressed) {
+            // Chỉ tấn công nếu KHÔNG đang di chuyển
+            if (!moving) {
 //                gp.chemManager.handleChem();
-                    attacking = true;
-                }
-                // Reset trạng thái di chuyển
-                moving = false;
-                pixelCounter = 0;
-                spriteCounter = 0;
+                attacking = true;
             }
+            // Reset trạng thái di chuyển
+            moving = false;
+            pixelCounter = 0;
+            spriteCounter = 0;
+        }
 
-            // Cập nhật animation tấn công
+        // Cập nhật animation tấn công
 //        if(attacking) {
 //            attacking();
 //        }
 
 
-            // Xử lý shield
-            if (shieldActive) {
-                shieldCounter++;
-                if (shieldCounter >= shieldDuration) {
-                    shieldActive = false;
-                    shieldCounter = 0;
-                }
-            }
-
-            // Xử lý chế độ xuyên tường
-            if (xuyenMode) {
-                xuyenModeMin++;
-                if (xuyenModeMin >= xuyenModeMax) {
-                    xuyenMode = false;
-                    xuyenModeMin = 0;
-
-                    // Kiểm tra xem player có đang trong tường không
-                    int playerCol = worldX / gp.tileSize;
-                    int playerRow = worldY / gp.tileSize;
-                    int tileNum = gp.tileM.mapTileNum[gp.currentMap][playerCol][playerRow];
-
-                    if (gp.tileM.tile[tileNum].collision) {
-                        pushOutFromWall(); // Đẩy ra khỏi tường nếu đang ở trong
-                    }
-                }
-            }
-
-            // Xử lý bất tử tạm thời sau khi bị đánh
-            if (invincible) {
-                invincibleCounter++;
-                if (invincibleCounter > 300) {
-                    invincible = false;
-                    invincibleCounter = 0;
-                }
-            }
-            if (life > maxLife) {
-                life = maxLife;
-            }
-
-            // Kiểm tra máu
-            life = Math.min(life, maxLife);
-            if (life <= 0) {
-                gp.gameState = gp.gameOverState;
+        // Xử lý shield
+        if (shieldActive) {
+            shieldCounter++;
+            if (shieldCounter >= shieldDuration) {
+                shieldActive = false;
+                shieldCounter = 0;
             }
         }
+
+        // Xử lý chế độ xuyên tường
+        if (xuyenMode) {
+            xuyenModeMin++;
+            if (xuyenModeMin >= xuyenModeMax) {
+                xuyenMode = false;
+                xuyenModeMin = 0;
+
+                // Kiểm tra xem player có đang trong tường không
+                if (isInsideWall()) {
+                    pushToNearestValidPosition();
+                }
+            }
+        }
+
+        // Xử lý bất tử tạm thời sau khi bị đánh
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter > 300) {
+                invincible = false;
+                invincibleCounter = 0;
+            }
+        }
+        if (life > maxLife) {
+            life = maxLife;
+        }
+
+        // Kiểm tra máu
+        life = Math.min(life, maxLife);
+        if (life <= 0) {
+            gp.gameState = gp.gameOverState;
+        }
+    }
+
         //=====================ATTACK======================
 //    public void attacking() {
 //        if(attacking) {
@@ -315,7 +322,7 @@ public class Player extends Entity {
 //            else spriteNum = 2;
 //        }
 //    }
-    }
+
 
         public void pickUpObject ( int i){
 
@@ -385,9 +392,6 @@ public class Player extends Entity {
                 }
             }
         }
-
-
-
 
         public void interactNPC ( int i){
             if (gp.kH.qPressed == true) {
@@ -459,19 +463,35 @@ public class Player extends Entity {
                     case "up":
                         if (spriteNum == 1) image = up1;
                         if (spriteNum == 2) image = up2;
+                        if (spriteNum == 3) image = up3;
+                        if (spriteNum == 4) image = up4;
+                        if (spriteNum == 5) image = up5;
+                        if (spriteNum == 6) image = up6;
                         break;
                     case "down":
                         if (spriteNum == 1) image = down1;
                         if (spriteNum == 2) image = down2;
+                        if (spriteNum == 3) image = down3;
+                        if (spriteNum == 4) image = down4;
+                        if (spriteNum == 5) image = down5;
+                        if (spriteNum == 6) image = down6;
 
                         break;
                     case "left":
                         if (spriteNum == 1) image = left1;
                         if (spriteNum == 2) image = left2;
+                        if (spriteNum == 3) image = left3;
+                        if (spriteNum == 4) image = left4;
+                        if (spriteNum == 5) image = left5;
+                        if (spriteNum == 6) image = left6;
                         break;
                     case "right":
                         if (spriteNum == 1) image = right1;
                         if (spriteNum == 2) image = right2;
+                        if (spriteNum == 3) image = right3;
+                        if (spriteNum == 4) image = right4;
+                        if (spriteNum == 5) image = right5;
+                        if (spriteNum == 6) image = right6;
 
                         break;
                 }
@@ -552,64 +572,84 @@ public class Player extends Entity {
         return xuyenMode;
     }
 
-    private void pushOutFromWall() {
-        if (!isInsideWall()) return;
-        // Danh sách các hướng kiểm tra (ưu tiên hướng hiện tại trước)
-        String[] directionsToCheck = {direction, "up", "down", "left", "right"};
-
-        for (String dir : directionsToCheck) {
-            // Tính toán vị trí giả lập khi di chuyển theo hướng này
-            int testX = worldX;
-            int testY = worldY;
-
-            switch (dir) {
-                case "up": testY -= gp.tileSize; break;
-                case "down": testY += gp.tileSize; break;
-                case "left": testX -= gp.tileSize; break;
-                case "right": testX += gp.tileSize; break;
-            }
-
-            // Kiểm tra xem vị trí này có hợp lệ không
-            boolean canMoveTo = true;
-
-            // Kiểm tra biên giới map
-            if (testX < 0 || testX >= gp.maxWorldCol * gp.tileSize ||
-                    testY < 0 || testY >= gp.maxWorldRow * gp.tileSize) {
-                canMoveTo = false;
-            }
-
-            // Kiểm tra va chạm với tile (nếu trong map)
-            if (canMoveTo) {
-                int col = testX / gp.tileSize;
-                int row = testY / gp.tileSize;
-                int tileNum = gp.tileM.mapTileNum[gp.currentMap][col][row];
-                canMoveTo = gp.tileM.tile[tileNum].collision == false;
-            }
-
-            // Nếu vị trí này hợp lệ, di chuyển player tới đó
-            if (canMoveTo) {
-                worldX = (testX / gp.tileSize) * gp.tileSize;
-                worldY = (testY / gp.tileSize) * gp.tileSize;
-                return; // Thoát sau khi tìm được hướng
-            }
-        }
-
-        // Nếu không tìm được hướng nào, đẩy ra vị trí spawn
-        worldX = gp.tileSize;
-        worldY = gp.tileSize;
-    }
-
     public boolean isInsideWall() {
         int playerCol = worldX / gp.tileSize;
         int playerRow = worldY / gp.tileSize;
 
         // Kiểm tra xem có đang ở ngoài map không
-        if (playerCol < 0 || playerCol >= gp.maxWorldCol ||
-                playerRow < 0 || playerRow >= gp.maxWorldRow) {
+        if (playerCol < 0 || playerCol >= gp.maxWorldCol || playerRow < 0 || playerRow >= gp.maxWorldRow) {
+            return true; // Nếu ra khỏi map, coi như đang trong tường
+        }
+
+        // Kiểm tra null hoặc chỉ số không hợp lệ
+        if (gp.tileM.mapTileNum == null || gp.currentMap < 0 || gp.currentMap >= gp.tileM.mapTileNum.length) {
             return true;
         }
 
         int tileNum = gp.tileM.mapTileNum[gp.currentMap][playerCol][playerRow];
         return gp.tileM.tile[tileNum].collision;
     }
+
+    private void pushToNearestValidPosition() {
+        // Lưu lại vị trí ban đầu để so sánh
+        int originalX = worldX;
+        int originalY = worldY;
+
+        // Tìm kiếm theo hình xoắn ốc từ trong ra ngoài
+        for (int radius = 1; radius <= 5; radius++) {
+            // Kiểm tra theo 4 hướng chính trước
+            for (int i = 0; i < 4; i++) {
+                int testX = originalX;
+                int testY = originalY;
+
+                switch (i) {
+                    case 0: testX += radius * gp.tileSize; break; // Phải
+                    case 1: testX -= radius * gp.tileSize; break; // Trái
+                    case 2: testY += radius * gp.tileSize; break; // Xuống
+                    case 3: testY -= radius * gp.tileSize; break; // Lên
+                }
+
+                if (isValidPosition(testX, testY)) {
+                    worldX = testX;
+                    worldY = testY;
+                    return;
+                }
+            }
+
+            // Kiểm tra các hướng chéo nếu cần
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dy = -radius; dy <= radius; dy++) {
+                    if (dx == 0 || dy == 0) continue; // Đã kiểm tra ở trên
+
+                    int testX = originalX + dx * gp.tileSize;
+                    int testY = originalY + dy * gp.tileSize;
+
+                    if (isValidPosition(testX, testY)) {
+                        worldX = testX;
+                        worldY = testY;
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Nếu vẫn không tìm thấy (rất hiếm), dùng vị trí mặc định gần nhất
+        worldX = gp.tileSize * 3; // Ví dụ vị trí an toàn
+        worldY = gp.tileSize * 3;
+    }
+
+    private boolean isValidPosition(int x, int y) {
+        // Kiểm tra trong map
+        if (x < 0 || x >= gp.maxWorldCol * gp.tileSize ||
+                y < 0 || y >= gp.maxWorldRow * gp.tileSize) {
+            return false;
+        }
+
+        // Kiểm tra tile không phải tường
+        int col = x / gp.tileSize;
+        int row = y / gp.tileSize;
+        int tileNum = gp.tileM.mapTileNum[gp.currentMap][col][row];
+        return !gp.tileM.tile[tileNum].collision;
+    }
 }
+

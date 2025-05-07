@@ -27,8 +27,8 @@ public class gamePanel extends JPanel implements Runnable {
     public final int scale = 3;
 
     public final int tileSize = originalTileSize * scale; //48x48 tile  (1 ô gạch)
-    public final int maxScreenCol = 16;     // Chiều dài (đơn vị số block) theo phương Ox của screen
-    public final int maxScreenRow = 12;     // Chiều rộng (đơn vị số block) theo phương Oy của
+    public final int maxScreenCol = 20;     // Chiều dài (đơn vị số block) theo phương Ox của screen
+    public final int maxScreenRow = 20;     // Chiều rộng (đơn vị số block) theo phương Oy của
     public final int screenWidth = tileSize * maxScreenCol; // 768 pixels: Chiều dài (đơn vị pixel)
     public final int screenHeight = tileSize * maxScreenRow; // 576 pixels: Chiều rộng (đơn vị pixel)
 
@@ -153,12 +153,10 @@ public class gamePanel extends JPanel implements Runnable {
                 }
             }
             for (int i = 0; i < monster[currentMap].length; i++) {
-                if (monster[currentMap][i] != null) {
-                    if (monster[currentMap][i].alive && !monster[currentMap][i].dying) {
-                        monster[currentMap][i].update();
-                    } else if (!monster[currentMap][i].alive) {
-                        monster[currentMap][i] = null;
-                    }
+                if (monster[currentMap][i] != null && monster[currentMap][i].alive && !monster[currentMap][i].dying) {
+                    monster[currentMap][i].update();
+                } else {
+                    monster[currentMap][i] = null;
                 }
             }
 

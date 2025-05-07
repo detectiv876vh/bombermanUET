@@ -109,6 +109,7 @@ public class Bomb extends Entity {
 
         // Gây sát thương lên monster tại ô này
         checkMonsterHit(bombXpos, bombYpos);
+        checkPlayerHit(bombXpos, bombYpos);
 
         // Phá tường 4 hướng xung quanh với kiểm tra va chạm
         explodeInDirection(1, 0);  // Right
@@ -150,6 +151,8 @@ public class Bomb extends Entity {
 
             // Gây sát thương lên monster tại ô này
             checkMonsterHit(targetTileX, targetTileY);
+            checkPlayerHit(targetTileX, targetTileY);
+
 
             // Dừng nếu gặp vật cản không phá được
             if (isCollision /*&& isBreakable*/) {
@@ -222,19 +225,46 @@ public class Bomb extends Entity {
     }
 
     private void checkMonsterHit(int tileX, int tileY) {
-        for (int i = 0; i < gp.monster[gp.currentMap].length; i++) {
-            Entity monster = gp.monster[gp.currentMap][i];
-            if (monster != null && monster.alive) {
-                int monsterTileX = monster.worldX / gp.tileSize;
-                int monsterTileY = monster.worldY / gp.tileSize;
+        Rectangle fireArea = new Rectangle(tileX * gp.tileSize, tileY * gp.tileSize, gp.tileSize, gp.tileSize);
 
-                if (monsterTileX == tileX && monsterTileY == tileY) {
-                    monster.alive = false;
-                    gp.playSE(6); // Âm thanh quái chết nếu có
+        for (Entity monster : gp.monster[gp.currentMap]) {
+            if (monster != null && monster.alive && !monster.dying) {
+                Rectangle monsterArea = new Rectangle(
+                        monster.worldX + monster.solidArea.x,
+                        monster.worldY + monster.solidArea.y,
+                        monster.solidArea.width,
+                        monster.solidArea.height
+                );
+
+                if (fireArea.intersects(monsterArea)) {
+                    monster.dying = true;
+                    gp.playSE(6);
                 }
             }
         }
     }
+
+    private void checkPlayerHit(int tileX, int tileY) {
+        Rectangle fireArea = new Rectangle(tileX * gp.tileSize, tileY * gp.tileSize, gp.tileSize, gp.tileSize);
+
+        Rectangle playerArea = new Rectangle(
+                gp.player.worldX + gp.player.solidArea.x,
+                gp.player.worldY + gp.player.solidArea.y,
+                gp.player.solidArea.width,
+                gp.player.solidArea.height
+        );
+
+        if (fireArea.intersects(playerArea)) {
+            if (!gp.player.invincible) {
+                gp.player.life--;
+                gp.player.invincible = true;
+                gp.player.invincibleCounter = 0;
+                gp.playSE(7); // Âm thanh trúng đòn
+            }
+        }
+    }
+
+
 
 
 

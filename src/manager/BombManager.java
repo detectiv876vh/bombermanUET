@@ -32,6 +32,7 @@ public class BombManager {
         int bombTileX = (player.worldX + player.solidArea.x + player.solidArea.width/2) / gp.tileSize;
         int bombTileY = (player.worldY + player.solidArea.y + player.solidArea.height/2) / gp.tileSize;
         if (gp.kH.spacePressed
+                && !gp.player.isXuyenMode()
                 && canPlaceBomb(bombTileX, bombTileY)
                 && player.teleportCooldown <= 0
                 && player.hasBomb > 0) {

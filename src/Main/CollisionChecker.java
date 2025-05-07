@@ -53,7 +53,12 @@ public class CollisionChecker {
     //Kiem tra va cham voi tuong
     public void checkTile(Entity entity) {
 
-        int entityLeftX = entity.worldX + entity.solidArea.x;                            // x = (worldX); y = (worldY)
+        if (entity instanceof Player && ((Player) entity).isXuyenMode()) {
+            entity.collisionOn = false; // Bỏ qua va chạm nếu đang ở chế độ xuyên tường
+            return;
+        }
+
+        int entityLeftX = entity.worldX + entity.solidArea.x;                // x = (worldX); y = (worldY)
         int entityRightX = entity.worldX + entity.solidArea.x + entity.solidArea.width;
         int entityTopY = entity.worldY + entity.solidArea.y;
         int entityBottomY = entity.worldY + entity.solidArea.y + entity.solidArea.height;
@@ -99,11 +104,6 @@ public class CollisionChecker {
                 }
                 break;
         }
-        if (entity instanceof Player && ((Player)entity).isXuyenMode()) {
-            entity.collisionOn = false;
-        }
-
-
     }
 
     public int checkObject(Entity entity,boolean player) {
@@ -141,6 +141,8 @@ public class CollisionChecker {
                         index = i;
                     }
                 }
+
+
                 //khong cho x va y tang lien tuc
                 entity.solidArea.x = entity.solidAreaDefaultX;
                 entity.solidArea.y = entity.solidAreaDefaultY;
