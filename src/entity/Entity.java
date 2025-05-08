@@ -17,6 +17,7 @@ public class Entity {
     public int worldX, worldY;
     public int speed;
     boolean attacking = false;
+    public int damager;
 
     //LOAD IMAGE
     public BufferedImage up1, up2, up3, up4,up5, up6, down1, down2, down3, down4, down5, down6;

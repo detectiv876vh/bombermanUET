@@ -86,6 +86,10 @@ public class MON_1 extends Entity {
         collisionOn = false;
         gp.checker.checkTile(this);
         gp.checker.checkObject(this, false);
+
+        // Thêm kiểm tra va chạm với bomb
+        gp.checker.checkBomb(this);
+
         gp.checker.checkEntity(this, gp.npc);
         gp.checker.checkEntity(this, gp.monster);
         boolean contactPlayer = gp.checker.checkPlayer(this);
@@ -128,6 +132,7 @@ public class MON_1 extends Entity {
             spriteCounter = 0;
         }
     }
+
 
     @Override
     public void damageReaction() {

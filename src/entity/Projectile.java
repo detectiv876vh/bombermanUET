@@ -67,6 +67,6 @@ public class Projectile extends Entity{
                 spriteNum = 1;
             }
             spriteCounter = 0;
-            }
+        }
     }
 }

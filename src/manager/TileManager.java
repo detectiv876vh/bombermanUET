@@ -204,4 +204,34 @@ public class TileManager {
 
         }
     }
+
+    public boolean isValidSpawnPoint(int worldX, int worldY) {
+        // Chuyển tọa độ thế giới sang tọa độ map
+        int col = worldX / gp.tileSize;
+        int row = worldY / gp.tileSize;
+
+        // Kiểm tra ngoài biên
+        if(col < 0 || col >= gp.maxWorldCol || row < 0 || row >= gp.maxWorldRow) {
+            return false;
+        }
+
+        // Kiểm tra tile collision
+        int tileNum = mapTileNum[gp.currentMap][col][row];
+        if(tile[tileNum].collision) {
+            return false;
+        }
+
+        // Kiểm tra va chạm với entity khác
+        Rectangle spawnArea = new Rectangle(worldX, worldY, gp.tileSize, gp.tileSize);
+        for(Entity entity : gp.monster[gp.currentMap]) {
+            if(entity != null && entity.getHitbox().intersects(spawnArea)) {
+                return false;
+            }
+        }
+        if(gp.player.getHitbox().intersects(spawnArea)) {
+            return false;
+        }
+
+        return true;
+    }
 }
