@@ -18,7 +18,6 @@ import java.util.Random;
 public class Player extends Entity {
 
     KeyHandler kH;
-    public Graphics2D g2d;
     public int maxBombs = 1;            //bom co ban =1
     public int bombRadius = 1; // radius mặc định ban đầu
 
@@ -27,16 +26,13 @@ public class Player extends Entity {
     public int hasBomb = maxBombs;
     public int hasKey = 0; // so key co duoc khi nhat tren map
     public int hasBoost = 0;
-    //    private ChemManager chemManager;
     public boolean moving = false;
     public int pixelCounter = 0;
     int standCounter = 0;
     public int teleportCooldown = 0;
-    public boolean attacking = false;
-    public int attackCounter = 0;
-    public int attackCooldown = 0;
-    public final int attackCooldownMax = 30;
-    public BufferedImage attackUp1, attackUp2, attackDown1, attackDown2, attackLeft1, attackLeft2, attackRight1, attackRight2;
+    public BufferedImage dying1, dying2, dying3, dying4;
+
+
     // =========XUYEN =========
     private boolean xuyenMode = false;
     private int xuyenModeMin = 0;
@@ -54,8 +50,6 @@ public class Player extends Entity {
 
         setDefaultValues();
         getPlayerImage();
-        getPlayerAttackImage();
-
     }
 
     //vị trí ban đầu của player.
@@ -67,7 +61,7 @@ public class Player extends Entity {
         direction = "down";
 
         //PLAYER STATUS
-        maxLife = 20 ;               //sua lai sau khi test game
+        maxLife = 6 ;               //sua lai sau khi test game
         life = maxLife - 4;
 
     }
@@ -99,27 +93,19 @@ public class Player extends Entity {
         right4 = setup("/entities/player_right4");
         right5 = setup("/entities/player_right5");
         right6 = setup("/entities/player_right6");
-    }
+        dying1 = setup("/entities/player_dying1");
+        dying2 = setup("/entities/player_dying2");
+        dying3 = setup("/entities/player_dying3");
+        dyingSprites = new BufferedImage[]{dying1, dying2, dying3, dying4};
 
-    public void getPlayerAttackImage() {
-        attackUp1 = setup("/player/2");
-        attackUp2 = setup("/player/3");
-        attackDown1 = setup("/player/2");
-        attackDown2 = setup("/player/3");
-        attackLeft1 = setup("/player/2");
-        attackLeft2 = setup("/player/3");
-        attackRight2 = setup("/player/2");
-        attackRight1 = setup("/player/3");
     }
 
     public void update() {
 
-//        collisionOn = false;
-//        gp.checker.checkTile(this);
-//        gp.checker.checkObject(this, true);
-//        gp.checker.checkEntity(this, gp.npc);
-//        gp.checker.checkEntity(this, gp.monster);
-
+        if (dying) {
+            dyingAnimation();
+            return; // Skip other updates while dying
+        }
         if (!moving) {
 //            if (attacking) {
 ////                attacking();
@@ -305,30 +291,28 @@ public class Player extends Entity {
 
         // Kiểm tra máu
         life = Math.min(life, maxLife);
-        if (life <= 0) {
-            int mapNum = gp.currentMap;
-            gp.gameState = gp.gameOverState;
-            gp.ui.showTransition = true;
-            gp.ui.transitionTimer = 0;
-            gp.tileM.loadMap("/maps/map0" + mapNum + ".txt", mapNum);
-            hasBomb = maxBombs;
-            return;
+//        if (life <= 0) {
+//            int mapNum = gp.currentMap;
+//            gp.gameState = gp.gameOverState;
+//            gp.ui.showTransition = true;
+//            gp.ui.transitionTimer = 0;
+//            gp.tileM.loadMap("/maps/map0" + mapNum + ".txt", mapNum);
+//            hasBomb = maxBombs;
+//            return;
+//        }
+
+        if (life <= 0 && !dying) {
+            startDying();
         }
     }
 
-        //=====================ATTACK======================
-//    public void attacking() {
-//        if(attacking) {
-//            spriteCounter++;
-//            if(spriteCounter > 25) {
-//                attacking = false;
-//                spriteCounter = 0;
-//            }
-//            else if(spriteCounter <= 5) spriteNum = 1;
-//            else spriteNum = 2;
-//        }
-//    }
-
+    private void startDying() {
+        dying = true;
+        dyingCounter = 0;
+        // Stop all movement
+        moving = false;
+        attacking = false;
+    }
 
         public void pickUpObject ( int i){
 
@@ -448,64 +432,64 @@ public class Player extends Entity {
             int tempScreenX = screenX;
             int tempScreenY = screenY;
 
+            if (dying) {
+                // Show dying animation
+                int x = screenX;
+                int y = screenY;
 
-            if (attacking) {
-                switch (direction) {
-                    case "up":
-                        tempScreenY -= gp.tileSize;
-                        image = (spriteNum == 1) ? attackUp1 : attackUp2;
-                        break;
-                    case "down":
-                        tempScreenY += gp.tileSize;
-                        image = (spriteNum == 1) ? attackDown1 : attackDown2;
-                        break;
-                    case "left":
-                        tempScreenX -= gp.tileSize;
-                        image = (spriteNum == 1) ? attackLeft1 : attackLeft2;
-                        break;
-                    case "right":
-                        tempScreenX += gp.tileSize;
-                        image = (spriteNum == 1) ? attackRight1 : attackRight2;
-                        break;
+                // Handle screen edge cases (same as your existing code)
+                if (screenX > worldX) x = worldX;
+                if (screenY > worldY) y = worldY;
+                int rightOffset = gp.screenWidth - screenX;
+                if (rightOffset > gp.worldWidth - worldX) {
+                    x = gp.screenWidth - (gp.worldWidth - worldX);
                 }
-            } else {
-                switch (direction) {
-                    case "up":
-                        if (spriteNum == 1) image = up1;
-                        if (spriteNum == 2) image = up2;
-                        if (spriteNum == 3) image = up3;
-                        if (spriteNum == 4) image = up4;
-                        if (spriteNum == 5) image = up5;
-                        if (spriteNum == 6) image = up6;
-                        break;
-                    case "down":
-                        if (spriteNum == 1) image = down1;
-                        if (spriteNum == 2) image = down2;
-                        if (spriteNum == 3) image = down3;
-                        if (spriteNum == 4) image = down4;
-                        if (spriteNum == 5) image = down5;
-                        if (spriteNum == 6) image = down6;
-
-                        break;
-                    case "left":
-                        if (spriteNum == 1) image = left1;
-                        if (spriteNum == 2) image = left2;
-                        if (spriteNum == 3) image = left3;
-                        if (spriteNum == 4) image = left4;
-                        if (spriteNum == 5) image = left5;
-                        if (spriteNum == 6) image = left6;
-                        break;
-                    case "right":
-                        if (spriteNum == 1) image = right1;
-                        if (spriteNum == 2) image = right2;
-                        if (spriteNum == 3) image = right3;
-                        if (spriteNum == 4) image = right4;
-                        if (spriteNum == 5) image = right5;
-                        if (spriteNum == 6) image = right6;
-
-                        break;
+                int bottomOffset = gp.screenHeight - screenY;
+                if (bottomOffset > gp.worldHeight - worldY) {
+                    y = gp.screenHeight - (gp.worldHeight - worldY);
                 }
+
+                g2d.drawImage(this.image, x, y, gp.tileSize, gp.tileSize, null);
+                return;
             }
+
+            switch (direction) {
+                case "up":
+                    if (spriteNum == 1) image = up1;
+                    if (spriteNum == 2) image = up2;
+                    if (spriteNum == 3) image = up3;
+                    if (spriteNum == 4) image = up4;
+                    if (spriteNum == 5) image = up5;
+                    if (spriteNum == 6) image = up6;
+                    break;
+                case "down":
+                    if (spriteNum == 1) image = down1;
+                    if (spriteNum == 2) image = down2;
+                    if (spriteNum == 3) image = down3;
+                    if (spriteNum == 4) image = down4;
+                    if (spriteNum == 5) image = down5;
+                    if (spriteNum == 6) image = down6;
+
+                    break;
+                case "left":
+                    if (spriteNum == 1) image = left1;
+                    if (spriteNum == 2) image = left2;
+                    if (spriteNum == 3) image = left3;
+                    if (spriteNum == 4) image = left4;
+                    if (spriteNum == 5) image = left5;
+                    if (spriteNum == 6) image = left6;
+                    break;
+                case "right":
+                    if (spriteNum == 1) image = right1;
+                    if (spriteNum == 2) image = right2;
+                    if (spriteNum == 3) image = right3;
+                    if (spriteNum == 4) image = right4;
+                    if (spriteNum == 5) image = right5;
+                    if (spriteNum == 6) image = right6;
+
+                    break;
+            }
+
             int x = tempScreenX;
             int y = tempScreenY;
 
@@ -535,14 +519,6 @@ public class Player extends Entity {
 
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));// ve trong suot
 
-            //DEBUG
-//        g2d.setFont(new Font("Arial", Font.PLAIN, 26));
-//        g2d.setColor(Color.WHITE);
-//        g2d.drawString("Invincible: " + invincibleCounter + "(nho xoa)", 10, 400);
-//            g2d.drawImage(image, tempScreenX, tempScreenY, gp.tileSize, gp.tileSize, null);
-//            if(attacking) {
-//                drawAttackEffect(g2d);
-//            }
             //=========XUYEN=======
             if(xuyenMode) {
                 AlphaComposite alcom = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
@@ -559,17 +535,6 @@ public class Player extends Entity {
             }
         }
 
-//    private void drawAttackEffect(Graphics2D g2d) {
-//        int attackScreenX = gp.chemManager.attackArea.x - worldX + screenX;
-//        int attackScreenY = gp.chemManager.attackArea.y - worldY + screenY;
-//
-//        // Hiệu chỉnh khi ở mép màn hình
-//        if (worldX < screenX) attackScreenX = gp.chemManager.attackArea.x;
-//        if (worldY < screenY) attackScreenY = gp.chemManager.attackArea.y;
-//
-//        g2d.setColor(new Color(255, 0, 0, 100));
-//        g2d.fillRect(attackScreenX, attackScreenY, gp.tileSize, gp.tileSize);
-//    }
     public void setXuyenMode(boolean xuyenMode) {
         this.xuyenMode = xuyenMode;
 
@@ -660,6 +625,35 @@ public class Player extends Entity {
         int row = y / gp.tileSize;
         int tileNum = gp.tileM.mapTileNum[gp.currentMap][col][row];
         return !gp.tileM.tile[tileNum].collision;
+    }
+
+    @Override
+    public void dyingAnimation() {
+        dyingCounter++;
+        int interval = 15; // Adjust this for faster/slower animation
+
+        if (dyingCounter < interval) {
+            image = dyingSprites[0];
+        }
+        else if (dyingCounter < interval * 2) {
+            image = dyingSprites[1];
+        }
+        else if (dyingCounter < interval * 3) {
+            image = dyingSprites[2];
+        }
+
+        else {
+            // Animation complete - trigger game over
+            dying = false;
+            alive = false;
+            int mapNum = gp.currentMap;
+            gp.gameState = gp.gameOverState;
+            gp.ui.showTransition = true;
+            gp.ui.transitionTimer = 0;
+            gp.tileM.loadMap("/maps/map0" + mapNum + ".txt", mapNum);
+            hasBomb = maxBombs;
+            return;
+        }
     }
 }
 
