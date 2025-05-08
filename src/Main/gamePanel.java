@@ -1,5 +1,6 @@
 package Main;
 
+import AI.PathFinder;
 import entity.Entity;
 import entity.Player;
 import environment.EnvironmentManager;
@@ -33,14 +34,14 @@ public class gamePanel extends JPanel implements Runnable {
     public final int screenHeight = tileSize * maxScreenRow; // 576 pixels: Chiều rộng (đơn vị pixel)
 
     // WORLD SETTINGS
-    public final int maxWorldCol = 50;
+    public final int maxWorldCol = 30;
     public final int maxWorldRow = 25;
     public int WIDTH = (tileSize * scale) * maxWorldCol;
     public int HEIGHT = (tileSize * scale) * maxWorldRow;
     public final int worldWidth = tileSize * maxWorldCol;   // Chiều dài bản đồ
     public final int worldHeight = tileSize * maxWorldRow;  // Chiều rộng bản đồ
     public final int maxMap = 10; // Tổng số map
-    public int currentMap = 0;
+    public int currentMap = 1;
 
     //FPS
     public int FPS = 60;
@@ -57,6 +58,7 @@ public class gamePanel extends JPanel implements Runnable {
     public AssetSetter aSetter = new AssetSetter(this);
     public CollisionChecker checker  = new CollisionChecker(this);
     public EventHandler eHandler = new EventHandler(this);
+    public PathFinder pFinder = new PathFinder(this);
 
     //ENTITIES AND OBJECTS
     public Player player = new Player(this, kH);
@@ -168,12 +170,18 @@ public class gamePanel extends JPanel implements Runnable {
                 }
             }
             for (int i = 0; i < monster[currentMap].length; i++) {
-                if (monster[currentMap][i] != null && monster[currentMap][i].alive && !monster[currentMap][i].dying) {
-                    monster[currentMap][i].update();
-                } else {
-                    monster[currentMap][i] = null;
+                Entity m = monster[currentMap][i];
+                if (m != null) {
+                    // luôn cho phép update(), để dyingAnimation() có thể chạy
+                    m.update();
+
+                    // sau khi update, nếu đã kết thúc và alive==false thì mới remove
+                    if (!m.alive) {
+                        monster[currentMap][i] = null;
+                    }
                 }
             }
+
 
             for (int i = 0; i < bombManager.bombList[currentMap].size(); i++) {
                 Bomb bomb = bombManager.bombList[currentMap].get(i);

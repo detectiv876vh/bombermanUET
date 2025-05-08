@@ -26,8 +26,9 @@ public class TileManager {
         mapTileNum = new int[gp.maxMap][gp.maxWorldCol][gp.maxWorldRow];
 
         getTileImage();
-        loadMap("/maps/map01.txt", 0);
-        loadMap("/maps/map02.txt", 1);
+        loadMap("/maps/map00.txt", 0);
+        loadMap("/maps/map01.txt", 1);
+        loadMap("/maps/map02.txt", 2);
     }
 
     public void getTileImage() {
@@ -93,8 +94,10 @@ public class TileManager {
                 item = new OBJ_Shield(gp);    // 13-15: 2%
             } else if (chance < 16) {
                 item = new OBJ_Invisible(gp); //15-16: 1%
-            } else if (chance < 25) {
+            } else if (chance < 20) {
                 item = new OBJ_Explosion(gp);
+            }else if (chance < 25) {
+                item = new OBJ_BombUP(gp);
             }
 
             if (item != null) {

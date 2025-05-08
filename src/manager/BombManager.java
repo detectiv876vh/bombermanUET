@@ -12,6 +12,7 @@ public class BombManager {
     private final gamePanel gp;
     private final entity.Player player;
     public ArrayList<Bomb>[] bombList;
+    public boolean globalBreakThrough = false; // Trạng thái toàn cục
 
 
     public BombManager(gamePanel gp, entity.Player player) {
@@ -46,6 +47,8 @@ public class BombManager {
             newBomb.radius = gp.player.bombRadius;
             newBomb.life = 30;
             newBomb.mapTileNum = gp.tileM.mapTileNum;
+            newBomb.canBreakThrough = this.globalBreakThrough; // Áp dụng trạng thái
+
 
             bombList[gp.currentMap].add(newBomb);
             player.hasBomb--;
@@ -60,5 +63,4 @@ public class BombManager {
         }
         return true;
     }
-
 }

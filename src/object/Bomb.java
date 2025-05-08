@@ -26,6 +26,7 @@ public class Bomb extends Entity {
     public int animationSpeed = 15; // Thay đổi giá trị này để điều chỉnh tốc độ animation
     public Rectangle collisionArea; // Vùng va chạm thực tế của bomb
     private boolean reversing = false; // Biến để kiểm soát chiều animation
+    public boolean canBreakThrough = false; // Cho phép phá nhiều tường
 
     public Bomb(gamePanel gp, DrawManager drawManager) {
         super(gp);
@@ -149,15 +150,24 @@ public class Bomb extends Entity {
             // Phá tường nếu có thể
             gp.tileM.explodeTile(targetTileX, targetTileY);
 
+            // Xử lý logic phá tường
+            if (isCollision) {
+                if (isBreakable) {
+                    gp.tileM.explodeTile(targetTileX, targetTileY);
+
+                    // Chỉ dừng nếu KHÔNG có power-up
+                    if (!this.canBreakThrough) {
+                        break;
+                    }
+                } else {
+                    // Dừng nếu gặp tường không phá được
+                    break;
+                }
+            }
+
             // Gây sát thương lên monster tại ô này
             checkMonsterHit(targetTileX, targetTileY);
             checkPlayerHit(targetTileX, targetTileY);
-
-
-            // Dừng nếu gặp vật cản không phá được
-            if (isCollision /*&& isBreakable*/) {
-                break;
-            }
         }
     }
 
@@ -237,7 +247,10 @@ public class Bomb extends Entity {
                 );
 
                 if (fireArea.intersects(monsterArea)) {
-                    monster.dying = true;
+                    // kích hoạt reaction thay vì tự thao tác
+                    monster.life = 0;
+                    monster.damageReaction();    // <-- gọi method này
+                    monster.setDyingSprites();   // load sprites ngay sau đó
                     gp.playSE(6);
                 }
             }

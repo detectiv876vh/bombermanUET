@@ -67,7 +67,7 @@ public class Player extends Entity {
         direction = "down";
 
         //PLAYER STATUS
-        maxLife = 6;               //sua lai sau khi test game
+        maxLife = 20 ;               //sua lai sau khi test game
         life = maxLife - 4;
 
     }
@@ -75,30 +75,30 @@ public class Player extends Entity {
     //gắn ảnh.
     public void getPlayerImage() {
 
-        up1 = setup("/entities/spr_player_back_walk-ezgif.com-crop");
-        up2 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
-        up3 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
-        up4 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
-        up5 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
-        up6 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
-        down1 = setup("/entities/spr_player_front_walk-ezgif.com-crop");
-        down2 = setup("/entities/spr_player_front_walk-ezgif.com-crop (1)");
-        down3 = setup("/entities/spr_player_front_walk-ezgif.com-crop (2)");
-        down4 = setup("/entities/spr_player_front_walk-ezgif.com-crop (3)");
-        down5 = setup("/entities/spr_player_front_walk-ezgif.com-crop (4)");
-        down6 = setup("/entities/spr_player_front_walk-ezgif.com-crop (5)");
+        up1 = setup("/entities/player_up1");
+        up2 = setup("/entities/player_up2");
+        up3 = setup("/entities/player_up3");
+        up4 = setup("/entities/player_up4");
+        up5 = setup("/entities/player_up5");
+        up6 = setup("/entities/player_up6");
+        down1 = setup("/entities/player_idle");
+        down2 = setup("/entities/player_run1");
+        down3 = setup("/entities/player_run2");
+        down4 = setup("/entities/player_run3");
+        down5 = setup("/entities/player_run4");
+        down6 = setup("/entities/player_run5");
         left1 = setup("/entities/spr_player_left_walk-ezgif.com-crop");
         left2 = setup("/entities/spr_player_left_walk-ezgif.com-crop (1)");
         left3 = setup("/entities/spr_player_left_walk-ezgif.com-crop (2)");
         left4 = setup("/entities/spr_player_left_walk-ezgif.com-crop (3)");
         left5 = setup("/entities/spr_player_left_walk-ezgif.com-crop (4)");
         left6 = setup("/entities/spr_player_left_walk-ezgif.com-crop (5)");
-        right1 = setup("/entities/spr_player_right_walk-ezgif.com-crop");
-        right2 = setup("/entities/spr_player_right_walk-ezgif.com-crop (1)");
-        right3 = setup("/entities/spr_player_right_walk-ezgif.com-crop (2)");
-        right4 = setup("/entities/spr_player_right_walk-ezgif.com-crop (3)");
-        right5 = setup("/entities/spr_player_right_walk-ezgif.com-crop (4)");
-        right6 = setup("/entities/spr_player_right_walk-ezgif.com-crop (5)");
+        right1 = setup("/entities/player_right1");
+        right2 = setup("/entities/player_right2");
+        right3 = setup("/entities/player_right3");
+        right4 = setup("/entities/player_right4");
+        right5 = setup("/entities/player_right5");
+        right6 = setup("/entities/player_right6");
     }
 
     public void getPlayerAttackImage() {
@@ -294,7 +294,7 @@ public class Player extends Entity {
         // Xử lý bất tử tạm thời sau khi bị đánh
         if (invincible) {
             invincibleCounter++;
-            if (invincibleCounter > 300) {
+            if (invincibleCounter > 150) {
                 invincible = false;
                 invincibleCounter = 0;
             }
@@ -306,9 +306,12 @@ public class Player extends Entity {
         // Kiểm tra máu
         life = Math.min(life, maxLife);
         if (life <= 0) {
+            int mapNum = gp.currentMap;
             gp.gameState = gp.gameOverState;
             gp.ui.showTransition = true;
             gp.ui.transitionTimer = 0;
+            gp.tileM.loadMap("/maps/map0" + mapNum + ".txt", mapNum);
+            hasBomb = maxBombs;
             return;
         }
     }
@@ -391,6 +394,10 @@ public class Player extends Entity {
                         break;
                     case "bombUpgrade_TYPE1":
                         gp.playSE(1);
+                        // Kích hoạt cho tất cả bomb mới
+                        gp.bombManager.globalBreakThrough = true;
+                        gp.obj[gp.currentMap][i] = null;
+                        break;
 
                 }
             }
@@ -643,7 +650,7 @@ public class Player extends Entity {
 
     private boolean isValidPosition(int x, int y) {
         // Kiểm tra trong map
-        if (x < 0 || x >= gp.maxWorldCol * gp.tileSize ||
+        if (x < 0 || x  >= gp.maxWorldCol * gp.tileSize ||
                 y < 0 || y >= gp.maxWorldRow * gp.tileSize) {
             return false;
         }
