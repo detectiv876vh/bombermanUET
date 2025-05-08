@@ -39,6 +39,7 @@ public class BombManager {
                 && player.hasBomb > 0) {
 
             Bomb newBomb = new Bomb(gp, gp.drawManager);
+            gp.playSE(6);
 
             newBomb.worldX = bombTileX * gp.tileSize; // Chuyển lại thành tọa độ thế giới
             newBomb.worldY = bombTileY * gp.tileSize;

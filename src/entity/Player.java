@@ -35,7 +35,7 @@ public class Player extends Entity {
     // =========XUYEN =========
     private boolean xuyenMode = false;
     private int xuyenModeMin = 0;
-    private final int xuyenModeMax = 3000;
+    private final int xuyenModeMax = 300;
 
     public Player(gamePanel gp, KeyHandler kH) {
         super(gp);
