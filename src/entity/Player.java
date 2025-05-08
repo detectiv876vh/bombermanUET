@@ -42,6 +42,7 @@ public class Player extends Entity {
     private int xuyenModeMin = 0;
     private final int xuyenModeMax = 300;
 
+
     public Player(gamePanel gp, KeyHandler kH) {
         super(gp);
         this.kH = kH;
@@ -69,7 +70,6 @@ public class Player extends Entity {
         //PLAYER STATUS
         maxLife = 6;               //sua lai sau khi test game
         life = maxLife - 4;
-
     }
 
     //gắn ảnh.
@@ -306,10 +306,12 @@ public class Player extends Entity {
         // Kiểm tra máu
         life = Math.min(life, maxLife);
         if (life <= 0) {
+            int numMap = gp.currentMap;
+            gp.playSE(7);
             gp.gameState = gp.gameOverState;
             gp.ui.showTransition = true;
             gp.ui.transitionTimer = 0;
-            return;
+            gp.loadMap(numMap);
         }
     }
 

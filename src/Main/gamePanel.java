@@ -374,8 +374,7 @@ public class gamePanel extends JPanel implements Runnable {
                         (centerX + buttonWidth) + "," + (quitY + buttonHeight));
 
                 // Kiểm tra giữ click vào nút Play.
-                if (x >= centerX && x <= centerX + buttonWidth &&
-                        y >= playY && y <= playY + buttonHeight) {
+                if (x >= 281 && x <= 487 && y >= 272 && y <= 354) {
                     System.out.println("Play button pressed!");
 
                     playButtonPressed = true;
@@ -383,8 +382,7 @@ public class gamePanel extends JPanel implements Runnable {
                 }
 
                 // Kiểm tra click vào nút Quit.
-                if (x >= centerX && x <= centerX + buttonWidth &&
-                        y >= quitY && y <= quitY + buttonHeight) {
+                if (x >= 281 && x <= 487 && y >= 384 && y <= 465) {
                     System.out.println("Quit button pressed!");
 
                     quitButtonPressed = true;
@@ -407,16 +405,14 @@ public class gamePanel extends JPanel implements Runnable {
                 int quitY = playY + buttonHeight + (tileSize - 20);
 
                 // Kiểm tra thả chuột trên nút Play.
-                if (playButtonPressed && x >= centerX && x <= centerX + buttonWidth &&
-                                         y >= playY && y <= playY + buttonHeight) {
+                if (playButtonPressed && x >= 281 && x <= 487 && y >= 272 && y <= 354) {
                     gameState = transitionState;
                     ui.startMapTransition("Level 1");
                     playSE(4);
                 }
 
                 // Kiểm tra thả chuột trên nút Quit.
-                if (quitButtonPressed && x >= centerX && x <= centerX + buttonWidth
-                                      && y >= quitY && y <= quitY + buttonHeight) {
+                if (quitButtonPressed && (x >= 281 && x <= 487 && y >= 384 && y <= 465)) {
                     playSE(4);
                     System.exit(0);
                 }

@@ -66,15 +66,15 @@ public class UI {
         backgroundFixed = background.getScaledInstance(gp.screenWidth, gp.screenHeight, Image.SCALE_SMOOTH);
 
         // BUTTON
-        try {
-            playButton = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/play.png"));
-            playButtonPress = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/playPress.png"));
-
-            quitButton = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/quit.png"));
-            quitButtonPress = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/quitPress.png"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        playButton = setup("/standbyscreen/playtest");
+        playButtonPress = setup("/standbyscreen/playPresstest");
+        quitButton = setup("/standbyscreen/quittest");
+        quitButtonPress = setup("/standbyscreen/quitPresstest");
+//            playButton = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/play.png"));
+//            playButtonPress = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/playPress.png"));
+//
+//            quitButton = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/quit.png"));
+//            quitButtonPress = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/quitPress.png"));
     }
 
     public void draw (Graphics2D g2) {
@@ -379,4 +379,23 @@ public class UI {
         this.transitionText = mapName;
     }
 
+    public BufferedImage setup(String imagePath) {
+
+        UtilityTool uTool = new UtilityTool();
+        BufferedImage image = null;
+
+        try {
+            image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
+
+            // Cắt khoảng trống xung quanh nếu có
+            image = uTool.cropToContent(image);
+
+            // Scale lên đúng tileSize
+            image = uTool.scaleImage(image, 210, 84);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
 }

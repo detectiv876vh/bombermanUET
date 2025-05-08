@@ -259,7 +259,7 @@ public class Bomb extends Entity {
                 gp.player.life--;
                 gp.player.invincible = true;
                 gp.player.invincibleCounter = 0;
-                gp.playSE(7); // Âm thanh trúng đòn
+//                gp.playSE(7); // Âm thanh trúng đòn
             }
         }
     }
