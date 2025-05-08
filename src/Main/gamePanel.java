@@ -101,6 +101,7 @@ public class gamePanel extends JPanel implements Runnable {
         aSetter.setMonster();
 //        playMusic(0);
         eManager.setup();
+        aSetter.setBoss();
     }
 
     public void startGameThread() {
@@ -318,6 +319,7 @@ public class gamePanel extends JPanel implements Runnable {
 
         aSetter.setObject();
         aSetter.setMonster();
+        aSetter.setBoss();
 //        aSetter.setNPC();
 
     }

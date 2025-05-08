@@ -16,6 +16,7 @@ public class Entity {
     public gamePanel gp;
     public int worldX, worldY;
     public int speed;
+    public int damage;
     boolean attacking = false;
 
     //LOAD IMAGE
@@ -353,14 +354,15 @@ public class Entity {
                 worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
                 worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
                 worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
-            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(image, screenX, screenY, width, height, null);
         }
         // If player is around the edge, draw everything
         else if (gp.player.worldX < gp.player.screenX ||
                 gp.player.worldY < gp.player.screenY ||
                 rightOffset > gp.worldWidth - gp.player.worldX ||
                 bottomOffset > gp.worldHeight - gp.player.worldY) {
-            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+//            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(image, screenX, screenY,width,height , null);
         }
     }
     //ANIMATION LUC MONSTER CHET
@@ -435,6 +437,25 @@ public class Entity {
         }
         return image;
     }
+    public BufferedImage setup96x96(String imagePath) {
+
+        UtilityTool uTool = new UtilityTool();
+        BufferedImage image = null;
+
+        try {
+            image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
+
+            // Cắt khoảng trống xung quanh nếu có
+            image = uTool.cropToContent(image);
+
+            // Scale lên đúng tileSize
+            image = uTool.scaleImage(image, 96, 96);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
 
     public Rectangle getHitbox() {
         return new Rectangle(
@@ -446,5 +467,7 @@ public class Entity {
     }
 
     protected void damageReaction() {
+        System.out.println("Boss - worldX: " + worldX + ", worldY: " + worldY + ", spriteNum: "
+                + spriteNum + ", invincible: " + invincible);
     }
 }
