@@ -51,7 +51,8 @@ public class EventHandler {
 
         if(canTouchEvent) {
             if(hit(0,2,2,"any") == true) {teleport(1,15,4);}
-            else if(hit(1,15,4,"any") == true) {teleport(0,12,2);}
+            else if(hit(1,2,2,"any") == true) {teleport(2,12,2);}
+            else if(hit(2,2,2,"any") == true) {teleport(3,12,2);}
 
         }
     }

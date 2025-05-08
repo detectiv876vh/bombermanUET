@@ -100,9 +100,11 @@ public class gamePanel extends JPanel implements Runnable {
 
         aSetter.setObject();
 //        aSetter.setNPC();
-        aSetter.setMonster();
+        aSetter.setMonster00();
+        aSetter.setMonster01();
 //        playMusic(0);
         eManager.setup();
+//        aSetter.setBoss();
     }
 
     public void startGameThread() {
@@ -325,8 +327,9 @@ public class gamePanel extends JPanel implements Runnable {
         clearMapEntities();
 
         aSetter.setObject();
-        aSetter.setMonster();
-//        aSetter.setNPC();
+        aSetter.setMonster00();
+        aSetter.setMonster01();
+        aSetter.setBoss();
 
     }
 

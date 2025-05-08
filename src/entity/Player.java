@@ -50,6 +50,7 @@ public class Player extends Entity {
 
         setDefaultValues();
         getPlayerImage();
+
     }
 
     //vị trí ban đầu của player.
@@ -106,9 +107,7 @@ public class Player extends Entity {
             return; // Skip other updates while dying
         }
         if (!moving) {
-//            if (attacking) {
-////                attacking();
-//            } else
+
             if (!attacking && (kH.upPressed || kH.downPressed || kH.leftPressed || kH.rightPressed)) {
                 if (kH.upPressed) {
                     direction = "up";
@@ -121,7 +120,6 @@ public class Player extends Entity {
                 }
 
                 moving = true;
-//                pixelCounter = 0;
 
                 //Check tile collision.
                 collisionOn = false;
@@ -134,10 +132,6 @@ public class Player extends Entity {
                 int objIndex = gp.checker.checkObject(this, true); //entity va boolean cua player
                 pickUpObject(objIndex);
 
-//                // CHECK NPC COLLISION
-//                int npcIndex = gp.checker.checkEntity(this, gp.npc);
-//                interactNPC(npcIndex);
-                //CHECK MONSTER COLLISION
                 int monsterIndex = gp.checker.checkEntity(this, gp.monster);
                 contactMonster(monsterIndex);
 
@@ -234,23 +228,6 @@ public class Player extends Entity {
             gp.bombManager.handleBombPlacement();
             gp.kH.spacePressed = false; // Tránh đặt bom liên tục
         }
-
-        if (kH.qPressed) {
-            // Chỉ tấn công nếu KHÔNG đang di chuyển
-            if (!moving) {
-//                gp.chemManager.handleChem();
-                attacking = true;
-            }
-            // Reset trạng thái di chuyển
-            moving = false;
-            pixelCounter = 0;
-            spriteCounter = 0;
-        }
-
-        // Cập nhật animation tấn công
-//        if(attacking) {
-//            attacking();
-//        }
 
 
         // Xử lý shield
