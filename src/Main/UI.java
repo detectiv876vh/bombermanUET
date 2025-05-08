@@ -102,8 +102,6 @@ public class UI {
 
         //PLAYER STATE
         if(gp.gameState == gp.playState) {
-            drawPlayerLife();
-//            drawMapTransition();
         }
         //ATTACK STATE
         if(gp.gameState == gp.chemState) {
@@ -148,7 +146,6 @@ public class UI {
 
         //PAUSE STATE
         if(gp.gameState == gp.pauseState) {
-            drawPlayerLife();
             drawPauseScreen();
         }
 
@@ -156,44 +153,6 @@ public class UI {
         g2.setColor(Color.white);
         g2.drawString(text, x, y);
 
-//        //MENU
-//        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 48F));
-//
-//        text = "NEW GAME";
-//        x = getXforCenteredText(text);
-//        y += gp.tileSize * 4;
-//
-//        if(commandNum == 0) {
-//            g2.setColor(Color.yellow);
-//            g2.drawString(">", x-gp.tileSize, y);
-//        } else {
-//            g2.setColor(Color.white);
-//        }
-//        g2.drawString(text, x, y);  // viết text ở vị trí x worldY.
-//
-//        text = "CONTINUE GAME";
-//        x = getXforCenteredText(text);
-//        y += gp.tileSize;
-//
-//        if(commandNum == 1) {
-//            g2.setColor(Color.yellow);
-//            g2.drawString(">", x-gp.tileSize, y);
-//        } else {
-//            g2.setColor(Color.white);
-//        }
-//        g2.drawString(text, x, y);
-//
-//        text = "QUIT";
-//        x = getXforCenteredText(text);
-//        y += gp.tileSize;
-//
-//        if(commandNum == 2) {
-//            g2.setColor(Color.yellow);
-//            g2.drawString(">", x-gp.tileSize, y);
-//        } else {
-//            g2.setColor(Color.white);
-//        }
-//        g2.drawString(text, x, y);
         int buttonWidth = playButton.getWidth();
         int buttonHeight = playButton.getHeight();
         int spacing = gp.tileSize - 20; // khoảng cách giữa các nút.
@@ -220,37 +179,6 @@ public class UI {
         }
     }
 
-    public void drawPlayerLife() {
-        int x = gp.tileSize/2;
-        int y = gp.tileSize/2;
-        int i = 0;
-
-        // draw blank heart
-        while(i<gp.player.maxLife/2) {
-            g2.drawImage(heart_blank,x,y,null);
-            i++;
-            x += gp.tileSize;
-        }
-        // reset
-        x = gp.tileSize/2;
-        y = gp.tileSize/2;
-        i = 0;
-        //  draw current life
-        while(i < gp.player.life) {
-            g2.drawImage(heart_half,x,y,null);
-            i++;
-            if (i < gp.player.life) {
-                g2.drawImage(heart_full, x, y, null);
-            }
-            i++;
-            x += gp.tileSize;
-        }
-
-    }
-
-//    public void drawGameOverScreen() {
-//
-//    }
 
     public void drawPauseScreen() {
 

@@ -38,14 +38,18 @@ public class MON_1 extends Entity {
 
     public void getMonsterImage() {
         // Load các sprites cho monster - sử dụng những sprites sẵn có
-        up1 = setup("/monster/TEST1");
-        up2 = setup("/monster/TEST2");
-        down1 = setup("/monster/TEST1");
-        down2 = setup("/monster/TEST2");
-        left1 = setup("/monster/TEST1");
-        left2 = setup("/monster/TEST2");
-        right1 = setup("/monster/TEST1");
-        right2 = setup("/monster/TEST2");
+        up1 = setup("/monster/sau1");
+        up2 = setup("/monster/sau2");
+        up3 = setup("/monster/sau3");
+        down1 = setup("/monster/truoc1");
+        down2 = setup("/monster/truoc2");
+        down3 = setup("/monster/truoc3");
+        left1 = setup("/monster/trai1");
+        left2 = setup("/monster/trai2");
+        left3 = setup("/monster/trai3");
+        right1 = setup("/monster/phai1");
+        right2 = setup("/monster/phai2");
+        right3 = setup("/monster/phai3");
     }
 
     private void setRandomDirection() {
@@ -117,6 +121,8 @@ public class MON_1 extends Entity {
             if (spriteNum == 1) {
                 spriteNum = 2;
             } else if (spriteNum == 2) {
+                spriteNum = 3;
+            } else if (spriteNum == 3) {
                 spriteNum = 1;
             }
             spriteCounter = 0;
