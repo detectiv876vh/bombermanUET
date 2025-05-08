@@ -63,7 +63,6 @@ public class Player extends Entity {
         //PLAYER STATUS
         maxLife = 6 ;               //sua lai sau khi test game
         life = maxLife - 4;
-
     }
 
     //gắn ảnh.
@@ -646,11 +645,12 @@ public class Player extends Entity {
             // Animation complete - trigger game over
             dying = false;
             alive = false;
-            int mapNum = gp.currentMap;
+            int numMap = gp.currentMap;
+            gp.playSE(7);
             gp.gameState = gp.gameOverState;
             gp.ui.showTransition = true;
             gp.ui.transitionTimer = 0;
-            gp.tileM.loadMap("/maps/map0" + mapNum + ".txt", mapNum);
+            gp.loadMap(numMap);
             hasBomb = maxBombs;
             return;
         }
