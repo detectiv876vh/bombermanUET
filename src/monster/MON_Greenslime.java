@@ -76,11 +76,31 @@ public class MON_Greenslime extends Entity {
             return; // Giữ nguyên hướng di chuyển đã được xác định
         }
         if (onPath) {
-
             int goalCol = (gp.player.worldX + gp.player.solidArea.x) / gp.tileSize;
             int goalRow = (gp.player.worldY + gp.player.solidArea.y) / gp.tileSize;
 
-            searchPath(goalCol,goalRow);
+            // Tính vị trí hiện tại của quái
+            int monsterCol = (worldX + solidArea.x) / gp.tileSize;
+            int monsterRow = (worldY + solidArea.y) / gp.tileSize;
+
+            // Kiểm tra xem quái đã ở kề với người chơi chưa
+            boolean adjacentToPlayer =
+                    (Math.abs(monsterCol - goalCol) <= 1 && monsterRow == goalRow) ||
+                            (Math.abs(monsterRow - goalRow) <= 1 && monsterCol == goalCol);
+
+            if (adjacentToPlayer) {
+                // Nếu đã kề với người chơi, di chuyển thẳng về phía người chơi
+                if (worldX < gp.player.worldX) direction = "right";
+                else if (worldX > gp.player.worldX) direction = "left";
+                else if (worldY < gp.player.worldY) direction = "down";
+                else if (worldY > gp.player.worldY) direction = "up";
+
+                // Đảm bảo quái tiếp tục di chuyển
+                moving = true;
+            } else {
+                // Nếu chưa kề, tiếp tục sử dụng pathfinding
+                searchPath(goalCol, goalRow);
+            }
         } else {
             actionLockCounter++;
             if (actionLockCounter == 60) {
@@ -110,6 +130,10 @@ public class MON_Greenslime extends Entity {
     public void update() {
         super.update();
 
+        if (!moving && !collisionOn) {
+            moving = true;  // Cho phép di chuyển tiếp
+        }
+
         // Kiểm tra bomb nguy hiểm định kỳ
         if (!dying && !bombDangerDetected && gp.bombManager != null) {
             dangerCheckInterval--;
@@ -136,6 +160,10 @@ public class MON_Greenslime extends Entity {
             }
         }
 
+        if (onPath) {
+            moving = true;
+        }
+
         int xDistance = Math.abs(worldX - gp.player.worldX);
         int yDistance = Math.abs(worldY - gp.player.worldY);
         int tileDistance = (xDistance + yDistance) / gp.tileSize;
@@ -158,6 +186,7 @@ public class MON_Greenslime extends Entity {
         hpBarOn = true;
         hpBarCounter = 0;
     }
+
     private void checkBombDanger() {
         // Chỉ kiểm tra nếu không đang chết
         if (dying) return;

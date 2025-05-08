@@ -44,7 +44,7 @@ public class Player extends Entity {
         screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
         screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 
-        solidArea = new Rectangle(1, 1, 46, 46);
+        solidArea = new Rectangle(2,2,44,44);
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
@@ -80,12 +80,12 @@ public class Player extends Entity {
         down4 = setup("/entities/player_run3");
         down5 = setup("/entities/player_run4");
         down6 = setup("/entities/player_run5");
-        left1 = setup("/entities/spr_player_left_walk-ezgif.com-crop");
-        left2 = setup("/entities/spr_player_left_walk-ezgif.com-crop (1)");
-        left3 = setup("/entities/spr_player_left_walk-ezgif.com-crop (2)");
-        left4 = setup("/entities/spr_player_left_walk-ezgif.com-crop (3)");
-        left5 = setup("/entities/spr_player_left_walk-ezgif.com-crop (4)");
-        left6 = setup("/entities/spr_player_left_walk-ezgif.com-crop (5)");
+        left1 = setup("/entities/player_left1");
+        left2 = setup("/entities/player_left2");
+        left3 = setup("/entities/player_left3");
+        left4 = setup("/entities/player_left4");
+        left5 = setup("/entities/player_left5");
+        left6 = setup("/entities/player_left6");
         right1 = setup("/entities/player_right1");
         right2 = setup("/entities/player_right2");
         right3 = setup("/entities/player_right3");
@@ -386,23 +386,14 @@ public class Player extends Entity {
             }
         }
 
-        public void interactNPC ( int i){
-            if (gp.kH.qPressed == true) {
-                if (i != 999) {
-                    System.out.println("you are hitting an npc");
-                }
+    public void contactMonster(int i) {
+        if (i != 999) {
+            if (!invincible && !shieldActive) {
+                life = 0; // Set máu về 0 ngay lập tức
+                startDying(); // Bắt đầu animation chết
             }
         }
-
-        public void contactMonster ( int i){          // giong voi interac
-            if (i != 999) {
-                if (!invincible && !shieldActive) {
-                    invincible = true;
-                    life -= 1;
-                    System.out.println("Took damage! Life: " + life);
-                }
-            }
-        }
+    }
 //        public void damageMonster (int i){
 //            if (i != 999 && gp.monster[i] != null) {
 //                if (gp.monster[i].invincible == false) {

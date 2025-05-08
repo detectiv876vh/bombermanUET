@@ -125,9 +125,9 @@ public class Entity {
 
             boolean contactPlayer = gp.checker.checkPlayer(this);
             if (this.type == 2 && contactPlayer) {
-                if (gp.player.invincible == false) {             //loi
+                if (gp.player.invincible == false) {
                     //can give dame
-                    gp.player.life -= 1;
+                    gp.player.life = 0;
                     gp.player.invincible = true;
                 }
             }
