@@ -17,26 +17,10 @@ public class OBJ_Bomb extends Entity {
 
         type = type_consumable;
         name = "bombItem";
-        image1 = setup("/objects/Bomb");
-//        image2 = setup("/objects/bomb2");
-        down1 = image1;
+        down1 = setup("/objects/Bomb");
         stackable = true;
 
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
-    }
-
-    public void update() {
-        spriteCounter++;
-        if (spriteCounter > 10) {
-            if (spriteNum == 1) {
-                spriteNum = 2;
-                down1 = image2;
-            } else {
-                spriteNum = 1;
-                down1 = image1;
-            }
-            spriteCounter = 0;
-        }
     }
 }

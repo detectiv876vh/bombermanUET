@@ -16,7 +16,6 @@ public class Entity {
     public gamePanel gp;
     public int worldX, worldY;
     public int speed;
-    public int damage;
     boolean attacking = false;
 
     //LOAD IMAGE
@@ -48,46 +47,49 @@ public class Entity {
     public final int shieldDuration = 300;
 
 
-        public String positionId;
-        //COUNTER
-        protected int moveCounter = 0;
+    public String positionId;
+    //COUNTER
+    protected int moveCounter = 0;
 
 
     //HITBOX:
     public Rectangle solidArea; //cho all entity
 
 
-        //===========Boss======
-        public int width;  // Mặc định bằng kích thước tile
-        public int height; // Mặc định bằng kích thước tile
-        public int screenX; // Sẽ được tính trong draw()
-        public int screenY; // Sẽ được tính trong draw()
+    //===========Boss======
+    public int width;  // Mặc định bằng kích thước tile
+    public int height; // Mặc định bằng kích thước tile
+    public int screenX; // Sẽ được tính trong draw()
+    public int screenY; // Sẽ được tính trong draw()
 
     public int solidAreaDefauftX, solidAreaDefauftY;
     public boolean collisionOn = false;
 
-        public String name;
-        public boolean collision = false;
-        public int type;         // player =0;;; npc =1.,,,2 = monster
+    public String name;
+    public boolean collision = false;
+    public int type;         // player =0;;; npc =1.,,,2 = monster
+
+    //Character status
+    public int maxLife;
+    public int life;
+    public boolean invincible = false; //giu nguoi choi mien nhiem sau khi nhan sat thuong
 
 
-        //Character status
-        public int maxLife;
-        public int life;
-        public boolean invincible = false; //giu nguoi choi mien nhiem sau khi nhan sat thuong
+    //OBJECTS
+    public Projectile projectileUp, projectileDown, projectileLeft, projectileRight, bomb;
 
+    // ENTITY STATUS
+    public boolean hpBarOn = false;
+    public boolean alive = true;
+    public boolean dying = false;
+    public int bombCount;
+    public int bombXpos, bombYpos;
+    public int solidAreaDefaultX;
+    public int solidAreaDefaultY;
 
-        //OBJECTS
-        public Projectile projectileUp, projectileDown, projectileLeft, projectileRight, bomb;
+    //AI
+    public boolean onPath = false;
 
-        // ENTITY STATUS
-        public boolean hpBarOn = false;
-        public boolean alive = true;
-        public boolean dying = false;
-        public int bombCount;
-        public int bombXpos, bombYpos;
-        public int solidAreaDefaultX;
-        public int solidAreaDefaultY;
 
         public Entity(gamePanel gp) {
             this.gp = gp;
@@ -95,13 +97,9 @@ public class Entity {
             this.width = gp.tileSize;
             this.height = gp.tileSize;
             solidArea = new Rectangle(0, 0, gp.tileSize, gp.tileSize);
-
-        dyingSprites = new BufferedImage[4]; // ví dụ: 4 frame chết
-
-        this.positionId = UUID.randomUUID().toString();
-
-
-    }
+            dyingSprites = new BufferedImage[4]; // ví dụ: 4 frame chết
+            this.positionId = UUID.randomUUID().toString();
+        }
 
         public void setAction() {
         }
@@ -118,92 +116,50 @@ public class Entity {
         //UPDATE FPS
         public void update() {
 
-        setAction();
+            setAction();
 
-        checkCollision();
+            collisionOn = false;
+            checkCollision();
 
-        boolean contactPlayer = gp.checker.checkPlayer(this);
-
-        if (moving) {
-            pixelCounter += speed;
-            if (pixelCounter >= gp.tileSize) {
-                moving = false;
-                pixelCounter = 0;
-            }
-        }
-
-        if(this.type == 2 && contactPlayer) {
-            if(gp.player.invincible == false) {             //loi
-                //can give dame
-                gp.player.life -=1;
-                gp.player.invincible = true;
-            }
-        }
-
-        //neu ko co gi chan thi di tiep
-        if (!collisionOn) {
-            switch (direction) {
-                case "up":
-                    worldY -= speed;
-                    break;
-                case "down":
-                    worldY += speed;
-                    break;
-                case "left":
-                    worldX -= speed;
-                    break;
-                case "right":
-                    worldX += speed;
-                    break;
-            }
-        }
-
-            spriteCounter++;
-            if (spriteCounter > 5) {
-                if (spriteNum == 1) {
-                    spriteNum = 2;
-                } else if (spriteNum == 2) {
-                    spriteNum = 3;
-                } else if (spriteNum == 3) {
-                    spriteNum = 4;
-                } else if (spriteNum == 4) {
-                    spriteNum = 5;
-                } else if (spriteNum == 5) {
-                    spriteNum = 6;
-                } else if (spriteNum == 6) {
-                    spriteNum = 1;
+            boolean contactPlayer = gp.checker.checkPlayer(this);
+            if (this.type == 2 && contactPlayer) {
+                if (gp.player.invincible == false) {             //loi
+                    //can give dame
+                    gp.player.life -= 1;
+                    gp.player.invincible = true;
                 }
-                spriteCounter = 0;
-
             }
 
-        pixelCounter += speed;
-
-        if (pixelCounter >= 48) {
-            pixelCounter = 0;
-        }
-
-        if (invincible) {
-            invincibleCounter++;
-            if (invincibleCounter > 60) { // Giả sử thời gian invincible là 60 frame (1 giây)
-                invincible = false;
-                invincibleCounter = 0;
-            }
-        }
-
-            if (dying) {
-                dyingCounter++;
-
-                // mỗi 12 frame đổi sprite chết
-                int frameIndex = dyingCounter / 12;
-                if (frameIndex >= dyingSprites.length) {
-                    alive = false;
-                    dying = false;
+            if (moving) {
+                pixelCounter += speed;
+                if (pixelCounter >= gp.tileSize) {
+                    moving = false;
+                    pixelCounter = 0;
                 }
-
-                return; // không cập nhật logic khác nữa
             }
 
+            //neu ko co gi chan thi di tiep
+            if (!collisionOn) {
+                switch (direction) {
+                    case "up":
+                        worldY -= speed;
+                        break;
+                    case "down":
+                        worldY += speed;
+                        break;
+                    case "left":
+                        worldX -= speed;
+                        break;
+                    case "right":
+                        worldX += speed;
+                        break;
+                }
+            }
+
+            // Cập nhật animation và trạng thái
+            updateSpriteCounter();
+            updateInvincibility();
+            updateDyingState();
         }
 
     public void draw(Graphics2D g2) {
@@ -311,7 +267,13 @@ public class Entity {
                 break;
         }
 
-        if (invincible == true) {
+        if (dying) {
+            g2.drawImage(this.image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+            return;
+        }
+
+
+        if (invincible) {
             hpBarOn = true;
             hpBarCounter = 0;
             changAlpha(g2, 0.4f);
@@ -365,43 +327,12 @@ public class Entity {
             g2.drawImage(image, screenX, screenY,width,height , null);
         }
     }
-    //ANIMATION LUC MONSTER CHET
-    public void dyingAnimation(Graphics2D g2) {
-        dyingCounter++;
-        int i=5;
-
-        if(dyingCounter <= i) {changAlpha(g2,0f);}
-
-        if(dyingCounter > i && dyingCounter <= 2*i) {changAlpha(g2,1f);}
-
-        if(dyingCounter > 2*i && dyingCounter <= 3*i) {changAlpha(g2,0f);}
-
-        if(dyingCounter > 3*i && dyingCounter <= 4*i) {changAlpha(g2,1f);}
-
-        if(dyingCounter > 4*i && dyingCounter <= 5*i) {changAlpha(g2,0f);}
-
-        if(dyingCounter > 5*i && dyingCounter <= 6*i) {changAlpha(g2,1f);}
-
-        if(dyingCounter > 6*i && dyingCounter <= 7*i) {changAlpha(g2,0f);}
-
-        if(dyingCounter > 7*i && dyingCounter <= 8*i) {changAlpha(g2,1f);}
-
-        if(dyingCounter > 8*i) {
-            dying = false;
-            alive = false;
-        }
-    }
 
     public void changAlpha(Graphics2D g2, float alphaValue) {
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
     }
 
-    // =============GET IMAGE LINK==================
-    public void loadDyingSprites(String basePath) {
-        for (int i = 0; i < dyingSprites.length; i++) {
-            dyingSprites[i] = setup(basePath + "_dead" + (i + 1));
-        }
-    }
+
 
 
     public BufferedImage setup_obj(String imagePath) {
@@ -466,8 +397,105 @@ public class Entity {
         );
     }
 
-    protected void damageReaction() {
-        System.out.println("Boss - worldX: " + worldX + ", worldY: " + worldY + ", spriteNum: "
-                + spriteNum + ", invincible: " + invincible);
+    public void damageReaction() {
+    }
+
+    public void setDyingSprites() {
+    }
+
+    public void dyingAnimation() {
+        dyingCounter++;
+        int interval = 12;
+
+        if (dyingCounter < interval) {
+            image = dyingSprites[0];
+        } else if (dyingCounter < interval * 2) {
+            image = dyingSprites[1];
+        } else if (dyingCounter < interval * 3) {
+            image = dyingSprites[2];
+        } else if (dyingCounter < interval * 4) {
+            image = dyingSprites[3];
+        } else {
+            dying = false;
+            alive = false;
+        }
+    }
+
+    public void searchPath(int goalCol, int goalRow) {
+        int startCol = (worldX + solidArea.x)/gp.tileSize;
+        int startRow = (worldY + solidArea.y)/gp.tileSize;
+
+        gp.pFinder.setNodes(startCol, startRow, goalCol, goalRow);
+
+        if(gp.pFinder.search()) {
+            if(!gp.pFinder.pathList.isEmpty()) {
+                int nextX = gp.pFinder.pathList.get(0).col * gp.tileSize;
+                int nextY = gp.pFinder.pathList.get(0).row * gp.tileSize;
+
+                // Tính toán hướng đi tối ưu
+                if (worldY > nextY) {
+                    direction = "up";
+                } else if (worldY < nextY) {
+                    direction = "down";
+                } else if (worldX > nextX) {
+                    direction = "left";
+                } else if (worldX < nextX) {
+                    direction = "right";
+                }
+
+                // Kiểm tra va chạm trước khi di chuyển
+                checkCollision();
+                if (collisionOn) {
+                    // Nếu có va chạm, thử hướng khác
+                    if (direction.equals("up") || direction.equals("down")) {
+                        direction = (worldX > nextX) ? "left" : "right";
+                    } else {
+                        direction = (worldY > nextY) ? "up" : "down";
+                    }
+                    checkCollision();
+                }
+            }
+        } else {
+            // Nếu không tìm thấy đường đi, tạm dừng theo đuổi
+            onPath = false;
+        }
+    }
+//    private void tryAlternativeRoute() {
+//        String[] directions = {"up", "down", "left", "right"};
+//        List<String> dirList = (List<String>) Arrays.asList(directions);
+//        Collections.shuffle(dirList); // Ngẫu nhiên hướng
+//
+//        for (String dir : dirList) {
+//            direction = dir;
+//            checkCollision();
+//            if (!collisionOn) {
+//                break; // Thoát nếu tìm được hướng di chuyển được
+//            }
+//        }
+//    }
+
+    private void updateSpriteCounter() {
+        spriteCounter++;
+        if (spriteCounter > 5) {
+            spriteNum = (spriteNum % 6) + 1;
+            spriteCounter = 0;
+        }
+    }
+
+    private void updateInvincibility() {
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter > 60) {
+                invincible = false;
+                invincibleCounter = 0;
+            }
+        }
+    }
+
+    private void updateDyingState() {
+        if (dying) {
+            dyingAnimation();
+        }
     }
 }
+

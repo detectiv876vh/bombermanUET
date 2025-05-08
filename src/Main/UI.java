@@ -67,8 +67,8 @@ public class UI {
 
         // BUTTON
         try {
-            playButton = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/play.png"));
-            playButtonPress = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/playPress.png"));
+            playButton = setup("/standbyscreen/play");
+            playButtonPress = setup("/standbyscreen/playPress");
 
             quitButton = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/quit.png"));
             quitButtonPress = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/quitPress.png"));
@@ -379,4 +379,20 @@ public class UI {
         this.transitionText = mapName;
     }
 
+    public BufferedImage setup(String imagePath) {
+
+        UtilityTool uTool = new UtilityTool();
+        BufferedImage image = null;
+
+        try {
+            image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
+
+            // Cắt khoảng trống xung quanh nếu có
+            image = uTool.cropToContent(image);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
 }

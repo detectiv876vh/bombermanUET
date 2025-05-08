@@ -32,9 +32,6 @@ public class Player extends Entity {
     public int pixelCounter = 0;
     int standCounter = 0;
     public int teleportCooldown = 0;
-    public boolean attacking = false;
-    public int attackCounter = 0;
-    public int attackCooldown = 0;
     public final int attackCooldownMax = 30;
     public BufferedImage attackUp1, attackUp2, attackDown1, attackDown2, attackLeft1, attackLeft2, attackRight1, attackRight2;
     // =========XUYEN =========
@@ -54,7 +51,6 @@ public class Player extends Entity {
 
         setDefaultValues();
         getPlayerImage();
-        getPlayerAttackImage();
 
     }
 
@@ -67,7 +63,7 @@ public class Player extends Entity {
         direction = "down";
 
         //PLAYER STATUS
-        maxLife = 10;               //sua lai sau khi test game
+        maxLife = 20 ;               //sua lai sau khi test game
         life = maxLife - 4;
 
     }
@@ -75,41 +71,30 @@ public class Player extends Entity {
     //gắn ảnh.
     public void getPlayerImage() {
 
-        up1 = setup("/entities/spr_player_back_walk-ezgif.com-crop");
-        up2 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
-        up3 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
-        up4 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
-        up5 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
-        up6 = setup("/entities/spr_player_back_walk-ezgif.com-crop (1)");
-        down1 = setup("/entities/spr_player_front_walk-ezgif.com-crop");
-        down2 = setup("/entities/spr_player_front_walk-ezgif.com-crop (1)");
-        down3 = setup("/entities/spr_player_front_walk-ezgif.com-crop (2)");
-        down4 = setup("/entities/spr_player_front_walk-ezgif.com-crop (3)");
-        down5 = setup("/entities/spr_player_front_walk-ezgif.com-crop (4)");
-        down6 = setup("/entities/spr_player_front_walk-ezgif.com-crop (5)");
+        up1 = setup("/entities/player_up1");
+        up2 = setup("/entities/player_up2");
+        up3 = setup("/entities/player_up3");
+        up4 = setup("/entities/player_up4");
+        up5 = setup("/entities/player_up5");
+        up6 = setup("/entities/player_up6");
+        down1 = setup("/entities/player_idle");
+        down2 = setup("/entities/player_run1");
+        down3 = setup("/entities/player_run2");
+        down4 = setup("/entities/player_run3");
+        down5 = setup("/entities/player_run4");
+        down6 = setup("/entities/player_run5");
         left1 = setup("/entities/spr_player_left_walk-ezgif.com-crop");
         left2 = setup("/entities/spr_player_left_walk-ezgif.com-crop (1)");
         left3 = setup("/entities/spr_player_left_walk-ezgif.com-crop (2)");
         left4 = setup("/entities/spr_player_left_walk-ezgif.com-crop (3)");
         left5 = setup("/entities/spr_player_left_walk-ezgif.com-crop (4)");
         left6 = setup("/entities/spr_player_left_walk-ezgif.com-crop (5)");
-        right1 = setup("/entities/spr_player_right_walk-ezgif.com-crop");
-        right2 = setup("/entities/spr_player_right_walk-ezgif.com-crop (1)");
-        right3 = setup("/entities/spr_player_right_walk-ezgif.com-crop (2)");
-        right4 = setup("/entities/spr_player_right_walk-ezgif.com-crop (3)");
-        right5 = setup("/entities/spr_player_right_walk-ezgif.com-crop (4)");
-        right6 = setup("/entities/spr_player_right_walk-ezgif.com-crop (5)");
-    }
-
-    public void getPlayerAttackImage() {
-        attackUp1 = setup("/player/2");
-        attackUp2 = setup("/player/3");
-        attackDown1 = setup("/player/2");
-        attackDown2 = setup("/player/3");
-        attackLeft1 = setup("/player/2");
-        attackLeft2 = setup("/player/3");
-        attackRight2 = setup("/player/2");
-        attackRight1 = setup("/player/3");
+        right1 = setup("/entities/player_right1");
+        right2 = setup("/entities/player_right2");
+        right3 = setup("/entities/player_right3");
+        right4 = setup("/entities/player_right4");
+        right5 = setup("/entities/player_right5");
+        right6 = setup("/entities/player_right6");
     }
 
     public void update() {
@@ -121,9 +106,7 @@ public class Player extends Entity {
 //        gp.checker.checkEntity(this, gp.monster);
 
         if (!moving) {
-//            if (attacking) {
-////                attacking();
-//            } else
+
             if (!attacking && (kH.upPressed || kH.downPressed || kH.leftPressed || kH.rightPressed)) {
                 if (kH.upPressed) {
                     direction = "up";
@@ -136,7 +119,6 @@ public class Player extends Entity {
                 }
 
                 moving = true;
-//                pixelCounter = 0;
 
                 //Check tile collision.
                 collisionOn = false;
@@ -149,10 +131,6 @@ public class Player extends Entity {
                 int objIndex = gp.checker.checkObject(this, true); //entity va boolean cua player
                 pickUpObject(objIndex);
 
-//                // CHECK NPC COLLISION
-//                int npcIndex = gp.checker.checkEntity(this, gp.npc);
-//                interactNPC(npcIndex);
-                //CHECK MONSTER COLLISION
                 int monsterIndex = gp.checker.checkEntity(this, gp.monster);
                 contactMonster(monsterIndex);
 
@@ -250,23 +228,6 @@ public class Player extends Entity {
             gp.kH.spacePressed = false; // Tránh đặt bom liên tục
         }
 
-        if (kH.qPressed) {
-            // Chỉ tấn công nếu KHÔNG đang di chuyển
-            if (!moving) {
-//                gp.chemManager.handleChem();
-                attacking = true;
-            }
-            // Reset trạng thái di chuyển
-            moving = false;
-            pixelCounter = 0;
-            spriteCounter = 0;
-        }
-
-        // Cập nhật animation tấn công
-//        if(attacking) {
-//            attacking();
-//        }
-
 
         // Xử lý shield
         if (shieldActive) {
@@ -294,7 +255,7 @@ public class Player extends Entity {
         // Xử lý bất tử tạm thời sau khi bị đánh
         if (invincible) {
             invincibleCounter++;
-            if (invincibleCounter > 300) {
+            if (invincibleCounter > 150) {
                 invincible = false;
                 invincibleCounter = 0;
             }
@@ -306,26 +267,15 @@ public class Player extends Entity {
         // Kiểm tra máu
         life = Math.min(life, maxLife);
         if (life <= 0) {
+            int mapNum = gp.currentMap;
             gp.gameState = gp.gameOverState;
             gp.ui.showTransition = true;
             gp.ui.transitionTimer = 0;
+            gp.tileM.loadMap("/maps/map0" + mapNum + ".txt", mapNum);
+            hasBomb = maxBombs;
             return;
         }
     }
-
-        //=====================ATTACK======================
-//    public void attacking() {
-//        if(attacking) {
-//            spriteCounter++;
-//            if(spriteCounter > 25) {
-//                attacking = false;
-//                spriteCounter = 0;
-//            }
-//            else if(spriteCounter <= 5) spriteNum = 1;
-//            else spriteNum = 2;
-//        }
-//    }
-
 
         public void pickUpObject ( int i){
 
@@ -391,15 +341,11 @@ public class Player extends Entity {
                         break;
                     case "bombUpgrade_TYPE1":
                         gp.playSE(1);
+                        // Kích hoạt cho tất cả bomb mới
+                        gp.bombManager.globalBreakThrough = true;
+                        gp.obj[gp.currentMap][i] = null;
+                        break;
 
-                }
-            }
-        }
-
-        public void interactNPC ( int i){
-            if (gp.kH.qPressed == true) {
-                if (i != 999) {
-                    System.out.println("you are hitting an npc");
                 }
             }
         }
@@ -413,28 +359,6 @@ public class Player extends Entity {
                 }
             }
         }
-//        public void damageMonster (int i){
-//            if (i != 999 && gp.monster[i] != null) {
-//                if (gp.monster[i].invincible == false) {
-//                    gp.monster[i].life -= 1;
-//                    gp.monster[i].invincible = true;
-//                    gp.monster[i].damageReaction();
-//
-//                    if (gp.monster[i].life <= 0) {
-//                        gp.monster[i].dying = true;
-//                    }
-//                    if(gp.monster[i].life <= 0) {
-//                        if (new Random().nextInt(100) < 20) {
-//                            OBJ_HeartItem heart = new OBJ_HeartItem(gp);
-//                            heart.worldX = gp.monster[i].worldX;
-//                            heart.worldY = gp.monster[i].worldY;
-//                            gp.obj[gp.currentMap][gp.obj[gp.currentMap].length - 1] = heart;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-
         public void draw (Graphics2D g2d) {
 
             BufferedImage image = null;
@@ -528,14 +452,6 @@ public class Player extends Entity {
 
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));// ve trong suot
 
-            //DEBUG
-//        g2d.setFont(new Font("Arial", Font.PLAIN, 26));
-//        g2d.setColor(Color.WHITE);
-//        g2d.drawString("Invincible: " + invincibleCounter + "(nho xoa)", 10, 400);
-//            g2d.drawImage(image, tempScreenX, tempScreenY, gp.tileSize, gp.tileSize, null);
-//            if(attacking) {
-//                drawAttackEffect(g2d);
-//            }
             //=========XUYEN=======
             if(xuyenMode) {
                 AlphaComposite alcom = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
@@ -552,17 +468,6 @@ public class Player extends Entity {
             }
         }
 
-//    private void drawAttackEffect(Graphics2D g2d) {
-//        int attackScreenX = gp.chemManager.attackArea.x - worldX + screenX;
-//        int attackScreenY = gp.chemManager.attackArea.y - worldY + screenY;
-//
-//        // Hiệu chỉnh khi ở mép màn hình
-//        if (worldX < screenX) attackScreenX = gp.chemManager.attackArea.x;
-//        if (worldY < screenY) attackScreenY = gp.chemManager.attackArea.y;
-//
-//        g2d.setColor(new Color(255, 0, 0, 100));
-//        g2d.fillRect(attackScreenX, attackScreenY, gp.tileSize, gp.tileSize);
-//    }
     public void setXuyenMode(boolean xuyenMode) {
         this.xuyenMode = xuyenMode;
 
@@ -643,7 +548,7 @@ public class Player extends Entity {
 
     private boolean isValidPosition(int x, int y) {
         // Kiểm tra trong map
-        if (x < 0 || x >= gp.maxWorldCol * gp.tileSize ||
+        if (x < 0 || x  >= gp.maxWorldCol * gp.tileSize ||
                 y < 0 || y >= gp.maxWorldRow * gp.tileSize) {
             return false;
         }

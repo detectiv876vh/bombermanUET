@@ -55,7 +55,7 @@ public class MON_Boss extends Entity {
         projectile.worldY = worldY + height/2 - 8;
         projectile.direction = direction;
         projectile.speed = projectileSpeed;
-        projectile.damage = projectileDamage;
+//        projectile.damage = projectileDamage;
         projectile.alive = true;
 
         // Thêm đạn vào game
