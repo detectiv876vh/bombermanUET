@@ -17,6 +17,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
+import java.util.Arrays;
 
 public class gamePanel extends JPanel implements Runnable {
 
@@ -42,6 +43,8 @@ public class gamePanel extends JPanel implements Runnable {
     public final int worldHeight = tileSize * maxWorldRow;  // Chiều rộng bản đồ
     public final int maxMap = 10; // Tổng số map
     public int currentMap = 1;
+    public boolean[] doorSpawned = new boolean[maxMap];
+
 
     //FPS
     public int FPS = 60;
@@ -92,6 +95,8 @@ public class gamePanel extends JPanel implements Runnable {
         this.requestFocusInWindow();
         this.addMouseListener(mouseH);
         this.addMouseMotionListener(mouseH);
+        Arrays.fill(doorSpawned, false);
+
     }
 
     public void setupGame() {
@@ -99,10 +104,9 @@ public class gamePanel extends JPanel implements Runnable {
         currentMap = 0;
 
         aSetter.setObject();
-//        aSetter.setNPC();
         aSetter.setMonster00();
         aSetter.setMonster01();
-//        playMusic(0);
+        playMusic(0);
         eManager.setup();
 //        aSetter.setBoss();
     }
@@ -158,8 +162,7 @@ public class gamePanel extends JPanel implements Runnable {
             player.update();
             bombManager.handleBombPlacement();
             bombManager.update();
-//          chemManager.handleChem();
-
+            checkDoorSpawnCondition();
 
             for (int i = 0; i < projectileList.size(); i++) {
                 if (projectileList.get(i) != null) {
@@ -183,6 +186,7 @@ public class gamePanel extends JPanel implements Runnable {
                     }
                 }
             }
+
 
 
             for (int i = 0; i < bombManager.bombList[currentMap].size(); i++) {
@@ -339,6 +343,24 @@ public class gamePanel extends JPanel implements Runnable {
 
         if (bombManager.bombList[currentMap] != null) {
             bombManager.bombList[currentMap].clear();
+        }
+    }
+
+    public boolean allMonstersDefeated(int mapNum) {
+        for (int i = 0; i < monster[mapNum].length; i++) {
+            if (monster[mapNum][i] != null && monster[mapNum][i].alive) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void checkDoorSpawnCondition() {
+        for (int mapNum = 0; mapNum < monster.length; mapNum++) {
+            if (!doorSpawned[mapNum] && allMonstersDefeated(mapNum)) {
+                aSetter.setDoor(mapNum);
+                doorSpawned[mapNum] = true;
+            }
         }
     }
 

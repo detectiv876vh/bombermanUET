@@ -24,7 +24,6 @@ public class Player extends Entity {
     public final int screenX;
     public final int screenY;
     public int hasBomb = maxBombs;
-    public int hasKey = 0; // so key co duoc khi nhat tren map
     public int hasBoost = 0;
     public boolean moving = false;
     public int pixelCounter = 0;
@@ -36,7 +35,7 @@ public class Player extends Entity {
     // =========XUYEN =========
     private boolean xuyenMode = false;
     private int xuyenModeMin = 0;
-    private final int xuyenModeMax = 300;
+    private final int xuyenModeMax = 3000;
 
     public Player(gamePanel gp, KeyHandler kH) {
         super(gp);
@@ -297,19 +296,8 @@ public class Player extends Entity {
                 String objectName = gp.obj[gp.currentMap][i].name;
 
                 switch (objectName) {
-                    case "Key":
-                        gp.playSE(1);
-                        hasKey++;
-                        gp.obj[gp.currentMap][i] = null;
-                        System.out.println("Key: " + hasKey);
-                        break;
                     case "Door":
-                        if (hasKey > 0) {
                             gp.playSE(2);
-                            gp.obj[gp.currentMap][i] = null;
-                            hasKey--;
-                        }
-                        System.out.println("Key: " + hasKey);
                         break;
                     case "Boost":
                         gp.playSE(1);
@@ -318,8 +306,6 @@ public class Player extends Entity {
                             speed += 2;
                         }
                         gp.obj[gp.currentMap][i] = null;
-                        break;
-                    case "Chest":
                         break;
                     case "bombItem":
                         gp.playSE(1);

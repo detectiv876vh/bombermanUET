@@ -16,7 +16,7 @@ public class MON_1 extends Entity {
         speed = 1;
         maxLife = 1;
         life = maxLife;
-        type = 1; // Loại monster thông thường
+        type = 2; // Loại monster thông thường
 
         // Thiết lập hitbox
         solidArea.x = 8;
@@ -101,7 +101,7 @@ public class MON_1 extends Entity {
 
         // Gây sát thương nếu chạm player
         if (contactPlayer && !gp.player.invincible) {
-            gp.player.life -= 1;
+            gp.player.life = 0;
             gp.player.invincible = true;
         }
 

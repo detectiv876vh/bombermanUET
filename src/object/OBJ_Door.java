@@ -1,7 +1,10 @@
 package object;
 
-import Main.gamePanel;
 import entity.Entity;
+import Main.gamePanel;
+
+import javax.imageio.ImageIO;
+import java.io.IOException;
 
 public class OBJ_Door extends Entity {
 
@@ -9,6 +12,13 @@ public class OBJ_Door extends Entity {
         super(gp);
         name = "Door";
         down1 = setup("/objects/door");
-        collision = true;
+
+
+        solidArea.x = 0;
+        solidArea.y = 0;
+        solidArea.width = gp.tileSize;
+        solidArea.height = gp.tileSize;
+        solidAreaDefaultX = solidArea.x;
+        solidAreaDefaultY = solidArea.y;
     }
 }

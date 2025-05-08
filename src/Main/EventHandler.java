@@ -1,5 +1,7 @@
 package Main;
 
+import object.OBJ_Door;
+
 import java.awt.*;
 
 public class EventHandler {
@@ -50,10 +52,16 @@ public class EventHandler {
         }
 
         if(canTouchEvent) {
-            if(hit(0,2,2,"any") == true) {teleport(1,15,4);}
-            else if(hit(1,2,2,"any") == true) {teleport(2,12,2);}
-            else if(hit(2,2,2,"any") == true) {teleport(3,12,2);}
-
+            if(hit(0,28,23,"any")
+                    && gp.allMonstersDefeated(0) && gp.obj[0][0] instanceof OBJ_Door) {
+                teleport(1,1,1);
+            }
+            else if(hit(1,28,23,"any")
+                    && gp.allMonstersDefeated(1) && gp.obj[1][1] instanceof OBJ_Door) {teleport(2,1,1);
+            }
+            else if(hit(2,28,23,"any")
+                    && gp.allMonstersDefeated(2) && gp.obj[2][2] instanceof OBJ_Door) {teleport(3,1,1);
+            }
         }
     }
 
