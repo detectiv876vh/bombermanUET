@@ -76,8 +76,8 @@ public class EventHandler {
                 }
             }
 
-            gp.player.solidArea.x = gp.player.solidAreaDefauftX;
-            gp.player.solidArea.y = gp.player.solidAreaDefauftY;
+            gp.player.solidArea.x = gp.player.solidAreaDefaultX;
+            gp.player.solidArea.y = gp.player.solidAreaDefaultY;
             eventRect[map][col][row].x = eventRect[map][col][row].eventRectDefaultX;
             eventRect[map][col][row].y = eventRect[map][col][row].eventRectDefaultY;
 
@@ -103,5 +103,17 @@ public class EventHandler {
         gp.player.spriteCounter = 0;
         gp.player.direction = "down";
         gp.player.teleportCooldown = 30;
+        gp.kH.spacePressed = false;
+        gp.player.hasBomb = gp.player.maxBombs;
+
+//        gp.changeMap(map);
+
+        // chuyển sang map mới sẽ hiện stt map đó.
+        String transitionText = "Level " + (map + 1);
+        gp.gameState = gp.transitionState;
+        gp.ui.showTransition = true;
+        gp.ui.transitionTimer = 0;
+        gp.ui.transitionText = transitionText;
+
     }
 }

@@ -1,6 +1,7 @@
 package Main;
 
 import entity.Entity;
+import entity.Player;
 import object.Bomb;
 
 import java.awt.*;
@@ -8,17 +9,56 @@ import java.net.SocketOption;
 import java.util.ArrayList;
 
 public class CollisionChecker {
-
+    public boolean contactPlayer = false;                        //loi
     gamePanel gp;
 
     public CollisionChecker(gamePanel gp) {
         this.gp = gp;
     }
 
+    public boolean checkPlayer(Entity entity) {//loi
+        contactPlayer = false;
+        entity.solidArea.x = entity.worldX + entity.solidArea.x;                // x = (worldX); y = (worldY)
+        entity.solidArea.y = entity.worldY + entity.solidArea.y;
+        gp.player.solidArea.x = gp.player.worldX + gp.player.solidArea.x;
+        gp.player.solidArea.y = gp.player.worldY + gp.player.solidArea.y;
+
+        switch(entity.direction) {
+            case "up":
+                entity.solidArea.y -= entity.speed;
+                break;
+            case "down":
+                entity.solidArea.y += entity.speed;
+                break;
+            case "left":
+                entity.solidArea.x -= entity.speed;
+                break;
+            case "right":
+                entity.solidArea.x += entity.speed;
+                break;
+        }
+
+        if(entity.solidArea.intersects(gp.player.solidArea)) {
+            entity.collisionOn = true;
+            contactPlayer = true;
+        }
+
+        entity.solidArea.x = entity.solidAreaDefaultX;
+        entity.solidArea.y = entity.solidAreaDefaultY;
+        gp.player.solidArea.x = gp.player.solidAreaDefaultX;
+        gp.player.solidArea.y = gp.player.solidAreaDefaultY;
+
+        return contactPlayer;
+    }
     //Kiem tra va cham voi tuong
     public void checkTile(Entity entity) {
 
-        int entityLeftX = entity.worldX + entity.solidArea.x;                            // x = (worldX); y = (worldY)
+        if (entity instanceof Player && ((Player) entity).isXuyenMode()) {
+            entity.collisionOn = false; // Bỏ qua va chạm nếu đang ở chế độ xuyên tường
+            return;
+        }
+
+        int entityLeftX = entity.worldX + entity.solidArea.x;                // x = (worldX); y = (worldY)
         int entityRightX = entity.worldX + entity.solidArea.x + entity.solidArea.width;
         int entityTopY = entity.worldY + entity.solidArea.y;
         int entityBottomY = entity.worldY + entity.solidArea.y + entity.solidArea.height;
@@ -101,11 +141,13 @@ public class CollisionChecker {
                         index = i;
                     }
                 }
+
+
                 //khong cho x va y tang lien tuc
-                entity.solidArea.x = entity.solidAreaDefauftX;
-                entity.solidArea.y = entity.solidAreaDefauftY;
-                gp.obj[gp.currentMap][i].solidArea.x = gp.obj[gp.currentMap][i].solidAreaDefauftX;
-                gp.obj[gp.currentMap][i].solidArea.y = gp.obj[gp.currentMap][i].solidAreaDefauftY;
+                entity.solidArea.x = entity.solidAreaDefaultX;
+                entity.solidArea.y = entity.solidAreaDefaultY;
+                gp.obj[gp.currentMap][i].solidArea.x = gp.obj[gp.currentMap][i].solidAreaDefaultX;
+                gp.obj[gp.currentMap][i].solidArea.y = gp.obj[gp.currentMap][i].solidAreaDefaultY;
             }
         }
         return index;
@@ -160,5 +202,51 @@ public class CollisionChecker {
                 }
             }
         }
+    }
+    public int checkEntity(Entity entity, Entity[][] target) {
+        if (entity instanceof Player && ((Player) entity).isXuyenMode()) {
+            entity.collisionOn = false;
+        } else {
+            int index = 999;
+            for (int i = 0; i < target[gp.currentMap].length; i++) {
+                if (target[gp.currentMap][i] != null) {
+                    // lay vi tri solidarea cua entity
+                    entity.solidArea.x = entity.worldX + entity.solidArea.x;
+                    entity.solidArea.y = entity.worldY + entity.solidArea.y;
+                    // lay vi tri solidarea cua object
+                    target[gp.currentMap][i].solidArea.x = target[gp.currentMap][i].worldX + target[gp.currentMap][i].solidArea.x;
+                    target[gp.currentMap][i].solidArea.y = target[gp.currentMap][i].worldY + target[gp.currentMap][i].solidArea.y;
+
+
+                    switch (entity.direction) {
+                        case "up":
+                            entity.solidArea.y -= entity.speed;
+                            break;
+                        case "down":
+                            entity.solidArea.y += entity.speed;
+                            break;
+                        case "left":
+                            entity.solidArea.x -= entity.speed;
+                            break;
+                        case "right":
+                            entity.solidArea.x += entity.speed;
+                            break;
+                    }
+                    if (entity.solidArea.intersects(target[gp.currentMap][i].solidArea)) { //kiem tra va cham
+                        if (target[gp.currentMap][i] != entity) {
+                            entity.collisionOn = true;
+                            index = i;
+                        }
+                    }
+                    //khong cho x va y tang lien tuc
+                    entity.solidArea.x = entity.solidAreaDefaultX;
+                    entity.solidArea.y = entity.solidAreaDefaultY;
+                    target[gp.currentMap][i].solidArea.x = target[gp.currentMap][i].solidAreaDefaultX;
+                    target[gp.currentMap][i].solidArea.y = target[gp.currentMap][i].solidAreaDefaultY;
+                }
+            }
+            return index;
+        }
+        return 999;
     }
 }

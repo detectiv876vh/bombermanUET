@@ -24,6 +24,7 @@ public class Sound {
         soundURL[4] = getClass().getResource("/sound/buttonchange.wav");
         soundURL[5] = getClass().getResource("/sound/explosion.wav");
         soundURL[6] = getClass().getResource("/sound/placebomb.wav");
+        soundURL[7] = getClass().getResource("/sound/gameover.wav");
 
     }
 

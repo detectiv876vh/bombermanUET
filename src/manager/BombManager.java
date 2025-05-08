@@ -2,6 +2,7 @@ package manager;
 
 import Main.gamePanel;
 import entity.Entity;
+import entity.Player;
 import object.Bomb;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ public class BombManager {
     private final gamePanel gp;
     private final entity.Player player;
     public ArrayList<Bomb>[] bombList;
+    public boolean globalBreakThrough = false; // Trạng thái toàn cục
 
 
     public BombManager(gamePanel gp, entity.Player player) {
@@ -27,10 +29,14 @@ public class BombManager {
     }
 
     public void handleBombPlacement() {
-        if (gp.kH.spacePressed && canPlaceBomb()) {
-            // Tính toán vị trí tile chính xác
-            int bombTileX = (player.worldX + player.solidArea.x + player.solidArea.width/2) / gp.tileSize;
-            int bombTileY = (player.worldY + player.solidArea.y + player.solidArea.height/2) / gp.tileSize;
+        // Tính toán vị trí tile chính xác
+        int bombTileX = (player.worldX + player.solidArea.x + player.solidArea.width/2) / gp.tileSize;
+        int bombTileY = (player.worldY + player.solidArea.y + player.solidArea.height/2) / gp.tileSize;
+        if (gp.kH.spacePressed
+                && !gp.player.isXuyenMode()
+                && canPlaceBomb(bombTileX, bombTileY)
+                && player.teleportCooldown <= 0
+                && player.hasBomb > 0) {
 
             Bomb newBomb = new Bomb(gp, gp.drawManager);
 
@@ -38,19 +44,21 @@ public class BombManager {
             newBomb.worldY = bombTileY * gp.tileSize;
             newBomb.bombXpos = bombTileX; // Lưu cả tọa độ tile
             newBomb.bombYpos = bombTileY;
-            newBomb.radius = 3;
+            newBomb.radius = gp.player.bombRadius;
             newBomb.life = 30;
             newBomb.mapTileNum = gp.tileM.mapTileNum;
+            newBomb.canBreakThrough = this.globalBreakThrough; // Áp dụng trạng thái
+
 
             bombList[gp.currentMap].add(newBomb);
-            gp.kH.spacePressed = false;
+            player.hasBomb--;
         }
     }
 
-    private boolean canPlaceBomb() {
-        for (Entity e : bombList[gp.currentMap]) {
-            if (e instanceof Bomb && !((Bomb) e).explosionAnimationComplete) {
-                return false;
+    private boolean canPlaceBomb(int tileX, int tileY) {
+        for (Bomb bomb : bombList[gp.currentMap]) {
+            if (bomb.bombXpos == tileX && bomb.bombYpos == tileY && !bomb.explosionAnimationComplete) {
+                return false; // Có bomb tại tile này
             }
         }
         return true;

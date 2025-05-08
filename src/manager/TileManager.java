@@ -2,6 +2,8 @@ package manager;
 
 import Main.UtilityTool;
 import Main.gamePanel;
+import entity.Entity;
+import object.*;
 import tile.Tile;
 
 import javax.imageio.ImageIO;
@@ -10,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Random;
 
 public class TileManager {
     gamePanel gp;
@@ -23,15 +26,16 @@ public class TileManager {
         mapTileNum = new int[gp.maxMap][gp.maxWorldCol][gp.maxWorldRow];
 
         getTileImage();
-        loadMap("/maps/map01.txt", 0);
-        loadMap("/maps/map02.txt", 1);
+        loadMap("/maps/map00.txt", 0);
+        loadMap("/maps/map01.txt", 1);
+        loadMap("/maps/map02.txt", 2);
     }
 
     public void getTileImage() {
         //tải ảnh các tile (ô vuông) từ file PNG và gán vào mảng tile.
-        setup(0, "tile3", false, false);
-        setup(1, "New_wall", true, false);
-        setup(2, "crack_wall", true, true);
+        setup(0, "wooden", false, false);
+        setup(1, "crack_wall", true, false);
+        setup(2, "tile5", true, true);
         setup(4,"tile4", false, false);
         setup(5, "tile5", true, false);
 
@@ -66,6 +70,47 @@ public class TileManager {
             } else if (gp.currentMap == 1) {
                 mapTileNum[gp.currentMap][tileX][tileY] = 4; // Gán về tile nền khác
             }
+
+            //random tỉ lệ rơi items
+            maybeDropItem(tileX, tileY);
+        }
+    }
+
+    public void maybeDropItem(int tileX, int tileY) {
+        Random rand = new Random();
+        int chance = rand.nextInt(100); // 0 - 99
+
+        // 25% cơ hội rơi item
+        if (chance < 25) {
+            Entity item = null;
+
+            if (chance < 2) {
+                item = new OBJ_HeartItem(gp); // (0-1]: 1%
+            } else if (chance < 10) {
+                item = new OBJ_Boost(gp);     // 1-9: 8%
+            } else if (chance < 13) {
+                item = new OBJ_Bomb(gp);      // 10-13: 3%
+            } else if (chance < 15) {
+                item = new OBJ_Shield(gp);    // 13-15: 2%
+            } else if (chance < 16) {
+                item = new OBJ_Invisible(gp); //15-16: 1%
+            } else if (chance < 20) {
+                item = new OBJ_Explosion(gp);
+            }else if (chance < 25) {
+                item = new OBJ_BombUP(gp);
+            }
+
+            if (item != null) {
+                item.worldX = tileX * gp.tileSize;
+                item.worldY = tileY * gp.tileSize;
+
+                for (int i = 0; i < gp.obj[gp.currentMap].length; i++) {
+                    if (gp.obj[gp.currentMap][i] == null) {
+                        gp.obj[gp.currentMap][i] = item;
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -78,7 +123,7 @@ public class TileManager {
             int col = 0;
             int row = 0;
 
-            while (col < gp.maxWorldCol && row < gp.maxWorldCol) {
+            while (col < gp.maxWorldCol && row < gp.maxWorldRow) {
                 String line = br.readLine();
 
                 while (col < gp.maxWorldCol) {
@@ -156,6 +201,7 @@ public class TileManager {
                 worldRow++;
 
             }
+
         }
     }
 }
