@@ -33,6 +33,12 @@ public class Entity {
     public int shotAvailableCounter = 0;
     public int pixelCounter = 0;
 
+    //===========Boss======
+    public int width;  // Mặc định bằng kích thước tile
+    public int height; // Mặc định bằng kích thước tile
+    public int screenX; // Sẽ được tính trong draw()
+    public int screenY; // Sẽ được tính trong draw()
+
     public int spriteNum = 1;
     public int dyingCounter = 0;
     public int hpBarCounter = 0;
@@ -84,6 +90,8 @@ public class Entity {
 
     public Entity(gamePanel gp) {
         this.gp = gp;
+        this.width = gp.tileSize;
+        this.height = gp.tileSize;
 
         //so-called hitbox:
         solidArea = new Rectangle(0, 0, 48, 48);
@@ -175,7 +183,7 @@ public class Entity {
 
         if (invincible) {
             invincibleCounter++;
-            if (invincibleCounter > 60) { // Giả sử thời gian invincible là 60 frame (1 giây)
+            if (invincibleCounter > 180) { // Giả sử thời gian invincible là 60 frame (1 giây)
                 invincible = false;
                 invincibleCounter = 0;
             }
@@ -344,14 +352,16 @@ public class Entity {
                 worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
                 worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
                 worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
-            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+//            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(image, screenX, screenY, width, height, null);
         }
         // If player is around the edge, draw everything
         else if (gp.player.worldX < gp.player.screenX ||
                 gp.player.worldY < gp.player.screenY ||
                 rightOffset > gp.worldWidth - gp.player.worldX ||
                 bottomOffset > gp.worldHeight - gp.player.worldY) {
-            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+//            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(image, screenX, screenY, width, height, null);
         }
     }
     //ANIMATION LUC MONSTER CHET
@@ -407,6 +417,26 @@ public class Entity {
         return image;
     }
 
+    public BufferedImage setup96x96(String imagePath) {
+
+        UtilityTool uTool = new UtilityTool();
+        BufferedImage image = null;
+
+        try {
+            image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
+
+            // Cắt khoảng trống xung quanh
+            image = uTool.cropToContent(image);
+
+            // Scale cố định về 96x96px
+            image = uTool.scaleImage(image, 96, 96);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
+
     public BufferedImage setup(String imagePath) {
 
         UtilityTool uTool = new UtilityTool();
@@ -426,6 +456,7 @@ public class Entity {
         }
         return image;
     }
+
 
     public Rectangle getHitbox() {
         return new Rectangle(

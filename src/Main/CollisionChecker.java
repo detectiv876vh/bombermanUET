@@ -58,6 +58,14 @@ public class CollisionChecker {
         int entityTopY = entity.worldY + entity.solidArea.y;
         int entityBottomY = entity.worldY + entity.solidArea.y + entity.solidArea.height;
 
+
+        // Kiểm tra xem có ra khỏi map không
+        if (entityLeftX < 0 || entityRightX >= gp.worldWidth ||
+                entityTopY < 0 || entityBottomY >= gp.worldHeight) {
+            entity.collisionOn = true;
+            return;
+        }
+
         int entityLeftCol = entityLeftX / gp.tileSize;
         int entityRightCol = entityRightX / gp.tileSize;
         int entityTopRow = entityTopY / gp.tileSize;

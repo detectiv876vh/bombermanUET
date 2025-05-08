@@ -4,7 +4,7 @@ import Main.KeyHandler;
 import Main.gamePanel;
 import manager.BombManager;
 import object.Bomb;
-//import manager.ChemManager;
+import manager.ChemManager;
 import object.OBJ_HeartItem;
 
 
@@ -27,7 +27,7 @@ public class Player extends Entity {
     public int hasBomb = maxBombs;
     public int hasKey = 0; // so key co duoc khi nhat tren map
     public int hasBoost = 0;
-//    private ChemManager chemManager;
+    private ChemManager chemManager;
     public boolean moving = false;
     public int pixelCounter = 0;
     int standCounter = 0;
@@ -40,7 +40,7 @@ public class Player extends Entity {
     // =========XUYEN =========
     private boolean xuyenMode = false;
     private int xuyenModeMin = 0;
-    private final int xuyenModeMax = 60;
+    private final int xuyenModeMax = 300;
 
     public Player(gamePanel gp, KeyHandler kH) {
         super(gp);
@@ -233,13 +233,14 @@ public class Player extends Entity {
         }
 
         // Xử lý đặt bom (chỉ khi không ở chế độ xuyên)
-        if (kH.spacePressed && !xuyenMode) {
-
-            if (kH.spacePressed) {
-                gp.bombManager.handleBombPlacement();
-                gp.kH.spacePressed = false; // Tránh đặt bom liên tục
+            if (kH.spacePressed ) {
+                if(xuyenMode) {
+                    gp.kH.spacePressed = false;
+                }else {
+                    gp.bombManager.handleBombPlacement();
+                    gp.kH.spacePressed = false; // Tránh đặt bom liên tục
+                }
             }
-
             if (kH.qPressed) {
                 // Chỉ tấn công nếu KHÔNG đang di chuyển
                 if (!moving) {
@@ -253,38 +254,20 @@ public class Player extends Entity {
             }
 
             // Cập nhật animation tấn công
-//        if(attacking) {
-//            attacking();
-//        }
+            if (attacking) {
+                attacking();
+            }
 
 
             // Xử lý shield
             if (shieldActive) {
                 shieldCounter++;
-                if (shieldCounter >= shieldDuration) {
+                if (shieldCounter >= 300) {
+                    invincible = true;
                     shieldActive = false;
                     shieldCounter = 0;
                 }
             }
-
-            // Xử lý chế độ xuyên tường
-            if (xuyenMode) {
-                xuyenModeMin++;
-                if (xuyenModeMin >= xuyenModeMax) {
-                    xuyenMode = false;
-                    xuyenModeMin = 0;
-
-                    // Kiểm tra xem player có đang trong tường không
-                    int playerCol = worldX / gp.tileSize;
-                    int playerRow = worldY / gp.tileSize;
-                    int tileNum = gp.tileM.mapTileNum[gp.currentMap][playerCol][playerRow];
-
-                    if (gp.tileM.tile[tileNum].collision) {
-                        pushOutFromWall(); // Đẩy ra khỏi tường nếu đang ở trong
-                    }
-                }
-            }
-
             // Xử lý bất tử tạm thời sau khi bị đánh
             if (invincible) {
                 invincibleCounter++;
@@ -302,20 +285,32 @@ public class Player extends Entity {
             if (life <= 0) {
                 gp.gameState = gp.gameOverState;
             }
+        if (xuyenMode) {
+            xuyenModeMin++;
+            if (xuyenModeMin >= xuyenModeMax) {
+                xuyenMode = false;
+                xuyenModeMin = 0;
+
+                // Kiểm tra xem player có đang trong tường không
+                if (isInsideWall()) {
+                    pushToNearestValidPosition();
+                }
+            }
         }
-        //=====================ATTACK======================
-//    public void attacking() {
-//        if(attacking) {
-//            spriteCounter++;
-//            if(spriteCounter > 25) {
-//                attacking = false;
-//                spriteCounter = 0;
-//            }
-//            else if(spriteCounter <= 5) spriteNum = 1;
-//            else spriteNum = 2;
-//        }
-//    }
     }
+        //=====================ATTACK======================
+        public void attacking() {
+            if(attacking) {
+                spriteCounter++;
+                if(spriteCounter > 25) {
+                    attacking = false;
+                    spriteCounter = 0;
+                }
+                else if(spriteCounter <= 5) spriteNum = 1;
+                else spriteNum = 2;
+            }
+        }
+
 
         public void pickUpObject ( int i){
 
@@ -386,47 +381,20 @@ public class Player extends Entity {
             }
         }
 
-
-
-
-        public void interactNPC ( int i){
-            if (gp.kH.qPressed == true) {
-                if (i != 999) {
-                    System.out.println("you are hitting an npc");
-                }
-            }
-        }
-
         public void contactMonster ( int i){          // giong voi interac
             if (i != 999) {
                 if (!invincible && !shieldActive) {
                     invincible = true;
+                    shieldActive = true;
                     life -= 1;
+                    invincibleCounter = 0;
                     System.out.println("Took damage! Life: " + life);
+                }
+                if(invincible  || shieldActive ) {
+                    System.out.println("Invincible or Shield active!");
                 }
             }
         }
-//        public void damageMonster (int i){
-//            if (i != 999 && gp.monster[i] != null) {
-//                if (gp.monster[i].invincible == false) {
-//                    gp.monster[i].life -= 1;
-//                    gp.monster[i].invincible = true;
-//                    gp.monster[i].damageReaction();
-//
-//                    if (gp.monster[i].life <= 0) {
-//                        gp.monster[i].dying = true;
-//                    }
-//                    if(gp.monster[i].life <= 0) {
-//                        if (new Random().nextInt(100) < 20) {
-//                            OBJ_HeartItem heart = new OBJ_HeartItem(gp);
-//                            heart.worldX = gp.monster[i].worldX;
-//                            heart.worldY = gp.monster[i].worldY;
-//                            gp.obj[gp.currentMap][gp.obj[gp.currentMap].length - 1] = heart;
-//                        }
-//                    }
-//                }
-//            }
-//        }
 
         public void draw (Graphics2D g2d) {
 
@@ -529,17 +497,17 @@ public class Player extends Entity {
             }
         }
 
-//    private void drawAttackEffect(Graphics2D g2d) {
-//        int attackScreenX = gp.chemManager.attackArea.x - worldX + screenX;
-//        int attackScreenY = gp.chemManager.attackArea.y - worldY + screenY;
-//
-//        // Hiệu chỉnh khi ở mép màn hình
-//        if (worldX < screenX) attackScreenX = gp.chemManager.attackArea.x;
-//        if (worldY < screenY) attackScreenY = gp.chemManager.attackArea.y;
-//
-//        g2d.setColor(new Color(255, 0, 0, 100));
-//        g2d.fillRect(attackScreenX, attackScreenY, gp.tileSize, gp.tileSize);
-//    }
+    private void drawAttackEffect(Graphics2D g2d) {
+        int attackScreenX = gp.chemManager.attackArea.x - worldX + screenX;
+        int attackScreenY = gp.chemManager.attackArea.y - worldY + screenY;
+
+        // Hiệu chỉnh khi ở mép màn hình
+        if (worldX < screenX) attackScreenX = gp.chemManager.attackArea.x;
+        if (worldY < screenY) attackScreenY = gp.chemManager.attackArea.y;
+
+        g2d.setColor(new Color(255, 0, 0, 100));
+        g2d.fillRect(attackScreenX, attackScreenY, gp.tileSize, gp.tileSize);
+    }
     public void setXuyenMode(boolean xuyenMode) {
         this.xuyenMode = xuyenMode;
 
@@ -550,53 +518,6 @@ public class Player extends Entity {
 
     public boolean isXuyenMode() {
         return xuyenMode;
-    }
-
-    private void pushOutFromWall() {
-        if (!isInsideWall()) return;
-        // Danh sách các hướng kiểm tra (ưu tiên hướng hiện tại trước)
-        String[] directionsToCheck = {direction, "up", "down", "left", "right"};
-
-        for (String dir : directionsToCheck) {
-            // Tính toán vị trí giả lập khi di chuyển theo hướng này
-            int testX = worldX;
-            int testY = worldY;
-
-            switch (dir) {
-                case "up": testY -= gp.tileSize; break;
-                case "down": testY += gp.tileSize; break;
-                case "left": testX -= gp.tileSize; break;
-                case "right": testX += gp.tileSize; break;
-            }
-
-            // Kiểm tra xem vị trí này có hợp lệ không
-            boolean canMoveTo = true;
-
-            // Kiểm tra biên giới map
-            if (testX < 0 || testX >= gp.maxWorldCol * gp.tileSize ||
-                    testY < 0 || testY >= gp.maxWorldRow * gp.tileSize) {
-                canMoveTo = false;
-            }
-
-            // Kiểm tra va chạm với tile (nếu trong map)
-            if (canMoveTo) {
-                int col = testX / gp.tileSize;
-                int row = testY / gp.tileSize;
-                int tileNum = gp.tileM.mapTileNum[gp.currentMap][col][row];
-                canMoveTo = gp.tileM.tile[tileNum].collision == false;
-            }
-
-            // Nếu vị trí này hợp lệ, di chuyển player tới đó
-            if (canMoveTo) {
-                worldX = (testX / gp.tileSize) * gp.tileSize;
-                worldY = (testY / gp.tileSize) * gp.tileSize;
-                return; // Thoát sau khi tìm được hướng
-            }
-        }
-
-        // Nếu không tìm được hướng nào, đẩy ra vị trí spawn
-        worldX = gp.tileSize;
-        worldY = gp.tileSize;
     }
 
     public boolean isInsideWall() {
@@ -611,5 +532,74 @@ public class Player extends Entity {
 
         int tileNum = gp.tileM.mapTileNum[gp.currentMap][playerCol][playerRow];
         return gp.tileM.tile[tileNum].collision;
+    }
+    public Rectangle getHitbox() {
+        return new Rectangle(
+                worldX + solidArea.x,
+                worldY + solidArea.y,
+                solidArea.width,
+                solidArea.height
+        );
+    }
+    private void pushToNearestValidPosition() {
+        // Lưu lại vị trí ban đầu để so sánh
+        int originalX = worldX;
+        int originalY = worldY;
+
+        // Tìm kiếm theo hình xoắn ốc từ trong ra ngoài
+        for (int radius = 1; radius <= 5; radius++) {
+            // Kiểm tra theo 4 hướng chính trước
+            for (int i = 0; i < 4; i++) {
+                int testX = originalX;
+                int testY = originalY;
+
+                switch (i) {
+                    case 0: testX += radius * gp.tileSize; break; // Phải
+                    case 1: testX -= radius * gp.tileSize; break; // Trái
+                    case 2: testY += radius * gp.tileSize; break; // Xuống
+                    case 3: testY -= radius * gp.tileSize; break; // Lên
+                }
+
+                if (isValidPosition(testX, testY)) {
+                    worldX = testX;
+                    worldY = testY;
+                    return;
+                }
+            }
+
+            // Kiểm tra các hướng chéo nếu cần
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dy = -radius; dy <= radius; dy++) {
+                    if (dx == 0 || dy == 0) continue; // Đã kiểm tra ở trên
+
+                    int testX = originalX + dx * gp.tileSize;
+                    int testY = originalY + dy * gp.tileSize;
+
+                    if (isValidPosition(testX, testY)) {
+                        worldX = testX;
+                        worldY = testY;
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Nếu vẫn không tìm thấy (rất hiếm), dùng vị trí mặc định gần nhất
+        worldX = gp.tileSize * 3; // Ví dụ vị trí an toàn
+        worldY = gp.tileSize * 3;
+    }
+
+    private boolean isValidPosition(int x, int y) {
+        // Kiểm tra trong map
+        if (x < 0 || x >= gp.maxWorldCol * gp.tileSize ||
+                y < 0 || y >= gp.maxWorldRow * gp.tileSize) {
+            return false;
+        }
+
+        // Kiểm tra tile không phải tường
+        int col = x / gp.tileSize;
+        int row = y / gp.tileSize;
+        int tileNum = gp.tileM.mapTileNum[gp.currentMap][col][row];
+        return !gp.tileM.tile[tileNum].collision;
     }
 }

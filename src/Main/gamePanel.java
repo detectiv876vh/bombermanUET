@@ -8,7 +8,7 @@ import manager.BombManager;
 import manager.DrawManager;
 import manager.TileManager;
 import object.Bomb;
-//import manager.ChemManager;
+import manager.ChemManager;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicTreeUI;
@@ -41,6 +41,7 @@ public class gamePanel extends JPanel implements Runnable {
     public final int worldHeight = tileSize * maxWorldRow;  // Chiều rộng bản đồ
     public final int maxMap = 10; // Tổng số map
     public int currentMap = 0;
+    public ChemManager chemManager;
 
     //FPS
     public int FPS = 60;
@@ -94,10 +95,10 @@ public class gamePanel extends JPanel implements Runnable {
     public void setupGame() {
         gameState = titleState;
         aSetter.setObject();
-//        aSetter.setNPC();
         aSetter.setMonster();
 //        playMusic(0);
         eManager.setup();
+        aSetter.setBoss();
     }
 
     public void startGameThread() {
@@ -139,7 +140,7 @@ public class gamePanel extends JPanel implements Runnable {
             player.update();
             bombManager.handleBombPlacement();
             bombManager.update();
-//          chemManager.handleChem();
+//            chemManager.handleChem();
 
 
             for (int i = 0; i < projectileList.size(); i++) {
@@ -174,7 +175,8 @@ public class gamePanel extends JPanel implements Runnable {
             }
         }
 
-        if(gameState == pauseState) {}
+        if(gameState == pauseState) {
+        }
 
 
     }
