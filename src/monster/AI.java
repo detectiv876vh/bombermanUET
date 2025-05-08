@@ -11,10 +11,15 @@ public class AI {
     private final Random rand = new Random();
 
     // Constants
-    private static final int VISION_RANGE = 5 * 48;
+    private static final int VISION_RANGE = 15 * 48;
+    private static final int BOMB_ESCAPE_RANGE = 2 * 48;
+    private static final int ESCAPE_DURATION = 120;
+    private static final int SAFE_DISTANCE_FROM_BOMB = 3 * 48;
     private static final int TILE_SIZE = 48;
 
     // AI state
+    private boolean isEscapingBomb = false;
+    private int escapeCounter = 0;
     private List<Node> currentPath = new ArrayList<>();
     private int pathIndex = 0;
     private int lastPlayerX, lastPlayerY;
@@ -29,11 +34,105 @@ public class AI {
     public void updateAI() {
         if (entity.moving) return;
 
+        if (isEscapingBomb) {
+            handleBombEscaping();
+            return;
+        }
+
+        Bomb bomb = findNearbyBomb();
+        if (bomb != null) {
+            startEscaping(bomb);
+            return;
+        }
+
         if (isPlayerInRange()) {
             chasePlayer();
         } else {
             randomMovement();
         }
+    }
+
+    private void handleBombEscaping() {
+        if (escapeCounter++ > ESCAPE_DURATION) {
+            resetEscapeState();
+            return;
+        }
+
+        followPath();
+    }
+
+    private void resetEscapeState() {
+        isEscapingBomb = false;
+        escapeCounter = 0;
+        currentPath.clear();
+        pathIndex = 0;
+    }
+
+    private void startEscaping(Bomb bomb) {
+        isEscapingBomb = true;
+        escapeCounter = 0;
+
+        int bombX = bomb.worldX / TILE_SIZE;
+        int bombY = bomb.worldY / TILE_SIZE;
+        int entityX = entity.worldX / TILE_SIZE;
+        int entityY = entity.worldY / TILE_SIZE;
+
+        Node bestTarget = findSafeLocation(bombX, bombY, entityX, entityY);
+        if (bestTarget != null) {
+            currentPath = findPath(entityX, entityY, bestTarget.x, bestTarget.y);
+            pathIndex = 0;
+        }
+    }
+
+    private Node findSafeLocation(int bombX, int bombY, int entityX, int entityY) {
+        List<Node> potentialTargets = new ArrayList<>();
+        int searchRadius = SAFE_DISTANCE_FROM_BOMB / TILE_SIZE;
+
+        // Search in concentric circles starting from safe distance
+        for (int distance = searchRadius; distance <= searchRadius + 2; distance++) {
+            for (int dx = -distance; dx <= distance; dx++) {
+                for (int dy = -distance; dy <= distance; dy++) {
+                    if (Math.abs(dx) + Math.abs(dy) >= distance) {
+                        int tx = bombX + dx;
+                        int ty = bombY + dy;
+                        if (isValidTile(tx, ty)){
+                            potentialTargets.add(new Node(tx, ty));
+                        }
+                    }
+                }
+            }
+
+            if (!potentialTargets.isEmpty()) {
+                break; // Found some targets at this distance
+            }
+        }
+
+        // Find closest safe location
+        Node bestTarget = null;
+        int minDistance = Integer.MAX_VALUE;
+
+        for (Node target : potentialTargets) {
+            int distance = Math.abs(target.x - entityX) + Math.abs(target.y - entityY);
+            if (distance < minDistance) {
+                minDistance = distance;
+                bestTarget = target;
+            }
+        }
+
+        return bestTarget;
+    }
+
+    private Bomb findNearbyBomb() {
+        for (Entity entity : gp.bombManager.bombList[gp.currentMap]) {
+            if (entity instanceof Bomb) {
+                int dx = Math.abs(this.entity.worldX - entity.worldX);
+                int dy = Math.abs(this.entity.worldY - entity.worldY);
+                if (dx <= BOMB_ESCAPE_RANGE && dy <= BOMB_ESCAPE_RANGE) {
+                    return (Bomb) entity;
+                }
+            }
+        }
+        return null;
     }
 
     private boolean isPlayerInRange() {
@@ -212,7 +311,20 @@ public class AI {
         entity.worldX = oldX;
         entity.worldY = oldY;
 
-        return !entity.collisionOn;
+        return !entity.collisionOn && !isBombAt(x, y);
+    }
+
+    private boolean isBombAt(int x, int y) {
+        for (Entity entity : gp.bombManager.bombList[gp.currentMap]) {
+            if (entity instanceof Bomb) {
+                int bombX = entity.worldX / TILE_SIZE;
+                int bombY = entity.worldY / TILE_SIZE;
+                if (bombX == x && bombY == y) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static class Node {

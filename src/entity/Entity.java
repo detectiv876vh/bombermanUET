@@ -33,12 +33,6 @@ public class Entity {
     public int shotAvailableCounter = 0;
     public int pixelCounter = 0;
 
-    //===========Boss======
-    public int width;  // Mặc định bằng kích thước tile
-    public int height; // Mặc định bằng kích thước tile
-    public int screenX; // Sẽ được tính trong draw()
-    public int screenY; // Sẽ được tính trong draw()
-
     public int spriteNum = 1;
     public int dyingCounter = 0;
     public int hpBarCounter = 0;
@@ -60,6 +54,13 @@ public class Entity {
 
     //HITBOX:
     public Rectangle solidArea; //cho all entity
+
+
+        //===========Boss======
+        public int width;  // Mặc định bằng kích thước tile
+        public int height; // Mặc định bằng kích thước tile
+        public int screenX; // Sẽ được tính trong draw()
+        public int screenY; // Sẽ được tính trong draw()
 
     public int solidAreaDefauftX, solidAreaDefauftY;
     public boolean collisionOn = false;
@@ -87,14 +88,12 @@ public class Entity {
         public int solidAreaDefaultX;
         public int solidAreaDefaultY;
 
-
-    public Entity(gamePanel gp) {
-        this.gp = gp;
-        this.width = gp.tileSize;
-        this.height = gp.tileSize;
-
-        //so-called hitbox:
-        solidArea = new Rectangle(0, 0, 48, 48);
+        public Entity(gamePanel gp) {
+            this.gp = gp;
+            this.positionId = UUID.randomUUID().toString();
+            this.width = gp.tileSize;
+            this.height = gp.tileSize;
+            solidArea = new Rectangle(0, 0, gp.tileSize, gp.tileSize);
 
         dyingSprites = new BufferedImage[4]; // ví dụ: 4 frame chết
 
@@ -123,14 +122,14 @@ public class Entity {
         checkCollision();
 
         boolean contactPlayer = gp.checker.checkPlayer(this);
-            checkCollision();
-            if (moving) {
-                pixelCounter += speed;
-                if (pixelCounter >= 48) {
-                    moving = false;
-                    pixelCounter = 0;
-                }
+
+        if (moving) {
+            pixelCounter += speed;
+            if (pixelCounter >= gp.tileSize) {
+                moving = false;
+                pixelCounter = 0;
             }
+        }
 
         if(this.type == 2 && contactPlayer) {
             if(gp.player.invincible == false) {             //loi
@@ -158,22 +157,24 @@ public class Entity {
             }
         }
 
-        spriteCounter++;
-        if (spriteCounter > 12) {
-            if (spriteNum == 1) {
-                spriteNum = 2;
-            } else if (spriteNum == 3) {
-                spriteNum = 4;
-            } else if (spriteNum == 4) {
-                spriteNum = 5;
-            } else if (spriteNum == 5) {
-                spriteNum = 6;
-            } else if (spriteNum == 6) {
-                spriteNum = 1;
-            }
-            spriteCounter = 0;
+            spriteCounter++;
+            if (spriteCounter > 5) {
+                if (spriteNum == 1) {
+                    spriteNum = 2;
+                } else if (spriteNum == 2) {
+                    spriteNum = 3;
+                } else if (spriteNum == 3) {
+                    spriteNum = 4;
+                } else if (spriteNum == 4) {
+                    spriteNum = 5;
+                } else if (spriteNum == 5) {
+                    spriteNum = 6;
+                } else if (spriteNum == 6) {
+                    spriteNum = 1;
+                }
+                spriteCounter = 0;
 
-        }
+            }
 
         pixelCounter += speed;
 
@@ -183,7 +184,7 @@ public class Entity {
 
         if (invincible) {
             invincibleCounter++;
-            if (invincibleCounter > 180) { // Giả sử thời gian invincible là 60 frame (1 giây)
+            if (invincibleCounter > 60) { // Giả sử thời gian invincible là 60 frame (1 giây)
                 invincible = false;
                 invincibleCounter = 0;
             }
@@ -352,16 +353,14 @@ public class Entity {
                 worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
                 worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
                 worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
-//            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
-            g2.drawImage(image, screenX, screenY, width, height, null);
+            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
         }
         // If player is around the edge, draw everything
         else if (gp.player.worldX < gp.player.screenX ||
                 gp.player.worldY < gp.player.screenY ||
                 rightOffset > gp.worldWidth - gp.player.worldX ||
                 bottomOffset > gp.worldHeight - gp.player.worldY) {
-//            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
-            g2.drawImage(image, screenX, screenY, width, height, null);
+            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
         }
     }
     //ANIMATION LUC MONSTER CHET
@@ -417,26 +416,6 @@ public class Entity {
         return image;
     }
 
-    public BufferedImage setup96x96(String imagePath) {
-
-        UtilityTool uTool = new UtilityTool();
-        BufferedImage image = null;
-
-        try {
-            image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
-
-            // Cắt khoảng trống xung quanh
-            image = uTool.cropToContent(image);
-
-            // Scale cố định về 96x96px
-            image = uTool.scaleImage(image, 96, 96);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return image;
-    }
-
     public BufferedImage setup(String imagePath) {
 
         UtilityTool uTool = new UtilityTool();
@@ -456,7 +435,6 @@ public class Entity {
         }
         return image;
     }
-
 
     public Rectangle getHitbox() {
         return new Rectangle(

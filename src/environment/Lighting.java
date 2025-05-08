@@ -67,11 +67,11 @@ public class Lighting {
         }
 
         RadialGradientPaint gPaint = new RadialGradientPaint(
-                centerX,
-                centerY,
-                lightRadius / 2,
-                fraction,
-                color
+                centerX,           // Tọa độ X của tâm gradient.
+                centerY,           // Tọa độ Y của tâm gradient.
+                lightRadius / 2,   // Bán kính của vòng gradient (vùng sáng).
+                fraction,          // Mảng float quy định vị trí các mức màu (giá trị từ 0.0 đến 1.0).
+                color              // Mảng Color tương ứng với từng giá trị trong fraction.
         );
 
         g2.setPaint(gPaint);

@@ -4,7 +4,7 @@ import Main.KeyHandler;
 import Main.gamePanel;
 import manager.BombManager;
 import object.Bomb;
-import manager.ChemManager;
+//import manager.ChemManager;
 import object.OBJ_HeartItem;
 
 
@@ -27,7 +27,7 @@ public class Player extends Entity {
     public int hasBomb = maxBombs;
     public int hasKey = 0; // so key co duoc khi nhat tren map
     public int hasBoost = 0;
-    private ChemManager chemManager;
+    //    private ChemManager chemManager;
     public boolean moving = false;
     public int pixelCounter = 0;
     int standCounter = 0;
@@ -67,7 +67,7 @@ public class Player extends Entity {
         direction = "down";
 
         //PLAYER STATUS
-        maxLife = 20;               //sua lai sau khi test game
+        maxLife = 6;               //sua lai sau khi test game
         life = maxLife - 4;
 
     }
@@ -108,8 +108,8 @@ public class Player extends Entity {
         attackDown2 = setup("/player/3");
         attackLeft1 = setup("/player/2");
         attackLeft2 = setup("/player/3");
-        attcackRight2 = setup("/player/2");
-        attcackRight1 = setup("/player/3");
+        attackRight2 = setup("/player/2");
+        attackRight1 = setup("/player/3");
     }
 
     public void update() {
@@ -205,8 +205,21 @@ public class Player extends Entity {
 
                 // Cập nhật animation
                 spriteCounter++;
-                if (spriteCounter > 12) {
-                    spriteNum = (spriteNum == 1) ? 2 : 1;
+                if (spriteCounter > 8) {
+                    if (spriteNum == 1) {
+                        spriteNum = 2;
+                    } else if (spriteNum == 2) {
+                        spriteNum = 3;
+                    }
+                    if (spriteNum == 3) {
+                        spriteNum = 4;
+                    } else if (spriteNum == 4) {
+                        spriteNum = 5;
+                    } else if (spriteNum == 5) {
+                        spriteNum = 6;
+                    } else if (spriteNum == 6) {
+                        spriteNum = 1;
+                    }
                     spriteCounter = 0;
                 }
 
@@ -232,59 +245,39 @@ public class Player extends Entity {
             teleportCooldown--;
         }
 
-        // Xử lý đặt bom (chỉ khi không ở chế độ xuyên)
-            if (kH.spacePressed ) {
-                if(xuyenMode) {
-                    gp.kH.spacePressed = false;
-                }else {
-                    gp.bombManager.handleBombPlacement();
-                    gp.kH.spacePressed = false; // Tránh đặt bom liên tục
-                }
-            }
-            if (kH.qPressed) {
-                // Chỉ tấn công nếu KHÔNG đang di chuyển
-                if (!moving) {
+        if (kH.spacePressed) {
+            gp.bombManager.handleBombPlacement();
+            gp.kH.spacePressed = false; // Tránh đặt bom liên tục
+        }
+
+        if (kH.qPressed) {
+            // Chỉ tấn công nếu KHÔNG đang di chuyển
+            if (!moving) {
 //                gp.chemManager.handleChem();
-                    attacking = true;
-                }
-                // Reset trạng thái di chuyển
-                moving = false;
-                pixelCounter = 0;
-                spriteCounter = 0;
+                attacking = true;
             }
+            // Reset trạng thái di chuyển
+            moving = false;
+            pixelCounter = 0;
+            spriteCounter = 0;
+        }
 
-            // Cập nhật animation tấn công
-            if (attacking) {
-                attacking();
-            }
+        // Cập nhật animation tấn công
+//        if(attacking) {
+//            attacking();
+//        }
 
 
-            // Xử lý shield
-            if (shieldActive) {
-                shieldCounter++;
-                if (shieldCounter >= 300) {
-                    invincible = true;
-                    shieldActive = false;
-                    shieldCounter = 0;
-                }
+        // Xử lý shield
+        if (shieldActive) {
+            shieldCounter++;
+            if (shieldCounter >= shieldDuration) {
+                shieldActive = false;
+                shieldCounter = 0;
             }
-            // Xử lý bất tử tạm thời sau khi bị đánh
-            if (invincible) {
-                invincibleCounter++;
-                if (invincibleCounter > 300) {
-                    invincible = false;
-                    invincibleCounter = 0;
-                }
-            }
-            if (life > maxLife) {
-                life = maxLife;
-            }
+        }
 
-            // Kiểm tra máu
-            life = Math.min(life, maxLife);
-            if (life <= 0) {
-                gp.gameState = gp.gameOverState;
-            }
+        // Xử lý chế độ xuyên tường
         if (xuyenMode) {
             xuyenModeMin++;
             if (xuyenModeMin >= xuyenModeMax) {
@@ -297,19 +290,41 @@ public class Player extends Entity {
                 }
             }
         }
-    }
-        //=====================ATTACK======================
-        public void attacking() {
-            if(attacking) {
-                spriteCounter++;
-                if(spriteCounter > 25) {
-                    attacking = false;
-                    spriteCounter = 0;
-                }
-                else if(spriteCounter <= 5) spriteNum = 1;
-                else spriteNum = 2;
+
+        // Xử lý bất tử tạm thời sau khi bị đánh
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter > 300) {
+                invincible = false;
+                invincibleCounter = 0;
             }
         }
+        if (life > maxLife) {
+            life = maxLife;
+        }
+
+        // Kiểm tra máu
+        life = Math.min(life, maxLife);
+        if (life <= 0) {
+            gp.gameState = gp.gameOverState;
+            gp.ui.showTransition = true;
+            gp.ui.transitionTimer = 0;
+            return;
+        }
+    }
+
+        //=====================ATTACK======================
+//    public void attacking() {
+//        if(attacking) {
+//            spriteCounter++;
+//            if(spriteCounter > 25) {
+//                attacking = false;
+//                spriteCounter = 0;
+//            }
+//            else if(spriteCounter <= 5) spriteNum = 1;
+//            else spriteNum = 2;
+//        }
+//    }
 
 
         public void pickUpObject ( int i){
@@ -381,20 +396,44 @@ public class Player extends Entity {
             }
         }
 
+        public void interactNPC ( int i){
+            if (gp.kH.qPressed == true) {
+                if (i != 999) {
+                    System.out.println("you are hitting an npc");
+                }
+            }
+        }
+
         public void contactMonster ( int i){          // giong voi interac
             if (i != 999) {
                 if (!invincible && !shieldActive) {
                     invincible = true;
-                    shieldActive = true;
                     life -= 1;
-                    invincibleCounter = 0;
                     System.out.println("Took damage! Life: " + life);
-                }
-                if(invincible  || shieldActive ) {
-                    System.out.println("Invincible or Shield active!");
                 }
             }
         }
+//        public void damageMonster (int i){
+//            if (i != 999 && gp.monster[i] != null) {
+//                if (gp.monster[i].invincible == false) {
+//                    gp.monster[i].life -= 1;
+//                    gp.monster[i].invincible = true;
+//                    gp.monster[i].damageReaction();
+//
+//                    if (gp.monster[i].life <= 0) {
+//                        gp.monster[i].dying = true;
+//                    }
+//                    if(gp.monster[i].life <= 0) {
+//                        if (new Random().nextInt(100) < 20) {
+//                            OBJ_HeartItem heart = new OBJ_HeartItem(gp);
+//                            heart.worldX = gp.monster[i].worldX;
+//                            heart.worldY = gp.monster[i].worldY;
+//                            gp.obj[gp.currentMap][gp.obj[gp.currentMap].length - 1] = heart;
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         public void draw (Graphics2D g2d) {
 
@@ -427,19 +466,35 @@ public class Player extends Entity {
                     case "up":
                         if (spriteNum == 1) image = up1;
                         if (spriteNum == 2) image = up2;
+                        if (spriteNum == 3) image = up3;
+                        if (spriteNum == 4) image = up4;
+                        if (spriteNum == 5) image = up5;
+                        if (spriteNum == 6) image = up6;
                         break;
                     case "down":
                         if (spriteNum == 1) image = down1;
                         if (spriteNum == 2) image = down2;
+                        if (spriteNum == 3) image = down3;
+                        if (spriteNum == 4) image = down4;
+                        if (spriteNum == 5) image = down5;
+                        if (spriteNum == 6) image = down6;
 
                         break;
                     case "left":
                         if (spriteNum == 1) image = left1;
                         if (spriteNum == 2) image = left2;
+                        if (spriteNum == 3) image = left3;
+                        if (spriteNum == 4) image = left4;
+                        if (spriteNum == 5) image = left5;
+                        if (spriteNum == 6) image = left6;
                         break;
                     case "right":
                         if (spriteNum == 1) image = right1;
                         if (spriteNum == 2) image = right2;
+                        if (spriteNum == 3) image = right3;
+                        if (spriteNum == 4) image = right4;
+                        if (spriteNum == 5) image = right5;
+                        if (spriteNum == 6) image = right6;
 
                         break;
                 }
@@ -497,17 +552,17 @@ public class Player extends Entity {
             }
         }
 
-    private void drawAttackEffect(Graphics2D g2d) {
-        int attackScreenX = gp.chemManager.attackArea.x - worldX + screenX;
-        int attackScreenY = gp.chemManager.attackArea.y - worldY + screenY;
-
-        // Hiệu chỉnh khi ở mép màn hình
-        if (worldX < screenX) attackScreenX = gp.chemManager.attackArea.x;
-        if (worldY < screenY) attackScreenY = gp.chemManager.attackArea.y;
-
-        g2d.setColor(new Color(255, 0, 0, 100));
-        g2d.fillRect(attackScreenX, attackScreenY, gp.tileSize, gp.tileSize);
-    }
+//    private void drawAttackEffect(Graphics2D g2d) {
+//        int attackScreenX = gp.chemManager.attackArea.x - worldX + screenX;
+//        int attackScreenY = gp.chemManager.attackArea.y - worldY + screenY;
+//
+//        // Hiệu chỉnh khi ở mép màn hình
+//        if (worldX < screenX) attackScreenX = gp.chemManager.attackArea.x;
+//        if (worldY < screenY) attackScreenY = gp.chemManager.attackArea.y;
+//
+//        g2d.setColor(new Color(255, 0, 0, 100));
+//        g2d.fillRect(attackScreenX, attackScreenY, gp.tileSize, gp.tileSize);
+//    }
     public void setXuyenMode(boolean xuyenMode) {
         this.xuyenMode = xuyenMode;
 
@@ -525,22 +580,19 @@ public class Player extends Entity {
         int playerRow = worldY / gp.tileSize;
 
         // Kiểm tra xem có đang ở ngoài map không
-        if (playerCol < 0 || playerCol >= gp.maxWorldCol ||
-                playerRow < 0 || playerRow >= gp.maxWorldRow) {
+        if (playerCol < 0 || playerCol >= gp.maxWorldCol || playerRow < 0 || playerRow >= gp.maxWorldRow) {
+            return true; // Nếu ra khỏi map, coi như đang trong tường
+        }
+
+        // Kiểm tra null hoặc chỉ số không hợp lệ
+        if (gp.tileM.mapTileNum == null || gp.currentMap < 0 || gp.currentMap >= gp.tileM.mapTileNum.length) {
             return true;
         }
 
         int tileNum = gp.tileM.mapTileNum[gp.currentMap][playerCol][playerRow];
         return gp.tileM.tile[tileNum].collision;
     }
-    public Rectangle getHitbox() {
-        return new Rectangle(
-                worldX + solidArea.x,
-                worldY + solidArea.y,
-                solidArea.width,
-                solidArea.height
-        );
-    }
+
     private void pushToNearestValidPosition() {
         // Lưu lại vị trí ban đầu để so sánh
         int originalX = worldX;
@@ -603,3 +655,4 @@ public class Player extends Entity {
         return !gp.tileM.tile[tileNum].collision;
     }
 }
+

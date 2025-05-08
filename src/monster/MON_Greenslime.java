@@ -17,15 +17,10 @@ public class MON_Greenslime extends Entity {
         type = 2;
         name = "GreenSlime";
         speed = 2;
-        maxLife = 3;
+        maxLife = 1;
         life = maxLife;
 
-        solidArea.x = 3;
-        solidArea.y = 18;
-        solidArea.width = 42;
-        solidArea.height = 30;
-        solidAreaDefaultX = solidArea.x;
-        solidAreaDefaultY = solidArea.y;
+        solidArea = new Rectangle(0,0,48,48);
 
         getImage();
 
