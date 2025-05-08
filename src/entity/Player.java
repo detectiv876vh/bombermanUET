@@ -24,7 +24,6 @@ public class Player extends Entity {
     public final int screenX;
     public final int screenY;
     public int hasBomb = maxBombs;
-    public int hasKey = 0; // so key co duoc khi nhat tren map
     public int hasBoost = 0;
     public boolean moving = false;
     public int pixelCounter = 0;
@@ -44,12 +43,13 @@ public class Player extends Entity {
         screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
         screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 
-        solidArea = new Rectangle(1, 1, 46, 46);
+        solidArea = new Rectangle(2,2,44,44);
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
         setDefaultValues();
         getPlayerImage();
+
     }
 
     //vị trí ban đầu của player.
@@ -80,12 +80,12 @@ public class Player extends Entity {
         down4 = setup("/entities/player_run3");
         down5 = setup("/entities/player_run4");
         down6 = setup("/entities/player_run5");
-        left1 = setup("/entities/spr_player_left_walk-ezgif.com-crop");
-        left2 = setup("/entities/spr_player_left_walk-ezgif.com-crop (1)");
-        left3 = setup("/entities/spr_player_left_walk-ezgif.com-crop (2)");
-        left4 = setup("/entities/spr_player_left_walk-ezgif.com-crop (3)");
-        left5 = setup("/entities/spr_player_left_walk-ezgif.com-crop (4)");
-        left6 = setup("/entities/spr_player_left_walk-ezgif.com-crop (5)");
+        left1 = setup("/entities/player_left1");
+        left2 = setup("/entities/player_left2");
+        left3 = setup("/entities/player_left3");
+        left4 = setup("/entities/player_left4");
+        left5 = setup("/entities/player_left5");
+        left6 = setup("/entities/player_left6");
         right1 = setup("/entities/player_right1");
         right2 = setup("/entities/player_right2");
         right3 = setup("/entities/player_right3");
@@ -106,9 +106,7 @@ public class Player extends Entity {
             return; // Skip other updates while dying
         }
         if (!moving) {
-//            if (attacking) {
-////                attacking();
-//            } else
+
             if (!attacking && (kH.upPressed || kH.downPressed || kH.leftPressed || kH.rightPressed)) {
                 if (kH.upPressed) {
                     direction = "up";
@@ -121,7 +119,6 @@ public class Player extends Entity {
                 }
 
                 moving = true;
-//                pixelCounter = 0;
 
                 //Check tile collision.
                 collisionOn = false;
@@ -134,10 +131,6 @@ public class Player extends Entity {
                 int objIndex = gp.checker.checkObject(this, true); //entity va boolean cua player
                 pickUpObject(objIndex);
 
-//                // CHECK NPC COLLISION
-//                int npcIndex = gp.checker.checkEntity(this, gp.npc);
-//                interactNPC(npcIndex);
-                //CHECK MONSTER COLLISION
                 int monsterIndex = gp.checker.checkEntity(this, gp.monster);
                 contactMonster(monsterIndex);
 
@@ -235,23 +228,6 @@ public class Player extends Entity {
             gp.kH.spacePressed = false; // Tránh đặt bom liên tục
         }
 
-        if (kH.qPressed) {
-            // Chỉ tấn công nếu KHÔNG đang di chuyển
-            if (!moving) {
-//                gp.chemManager.handleChem();
-                attacking = true;
-            }
-            // Reset trạng thái di chuyển
-            moving = false;
-            pixelCounter = 0;
-            spriteCounter = 0;
-        }
-
-        // Cập nhật animation tấn công
-//        if(attacking) {
-//            attacking();
-//        }
-
 
         // Xử lý shield
         if (shieldActive) {
@@ -320,19 +296,8 @@ public class Player extends Entity {
                 String objectName = gp.obj[gp.currentMap][i].name;
 
                 switch (objectName) {
-                    case "Key":
-                        gp.playSE(1);
-                        hasKey++;
-                        gp.obj[gp.currentMap][i] = null;
-                        System.out.println("Key: " + hasKey);
-                        break;
                     case "Door":
-                        if (hasKey > 0) {
                             gp.playSE(2);
-                            gp.obj[gp.currentMap][i] = null;
-                            hasKey--;
-                        }
-                        System.out.println("Key: " + hasKey);
                         break;
                     case "Boost":
                         gp.playSE(1);
@@ -341,8 +306,6 @@ public class Player extends Entity {
                             speed += 2;
                         }
                         gp.obj[gp.currentMap][i] = null;
-                        break;
-                    case "Chest":
                         break;
                     case "bombItem":
                         gp.playSE(1);
@@ -386,23 +349,14 @@ public class Player extends Entity {
             }
         }
 
-        public void interactNPC ( int i){
-            if (gp.kH.qPressed == true) {
-                if (i != 999) {
-                    System.out.println("you are hitting an npc");
-                }
+    public void contactMonster(int i) {
+        if (i != 999) {
+            if (!invincible && !shieldActive) {
+                life = 0; // Set máu về 0 ngay lập tức
+                startDying(); // Bắt đầu animation chết
             }
         }
-
-        public void contactMonster ( int i){          // giong voi interac
-            if (i != 999) {
-                if (!invincible && !shieldActive) {
-                    invincible = true;
-                    life -= 1;
-                    System.out.println("Took damage! Life: " + life);
-                }
-            }
-        }
+    }
 //        public void damageMonster (int i){
 //            if (i != 999 && gp.monster[i] != null) {
 //                if (gp.monster[i].invincible == false) {

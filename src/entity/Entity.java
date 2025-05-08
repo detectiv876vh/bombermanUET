@@ -9,9 +9,7 @@ import object.Bomb;
     import java.awt.*;
     import java.awt.image.BufferedImage;
     import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.UUID;
+    import java.util.UUID;
 
 public class Entity {
     //STATE
@@ -125,9 +123,9 @@ public class Entity {
 
             boolean contactPlayer = gp.checker.checkPlayer(this);
             if (this.type == 2 && contactPlayer) {
-                if (gp.player.invincible == false) {             //loi
+                if (gp.player.invincible == false) {
                     //can give dame
-                    gp.player.life -= 1;
+                    gp.player.life = 0;
                     gp.player.invincible = true;
                 }
             }
@@ -284,6 +282,14 @@ public class Entity {
         }
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
+        if (dying) {
+            int frameIndex = dyingCounter / 12;
+            if (frameIndex >= dyingSprites.length) {
+                frameIndex = dyingSprites.length - 1;
+            }
+            g2.drawImage(dyingSprites[frameIndex], screenX, screenY, gp.tileSize, gp.tileSize, null);
+            return; // Không vẽ gì khác nếu đang chết
+        }
 
 
         //MONSTRE HP BAR
@@ -310,21 +316,22 @@ public class Entity {
                 worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
                 worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
                 worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
-            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(image, screenX, screenY, width, height, null);
         }
         // If player is around the edge, draw everything
         else if (gp.player.worldX < gp.player.screenX ||
                 gp.player.worldY < gp.player.screenY ||
                 rightOffset > gp.worldWidth - gp.player.worldX ||
                 bottomOffset > gp.worldHeight - gp.player.worldY) {
-            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+//            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+            g2.drawImage(image, screenX, screenY,width,height , null);
         }
     }
-
 
     public void changAlpha(Graphics2D g2, float alphaValue) {
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
     }
+
 
 
 
@@ -355,6 +362,25 @@ public class Entity {
 
             // Scale lên đúng tileSize
             image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
+    public BufferedImage setup96x96(String imagePath) {
+
+        UtilityTool uTool = new UtilityTool();
+        BufferedImage image = null;
+
+        try {
+            image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
+
+            // Cắt khoảng trống xung quanh nếu có
+            image = uTool.cropToContent(image);
+
+            // Scale lên đúng tileSize
+            image = uTool.scaleImage(image, 96, 96);
 
         } catch (IOException e) {
             e.printStackTrace();

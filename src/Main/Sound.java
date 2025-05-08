@@ -9,7 +9,7 @@ import java.net.URL;
 
 public class Sound {
 
-    Clip clip;
+    Clip clip; // Biến clip sẽ được sử dụng để chứa và điều khiển âm thanh (phát, lặp lại, dừng).
     URL soundURL[] = new URL[30]; // Tổng số sound thêm vào.
     FloatControl fc;    // Điều chỉnh âm lượng.
     int volumeScale = 3;
@@ -32,9 +32,9 @@ public class Sound {
 
         try {
 
-            AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL[i]);
-            clip = AudioSystem.getClip();
-            clip.open(ais);
+            AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL[i]); // lấy dữ liệu âm thanh từ tệp tại soundURL[i]
+            clip = AudioSystem.getClip(); // trả về một đối tượng Clip mới.
+            clip.open(ais); // nạp dữ liệu âm thanh vào clip.
             fc = (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);  // Truy xuất bộ điều khiển âm thanh của clip
                                                                                 // và điểu chỉnh nó theo đơn vị dB
             if (i == 6) { // Nếu là placebomb.wav

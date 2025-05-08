@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
 
     gamePanel gp;
-    public boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed,qPressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed;
 
     public KeyHandler(gamePanel gp) {
         this.gp = gp;
@@ -24,12 +24,16 @@ public class KeyHandler implements KeyListener {
         if (gp.gameState == gp.titleState) {
 
             if (code == KeyEvent.VK_W) {
-                gp.ui.commandNum = (gp.ui.commandNum == 0) ? 1 : 0; // Chỉ có 2 nút Play/Quit
-                gp.playSE(4);
+                if (gp.ui.commandNum == 1) {
+                    gp.ui.commandNum = 0;
+                    gp.playSE(4); // Chỉ phát âm thanh khi có thay đổi từ 1 -> 0.
+                }
             }
             if (code == KeyEvent.VK_S) {
-                gp.ui.commandNum = (gp.ui.commandNum == 0) ? 1 : 0;
-                gp.playSE(4);
+                if (gp.ui.commandNum == 0) {
+                    gp.ui.commandNum = 1;
+                    gp.playSE(4); // Chỉ phát âm thanh khi có thay đổi từ 0 -> 1.
+                }
             }
             if (code == KeyEvent.VK_SPACE || code == KeyEvent.VK_ENTER) {
                 if (gp.ui.commandNum == 0) {
@@ -129,11 +133,6 @@ public class KeyHandler implements KeyListener {
 
             if (code == KeyEvent.VK_SPACE) {
                 spacePressed = true;
-                gp.playSE(6);
-            }
-            if(code == KeyEvent.VK_Q){
-                System.out.println("Q");
-                qPressed = true;
             }
 
             if (code == KeyEvent.VK_R) {
@@ -172,11 +171,6 @@ public class KeyHandler implements KeyListener {
 
         if (code == KeyEvent.VK_SPACE) {
             spacePressed = false;
-        }
-
-        if(code == KeyEvent.VK_Q){
-            System.out.println("Q");
-            qPressed = false;
         }
     }
 }
