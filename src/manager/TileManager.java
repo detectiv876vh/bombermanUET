@@ -69,6 +69,8 @@ public class TileManager {
                 mapTileNum[gp.currentMap][tileX][tileY] = 0; // Gán về tile nền
             } else if (gp.currentMap == 1) {
                 mapTileNum[gp.currentMap][tileX][tileY] = 4; // Gán về tile nền khác
+            } else if (gp.currentMap == 2) {
+                mapTileNum[gp.currentMap][tileX][tileY] = 4;
             }
 
             //random tỉ lệ rơi items

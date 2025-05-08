@@ -86,6 +86,10 @@ public class MON_1 extends Entity {
         collisionOn = false;
         gp.checker.checkTile(this);
         gp.checker.checkObject(this, false);
+
+        // Thêm kiểm tra va chạm với bomb
+        gp.checker.checkBomb(this);
+
         gp.checker.checkEntity(this, gp.npc);
         gp.checker.checkEntity(this, gp.monster);
         boolean contactPlayer = gp.checker.checkPlayer(this);
@@ -101,7 +105,7 @@ public class MON_1 extends Entity {
 
         // Gây sát thương nếu chạm player
         if (contactPlayer && !gp.player.invincible) {
-            gp.player.life = 0;
+            gp.player.life -= 1;
             gp.player.invincible = true;
         }
 
@@ -131,6 +135,7 @@ public class MON_1 extends Entity {
 
     @Override
     public void damageReaction() {
+        moving = false;
         dying = true;
         alive = false;
         dyingCounter = 0;

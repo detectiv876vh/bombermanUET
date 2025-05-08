@@ -62,7 +62,7 @@ public class Player extends Entity {
 
         //PLAYER STATUS
         maxLife = 6 ;               //sua lai sau khi test game
-        life = maxLife - 4;
+        life = maxLife;
     }
 
     //gắn ảnh.

@@ -21,8 +21,6 @@ public class Entity {
     //LOAD IMAGE
     public BufferedImage up1, up2, up3, up4,up5, up6, down1, down2, down3, down4, down5, down6;
     public BufferedImage right1, right2, right3, right4,right5, right6, left1, left2, left3, left4, left5, left6;
-    public BufferedImage attackUp1,attackUp2,attackDown1,attackDown2,attackLeft1,attackLeft2,
-            attcackRight1,attcackRight2;
     public BufferedImage[] dyingSprites;
     public BufferedImage image, image2, image3;
     public String direction = "down";
@@ -460,19 +458,6 @@ public class Entity {
             onPath = false;
         }
     }
-//    private void tryAlternativeRoute() {
-//        String[] directions = {"up", "down", "left", "right"};
-//        List<String> dirList = (List<String>) Arrays.asList(directions);
-//        Collections.shuffle(dirList); // Ngẫu nhiên hướng
-//
-//        for (String dir : dirList) {
-//            direction = dir;
-//            checkCollision();
-//            if (!collisionOn) {
-//                break; // Thoát nếu tìm được hướng di chuyển được
-//            }
-//        }
-//    }
 
     private void updateSpriteCounter() {
         spriteCounter++;

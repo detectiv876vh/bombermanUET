@@ -150,6 +150,7 @@ public class MON_Greenslime extends Entity {
     }
 
     public void damageReaction() {
+        moving = false;
         dying = true;
         dyingCounter = 0;
         collisionOn = true; // Tắt va chạm khi đang chết

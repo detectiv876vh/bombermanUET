@@ -38,7 +38,7 @@ bản đồ.
 ---
 
 ## UML diagram
-
+![img_6.png](img_6.png)
 ---
 
 ## Cài đặt

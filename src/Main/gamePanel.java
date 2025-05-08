@@ -333,7 +333,7 @@ public class gamePanel extends JPanel implements Runnable {
 
         aSetter.setMonster00();
         aSetter.setMonster01();
-        aSetter.setBoss();
+
 
     }
 
