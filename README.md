@@ -3,7 +3,7 @@
 ---
 
 ## Thành viên
-**Nhóm 1**
+**Nhóm 12**
 
 - Lê Trung Đức - 24022293
 - Bùi Tiến Dũng - 24022299
@@ -16,22 +16,22 @@ Bomberman là một trò chơi điện tử cổ điển, nổi tiếng với l�
 bom để phá hủy chướng ngại vật, tiêu diệt kẻ thù và mở đường đến chiến thắng, tựa game này được nhóm mình miêu tả lại và
 được pha trộn thêm vài yếu tố dạng hầm ngục.
 
-- (Ảnh main) Bomber là nhân vật chính của trò chơi. có thể di chuyển theo 4 hướng cơ bản và được cố định có 1 máu.
+-  Bomber là nhân vật chính của trò chơi. có thể di chuyển theo 4 hướng cơ bản và được cố định có 1 máu.
 - Ngăn cản người chơi đến với chiến thắng là các monster, chúng sẽ đuổi theo truy đuổi nhân vật bằng mọi cách.
-- (Ảnh bom) Bomb là vũ khí duy nhất người chơi có thể gây sát thương lên quái. Bom chỉ có thể đặt tại các ô grass. Khi
+-  Bomb là vũ khí duy nhất người chơi có thể gây sát thương lên quái. Bom chỉ có thể đặt tại các ô grass. Khi
 kích hoạt Bomber và quái không thể di chuyển vào vị trí quả bomb (Sau khi đặt bom người chơi sẽ có 1 lần được đi ra khỏi
 vị trí quả bom sang bên cạnh). Bom sẽ được đặt ngay tại vị trí chính giữa ô gần nhất với người chơi, sau 3s bom sẽ phát
 nổ theo 4 hướng với các Flame (ảnh Flame) đi cùng.
-- (Ảnh các nền nhà) Grass Là nền tảng cơ bản trong bản đồ, Grass cho phép các đối tượng như Bomber và Enemy tự do di chuyển
+-  Grass Là nền tảng cơ bản trong bản đồ, Grass cho phép các đối tượng như Bomber và Enemy tự do di chuyển
 qua. Người chơi cũng có thể đặt Bomb trực tiếp lên ô Grass mà không bị giới hạn.
-- (Ảnh tường) Wall là chướng ngại vật cố định, không thể bị phá hủy bởi Bomb và cũng không cho phép đặt Bomb lên trên.
+-  Wall là chướng ngại vật cố định, không thể bị phá hủy bởi Bomb và cũng không cho phép đặt Bomb lên trên.
 Cả Bomber lẫn Enemy đều không thể di chuyển xuyên qua hoặc đứng lên ô chứa Wall.
-- (Ảnh brickWall) Brick được đặt trên nền Grass và đóng vai trò như một chướng ngại tạm thời. Người chơi không thể đặt
+-  Brick được đặt trên nền Grass và đóng vai trò như một chướng ngại tạm thời. Người chơi không thể đặt
 Bomb trực tiếp lên Brick, và nó ngăn cản việc di chuyển của cả Bomber lẫn Enemy. Tuy nhiên, Brick có thể bị phá hủy nếu
 trúng bom phát nổ gần đó, sau khi phá vỡ Brick sẽ được thay bằng Grass hoặc có thể rơi các vật phẩm ẩn bên dưới. 
-- (Ảnh cửa) Door là vật thể có thể đưa bạn sang level mới, Bomber không thể mở nó nếu không có Key, nhiệm vụ chính của 
+-  Door là vật thể có thể đưa bạn sang level mới, Bomber không thể mở nó nếu không có Key, nhiệm vụ chính của 
 người chơi là tìm kiếm Key được phân bố ngẫu nhiên trên bản đồ để mở Door và hoàn thành màn chơi.
-- (Ảnh chìa khóa) Key có chức năng duy nhất là mở cánh cửa, Bomber có thể giữ nhiều key 1 lúc, nhưng mỗi lần chỉ sử dụng
+-  Key có chức năng duy nhất là mở cánh cửa, Bomber có thể giữ nhiều key 1 lúc, nhưng mỗi lần chỉ sử dụng
 một chiếc để mở cửa. Key thường được giấu kỹ hoặc đặt ở những vị trí thử thách, buộc người chơi phải khám phá toàn bộ
 bản đồ.
 
@@ -74,7 +74,9 @@ mang đến một khả năng tăng cường giúp người chơi vượt qua m�
 - ![img_4.png](img_4.png) Tăng tốc cho người chơi.
 - ![xuyen.png](res/objects/xuyen.png) Item cho phép người chơi có thể đi xuyên vật thể trong 5s
 
-Các Enemy trong trò chơi được thiết kế đa dạng về hình dạng, hành vi và mức độ nguy hiểm như:
+Các Enemy trong trò chơi được thiết kế như:
+- ![slime_idle.png](res/monster/slime_idle.png) Slime
+- ![img_5.png](img_5.png) Nấm đỏ
 
 ---
 

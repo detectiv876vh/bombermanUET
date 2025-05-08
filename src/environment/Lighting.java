@@ -20,7 +20,7 @@ public class Lighting {
     public void draw(Graphics2D g2) {
 
         // Chỉ vẽ ở map 2.
-        if (gp.currentMap == 1) {
+        if (gp.currentMap == 2) {
             // vẽ lại khi player ở dìa map.
             updateDarknessFilter();
 

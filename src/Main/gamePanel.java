@@ -365,24 +365,11 @@ public class gamePanel extends JPanel implements Runnable {
                 int x = e.getX();
                 int y = e.getY();
 
-                // Debug information
-                System.out.println("Mouse pressed at: " + x + ", " + y);
-
-                // Vị trí và kích thước các nút.
-                int buttonWidth = ui.playButton.getWidth();
-                int buttonHeight = ui.playButton.getHeight();
-                int centerX = screenWidth/2 - buttonWidth/2;
-                int playY = screenHeight/2 - buttonHeight/2 + 80;
-                int quitY = playY + buttonHeight + (tileSize - 20);
-
-                // Debug button positions
-                System.out.println("Play button: " + centerX + "," + playY + " to " +
-                        (centerX + buttonWidth) + "," + (playY + buttonHeight));
-                System.out.println("Quit button: " + centerX + "," + quitY + " to " +
-                        (centerX + buttonWidth) + "," + (quitY + buttonHeight));
+//                // Debug information
+//                System.out.println("Mouse pressed at: " + x + ", " + y);
 
                 // Kiểm tra giữ click vào nút Play.
-                if (x >= 281 && x <= 487 && y >= 272 && y <= 354) {
+                if (x >= 281 && x <= 487 && y >= 353 && y <= 430) {
                     System.out.println("Play button pressed!");
 
                     playButtonPressed = true;
@@ -390,7 +377,7 @@ public class gamePanel extends JPanel implements Runnable {
                 }
 
                 // Kiểm tra click vào nút Quit.
-                if (x >= 281 && x <= 487 && y >= 384 && y <= 465) {
+                if (x >= 281 && x <= 487 && y >= 452 && y <= 525) {
                     System.out.println("Quit button pressed!");
 
                     quitButtonPressed = true;
@@ -405,22 +392,15 @@ public class gamePanel extends JPanel implements Runnable {
                 int x = e.getX();
                 int y = e.getY();
 
-                // Vị trí và kích thước các nút.
-                int buttonWidth = ui.playButton.getWidth();
-                int buttonHeight = ui.playButton.getHeight();
-                int centerX = screenWidth/2 - buttonWidth/2;
-                int playY = screenHeight/2 - buttonHeight/2 + 80;
-                int quitY = playY + buttonHeight + (tileSize - 20);
-
                 // Kiểm tra thả chuột trên nút Play.
-                if (playButtonPressed && x >= 281 && x <= 487 && y >= 272 && y <= 354) {
+                if (playButtonPressed && x >= 281 && x <= 487 && y >= 353 && y <= 430) {
                     gameState = transitionState;
                     ui.startMapTransition("Level 1");
                     playSE(4);
                 }
 
                 // Kiểm tra thả chuột trên nút Quit.
-                if (quitButtonPressed && (x >= 281 && x <= 487 && y >= 384 && y <= 465)) {
+                if (quitButtonPressed && (x >= 281 && x <= 487 && y >= 452 && y <= 525)) {
                     playSE(4);
                     System.exit(0);
                 }
@@ -429,43 +409,6 @@ public class gamePanel extends JPanel implements Runnable {
                 playButtonPressed = false;
                 quitButtonPressed = false;
                 repaint();
-            }
-        }
-
-        public void mouseMoved(MouseEvent e) {
-            if(gameState == titleState) {
-                int x = e.getX();
-                int y = e.getY();   // tọa độ con trỏ chuột đang ở.
-
-                int buttonWidth = ui.playButton.getWidth();
-                int buttonHeight = ui.playButton.getHeight();
-                int centerX = screenWidth/2 - buttonWidth/2;
-                int playY = screenHeight/2 - buttonHeight/2 + 80;
-                int quitY = playY + buttonHeight + (tileSize - 20);
-
-                int newHover = -1;
-
-                // Kiểm tra hover nút Play
-                if (x >= centerX && x <= centerX + buttonWidth &&
-                        y >= playY && y <= playY + buttonHeight) {
-                    newHover = 0;
-                }
-                // Kiểm tra hover nút Quit
-                else if (x >= centerX && x <= centerX + buttonWidth &&
-                        y >= quitY && y <= quitY + buttonHeight) {
-                    newHover = 1;
-                }
-
-                // Phát âm thanh khi thay đổi hover
-                if (newHover != ui.lastHovered) {
-//                    // Phát âm thanh khi hover vào nít, không phát khi rời nút.
-//                    if (newHover != -1 && ui.lastHovered == -1) {
-//                        playSE(4);
-//                    }
-
-                    ui.lastHovered = newHover;
-                    ui.commandNum = newHover;
-                }
             }
         }
     }

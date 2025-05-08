@@ -70,11 +70,6 @@ public class UI {
         playButtonPress = setup("/standbyscreen/playPresstest");
         quitButton = setup("/standbyscreen/quittest");
         quitButtonPress = setup("/standbyscreen/quitPresstest");
-//            playButton = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/play.png"));
-//            playButtonPress = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/playPress.png"));
-//
-//            quitButton = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/quit.png"));
-//            quitButtonPress = ImageIO.read(getClass().getResourceAsStream("/standbyscreen/quitPress.png"));
     }
 
     public void draw (Graphics2D g2) {
@@ -82,7 +77,6 @@ public class UI {
         //SET FONT
         g2.setFont(theleahFat);
         g2.setColor(Color.white);
-//        g2.drawString("Key = " + gp.player.hasKey, 50,50);       //viet so key tren map o 50 50
 
         // MAP TRANSITION
         if (showTransition) {
@@ -94,16 +88,10 @@ public class UI {
         if(gp.gameState == gp.titleState) {
             drawTitleScreen();
         }
-//        //draw bombs
-//        //GAME OVERSTATE
-//        if(gp.gameState == gp.gameOverState) {
-//            drawGameOverScreen();
-//        }
 
         //PLAYER STATE
         if(gp.gameState == gp.playState) {
             drawPlayerLife();
-//            drawMapTransition();
         }
         //ATTACK STATE
         if(gp.gameState == gp.chemState) {
@@ -129,22 +117,10 @@ public class UI {
 
     public void drawTitleScreen() {
 
-//        //BACKGROUND COLOR
-//        g2.setColor(Color.BLACK);
-//        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
-
         // BACKGROUND IMAGE
         g2.drawImage(backgroundFixed, 0, 0, null);
 
-        // TITLE NAME
-        g2.setFont(g2.getFont().deriveFont(Font.BOLD,96F));
-        String text = "Bomberman";
-        int x = getXforCenteredText(text);
-        int y = gp.tileSize * 3;
-
-        //SHADOW
-        g2.setColor(Color.gray);
-        g2.drawString(text, x+5, y+5);
+        int y;
 
         //PAUSE STATE
         if(gp.gameState == gp.pauseState) {
@@ -152,56 +128,14 @@ public class UI {
             drawPauseScreen();
         }
 
-        // NAME GAME COLOR
-        g2.setColor(Color.white);
-        g2.drawString(text, x, y);
-
-//        //MENU
-//        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 48F));
-//
-//        text = "NEW GAME";
-//        x = getXforCenteredText(text);
-//        y += gp.tileSize * 4;
-//
-//        if(commandNum == 0) {
-//            g2.setColor(Color.yellow);
-//            g2.drawString(">", x-gp.tileSize, y);
-//        } else {
-//            g2.setColor(Color.white);
-//        }
-//        g2.drawString(text, x, y);  // viết text ở vị trí x worldY.
-//
-//        text = "CONTINUE GAME";
-//        x = getXforCenteredText(text);
-//        y += gp.tileSize;
-//
-//        if(commandNum == 1) {
-//            g2.setColor(Color.yellow);
-//            g2.drawString(">", x-gp.tileSize, y);
-//        } else {
-//            g2.setColor(Color.white);
-//        }
-//        g2.drawString(text, x, y);
-//
-//        text = "QUIT";
-//        x = getXforCenteredText(text);
-//        y += gp.tileSize;
-//
-//        if(commandNum == 2) {
-//            g2.setColor(Color.yellow);
-//            g2.drawString(">", x-gp.tileSize, y);
-//        } else {
-//            g2.setColor(Color.white);
-//        }
-//        g2.drawString(text, x, y);
         int buttonWidth = playButton.getWidth();
         int buttonHeight = playButton.getHeight();
-        int spacing = gp.tileSize - 20; // khoảng cách giữa các nút.
+        int spacing = gp.tileSize - 35; // khoảng cách giữa các nút.
 
 // Tính tổng chiều cao của cả menu.
         int totalHeight = buttonHeight * 2 + spacing;
-        int yStart = gp.screenHeight / 2 - totalHeight / 2 + 80;
-        x = gp.screenWidth / 2 - buttonWidth / 2;
+        int yStart = gp.screenHeight / 2 - totalHeight / 2 + 150;
+        int x = gp.screenWidth / 2 - buttonWidth / 2;
         y = yStart;
 
 // PLAY - sử dụng mouseHandler để kiểm tra trạng thái nhấn.
@@ -247,10 +181,6 @@ public class UI {
         }
 
     }
-
-//    public void drawGameOverScreen() {
-//
-//    }
 
     public void drawPauseScreen() {
 
@@ -353,11 +283,6 @@ public class UI {
                 if (gp.currentMap + 1 < gp.maxMap) {
                     gp.changeMap(gp.currentMap + 1);
                 }
-//                else {
-//                    // Nếu hết level, quay lại màn hình title
-//                    gp.gameState = gp.titleState;
-//                    gp.ui.commandNum = 0;
-//                }
             } else {
                 // Sau khi hiển thị level, chuyển sang trạng thái chơi
                 gp.gameState = gp.playState;
