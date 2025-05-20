@@ -7,7 +7,30 @@
 
 - Lê Trung Đức - 24022293
 - Bùi Tiến Dũng - 24022299
-- Nguyễn Việt Hà - 24022271
+- Nguyễn Việt Hà - 24022371
+
+---
+
+## Cốt truyện
+Thái tử Leduc của vương triều Dubai, mang thiên mệnh cao cả, bị hút vào một linh trận cổ xưa, hồn xuyên đến dị giới tu 
+tiên nơi yêu tà hoành hành và trời đất đảo điên. Không mang kiếm hay pháp bảo như các tu sĩ thường thấy, hắn chỉ có Lôi 
+Đạn Linh Cấm — loại bom thượng cổ có thể cảm ứng thiên cơ, đủ sức diệt quỷ tru tiên.
+
+Được giao sứ mệnh giải cứu Công chúa Israel — thánh nữ cuối cùng mang huyết mạch Thần Tộc — Leduc bước vào hành trình 
+huyết lệ: phá cấm địa, tru yêu hoàng, đánh đổi linh hồn lẫn thân xác. Sau cùng, hắn tiến vào Ma Vực Cấm Địa và đối mặt 
+một sinh vật có cánh trắng, tà lẫn thánh.
+
+Không chút do dự, Leduc kích nổ toàn bộ linh đạn, tự thiêu linh thể để xóa sổ sinh vật kia. Nhưng trong đống tro tàn, 
+không có Công chúa — chỉ một cánh cổng đá khắc chữ "Luân Hồi Vô Tận" lặng lẽ mở ra.
+
+Hắn bước vào, linh hồn tan vỡ, hy vọng lụi tàn. Thế giới quay vòng.
+
+Khi mở mắt lại giữa bão cát ngày đầu, hắn không còn nhớ gì, nhưng nỗi đau mất mát vẫn âm ỉ trong tim.
+
+Luân hồi lặp lại.
+
+Chỉ có nàng là không thể trở về.
+Chết dưới chính tay hắn.
 
 ---
 
